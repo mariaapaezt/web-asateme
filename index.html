@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASATEME - Asociación Santafesina de Tenis de Mesa</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        asatemeBlue: '#003366',
+                        asatemeRed: '#D32F2F',
+                        asatemeGray: '#F1F5F9',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-asatemeGray font-sans text-gray-800">
+
+    <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-xl">
+        <div class="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-12 w-auto object-contain">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-extrabold tracking-wide leading-none">ASATEME</h1>
+                    <span class="text-xs text-gray-300 uppercase tracking-widest">Asociación Santafesina de Tenis de
+                        Mesa</span>
+                </div>
+            </div>
+
+            <div class="hidden lg:flex space-x-6 font-semibold text-sm">
+                <a href="#noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
+                <a href="#jugadores" class="hover:text-asatemeRed transition duration-300">Jugadores</a>
+                <a href="#ranking" class="hover:text-asatemeRed transition duration-300">Ranking</a>
+                <a href="#calendario" class="hover:text-asatemeRed transition duration-300">Calendario</a>
+                <a href="#eventos" class="hover:text-asatemeRed transition duration-300">Eventos</a>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="#afiliaciones"
+                    class="bg-asatemeRed hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition shadow-md text-sm">
+                    <i class="fas fa-user-plus mr-1"></i> Afiliate
+                </a>
+                <button id="menu-toggle" class="lg:hidden text-2xl focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu"
+            class="hidden lg:hidden bg-asatemeBlue border-t border-blue-900 px-4 py-4 space-y-3 font-semibold text-sm">
+            <a href="#noticias" class="block hover:text-asatemeRed">Noticias</a>
+            <a href="#jugadores" class="block hover:text-asatemeRed">Jugadores</a>
+            <a href="#ranking" class="block hover:text-asatemeRed">Ranking</a>
+            <a href="#calendario" class="block hover:text-asatemeRed">Calendario</a>
+            <a href="#eventos" class="block hover:text-asatemeRed">Eventos</a>
+        </div>
+    </nav>
+
+    <main>
+        <section id="noticias" class="relative h-[500px] md:h-[600px] flex items-center text-white overflow-hidden">
+            <div
+                class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1611250188496-e966043a062e?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center">
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-r from-asatemeBlue via-asatemeBlue/90 to-transparent"></div>
+
+            <div class="container mx-auto px-4 md:px-6 relative z-10">
+                <div class="max-w-3xl">
+                    <span
+                        class="bg-asatemeRed text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4 inline-block">
+                        <i class="fas fa-bullhorn mr-1"></i> Última Hora
+                    </span>
+                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
+                        Liga de Equipos Rosarina<br /><span class="text-asatemeRed">¡Gran Comienzo!</span>
+                    </h2>
+                    <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl">
+                        Sábado 6 de Junio en el Club Atlético Provincial se dará inicio a la Liga de Equipos Rosarina
+                        con una jornada llena de emoción y competencia. Más de 20 equipos se enfrentarán en una serie de
+                        partidos electrizantes que marcarán el comienzo de esta nueva temporada.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="noticia-liga.html"
+                            class="bg-white text-asatemeBlue font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300 inline-block text-center">
+                            Leer Noticia Completa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: JUGADORES (VISTA FIJA EN CUADRÍCULA) -->
+        <section id="jugadores" class="py-16 bg-white">
+            <div class="container mx-auto px-4 md:px-6">
+                <div class="flex justify-between items-end mb-10">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-asatemeBlue">Destacados y Referentes</h2>
+                        <div class="w-24 h-1 bg-asatemeRed mt-3"></div>
+                    </div>
+                </div>
+
+                <!-- CONTENEDOR EN CUADRÍCULA RESPONSIVA -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                    <!-- Tarjeta Atleta 1: Isabella Olivarez -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                        <div class="h-56 bg-gray-100 relative overflow-hidden">
+                            <img src="assets/images/Isabella.jpeg" alt="Isabella Olivarez"
+                                class="w-full h-full object-cover object-top">
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-lg font-bold text-gray-800">Isabella Olivarez</h3>
+                            <p class="text-asatemeRed font-semibold text-sm mb-1">Selección Sub 13</p>
+                            <p class="text-gray-500 text-sm"><i class="fas fa-flag mr-1"></i> Rosario</p>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Atleta 2: Ixchel Guia Monzón -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                        <div class="h-56 bg-gray-100 relative overflow-hidden">
+                            <img src="assets/images/Ixchel.png" alt="Ixchel Guia Monzón"
+                                class="w-full h-full object-cover object-top">
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-lg font-bold text-gray-800">Ixchel Guia Monzón</h3>
+                            <p class="text-asatemeRed font-semibold text-sm mb-1">Selección Sub 15</p>
+                            <p class="text-gray-500 text-sm"><i class="fas fa-flag mr-1"></i> Rosario</p>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Atleta 3: Aitana Bibbo -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                        <div class="h-56 bg-gray-100 relative overflow-hidden">
+                            <img src="assets/images/Aitana.jpeg" alt="Aitana Bibbo"
+                                class="w-full h-full object-cover object-top">
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-lg font-bold text-gray-800">Aitana Bibbo</h3>
+                            <p class="text-asatemeRed font-semibold text-sm mb-1">Selección Sub 11</p>
+                            <p class="text-gray-500 text-sm"><i class="fas fa-flag mr-1"></i> Rosario</p>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Atleta 4: Valentino Marcial -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                        <div class="h-56 bg-gray-100 relative overflow-hidden">
+                            <img src="assets/images/Valentino.jpeg" alt="Valentino Marcial"
+                                class="w-full h-full object-cover object-top">
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-lg font-bold text-gray-800">Valentino Marcial</h3>
+                            <p class="text-asatemeRed font-semibold text-sm mb-1">Selección Sub 15</p>
+                            <p class="text-gray-500 text-sm"><i class="fas fa-flag mr-1"></i> Rosario</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <section id="ranking" class="py-16 bg-gray-50 border-y border-gray-200">
+            <div class="container mx-auto px-4 md:px-6">
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <div class="w-full lg:w-1/4">
+                        <div class="bg-white p-6 rounded-xl shadow-md sticky top-24">
+                            <h3 class="text-xl font-bold text-asatemeBlue mb-4 border-b pb-2">
+                                <i class="fas fa-trophy mr-2"></i>Categorías
+                            </h3>
+                            <div class="space-y-2" id="category-buttons">
+                                <button onclick="changeCategory('caballeros')" id="btn-caballeros"
+                                    class="w-full text-left px-4 py-3 rounded-lg bg-asatemeBlue text-white font-semibold transition">
+                                    Caballeros
+                                </button>
+                                <button onclick="changeCategory('damas')" id="btn-damas"
+                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
+                                    Damas
+                                </button>
+                                <button onclick="changeCategory('sub15')" id="btn-sub15"
+                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
+                                    Sub-15
+                                </button>
+                                <button onclick="changeCategory('sub11')" id="btn-sub11"
+                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
+                                    Sub-11
+                                </button>
+                                <button onclick="changeCategory('maxi')" id="btn-maxi"
+                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
+                                    Maxi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full lg:w-3/4">
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                            <div class="p-6 border-b flex justify-between items-center bg-asatemeBlue text-white">
+                                <h3 class="text-2xl font-bold" id="ranking-title"><i class="fas fa-medal mr-2"></i>Top 5
+                                    Caballeros</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead class="bg-gray-100 text-gray-600 uppercase text-sm">
+                                        <tr>
+                                            <th class="px-6 py-4">Posición</th>
+                                            <th class="px-6 py-4">Jugador</th>
+                                            <th class="px-6 py-4">Club</th>
+                                            <th class="px-6 py-4 text-right">Puntos</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100" id="ranking-body">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="calendario" class="py-16 bg-white">
+            <div class="container mx-auto px-4 md:px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-asatemeBlue">Calendario de Competencias</h2>
+                    <div class="w-20 h-1 bg-asatemeRed mx-auto mt-3"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    <div
+                        class="bg-white rounded-xl shadow-lg border-l-4 border-green-500 overflow-hidden card-hover border border-gray-100">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <span
+                                    class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase">Abierta</span>
+                                <span class="text-gray-500 font-bold text-sm">Próximamente</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Abierto de Santa Fe</h3>
+                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Provincia
+                                de Santa Fe, ARG</p>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white rounded-xl shadow-lg border-l-4 border-asatemeBlue overflow-hidden card-hover border border-gray-100">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <span
+                                    class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase">Planificado</span>
+                                <span class="text-gray-500 font-bold text-sm">Calendario Anual</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Gran Torneo Provincial</h3>
+                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Sedes
+                                Regionales</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="eventos" class="py-16 bg-gray-50">
+            <div id="afiliaciones"
+                class="container mx-auto px-4 md:px-6 max-w-4xl bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-gray-100 text-center">
+                <h2 class="text-3xl font-bold text-asatemeBlue mb-4">Sistema de Afiliación Provincial</h2>
+                <p class="text-gray-600 mb-8 max-w-xl mx-auto">
+                    Formá parte oficial del tenis de mesa de la provincia. Accedé al circuito puntuable, clínicas
+                    profesionales de entrenamiento y torneos homologados.
+                </p>
+                <button
+                    class="bg-asatemeRed hover:bg-red-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg transition duration-300">
+                    <i class="fas fa-file-signature mr-2"></i>Iniciar Trámite Online
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-asatemeBlue text-white py-12 border-t-4 border-asatemeRed">
+        <div class="container mx-auto px-4 md:px-6 text-center">
+            <p class="font-bold text-lg mb-2">ASATEME</p>
+            <p class="text-gray-400 text-sm mb-6">Asociación Santafesina de Tenis de Mesa · Regulando el deporte a nivel
+                provincial</p>
+            <div class="text-xs text-gray-500">
+                &copy; 2026 ASATEME. Todos los derechos reservados. Desarrollado con enfoque Full Stack.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/ranking.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
