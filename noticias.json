@@ -1,0 +1,106 @@
+[
+    {
+        "id": "importancia-liga-equipos-2026",
+        "titulo": "La Liga de Equipos: El pilar fundamental para el crecimiento del Tenis de Mesa",
+        "resumen": "El tenis de mesa en Rosario encuentra en las ligas de equipos un pilar fundamental para su crecimiento integral, permitiendo que todas las personas se acerquen a los clubes a vivir los partidos en primera persona.",
+        "fecha": "Junio, 2026",
+        "imagenPortada": "assets/images/Liga-Equipos.png",
+        "mostrarLogoLiga": true,
+        "contenido": [
+            {
+                "tipo": "parrafo",
+                "texto": "El tenis de mesa en Rosario, enmarcado en el constante desarrollo deportivo de Argentina, encuentra en las ligas de equipos un pilar fundamental para su crecimiento integral. Según destaca la comisión directiva de ASATEME, este formato comunitario y competitivo permite que todas las personas se acerquen a los clubes a vivir los partidos en primera persona, elevando la disciplina a un nivel federativo superior donde cada participante defiende con orgullo los colores de la institution que lo respalda."
+            },
+            {
+                "tipo": "cita",
+                "texto": "Este formato permite que la disciplina se eleve a un nivel donde los premios obtenidos impactan directo en el crecimiento material e institucional de nuestros clubes."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "Además, esta modalidad otorga una mayor relevancia de la disciplina dentro de los propios clubes, ya que los premios que se obtienen están destinados a las instituciones participantes. Esto se traduce en una vía directa para adquirir materiales, mesas e infraestructura clave para seguir creciendo en el deporte."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "A nivel federativo, el impacto es crucial: de este semillero se desprenden los mejores clubes de la provincia. Al finalizar el año, los planteles destacados acceden a galardones especiales y obtienen la plaza para representar a sus ciudades frente a otras provincias de la Argentina que compiten bajo este mismo formato. Un punto alto a resaltar es que los ganadores quedan habilitados para gestionar y recibir apoyos económicos directos para los jugadores que integran el selectivo santafesino."
+            },
+            {
+                "tipo": "tarjetaInformativa",
+                "icono": "fas fa-handshake",
+                "titulo": "El rol de los referentes",
+                "text": "El trabajo diario de los profesores, entrenadores y directivos es indispensable para brindar el espacio y los recursos necesarios para que el torneo se desarrolle con éxito sostenido."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "Finalmente, esta dinámica fomenta el desarrollo de partidos de altísimo nivel durante la semana mediante las visitas interclubes. Esta circulación constante rompe las barreras tradicionales del entrenamiento cerrado y logra que nuestra disciplina sea cada vez más conocida, afianzándose firmemente en las diversas instituciones donde hacen vida nuestros clubes de tenis de mesa en toda la provincia de Santa Fe."
+            }
+        ]
+    },
+    {
+        "id": "torneo-provincial-asateme-junio-2026",
+        "titulo": "¡Inscripciones Abiertas! Torneo Provincial ASATEME 2026",
+        "resumen": "Este sábado 13 de junio el Complejo Emilio Lotuff recibe a la máxima cita provincial. Sumá doble puntuación para el Ranking y clasificá a la Carrera de Campeones de fin de año con USD 1.000 en premios.",
+        "fecha": "Junio, 2026",
+        "imagenPortada": "assets/images/4to asateme.jpeg",
+        "mostrarLogoLiga": false,
+        "contenido": [
+            {
+                "tipo": "parrafo",
+                "texto": "¡Se viene una fecha tremenda! Los invitamos a participar del próximo Torneo Provincial ASATEME 2026, que se disputará el sábado 13 de junio en el Gimnasio Emilio Lotuff. Este certamen será clave, ya que otorgará doble puntuación para el Ranking Provincial y sumará valiosos puntos para la gran Carrera de Campeones de fin de año (donde clasificarán todos los jugadores que logren podio durante el año en curso en cada categoría, compitiendo por una bolsa de 1.000 USD en premios)."
+            },
+            {
+                "tipo": "tarjetaInformativa",
+                "icono": "fas fa-clock",
+                "titulo": "Cronograma de Horarios (Sábado 13/06)",
+                "text": "• 09:30 hs ➔ QUINTA CATEGORÍA\n• 10:30 hs ➔ TERCERA CATEGORÍA\n• 12:45 hs ➔ PRIMERA CATEGORÍA\n• 14:00 hs ➔ CUARTA CATEGORÍA\n• 15:53 hs ➔ SEGUNDA CATEGORÍA\n• 16:30 hs ➔ SUB 13 (Principiantes solamente, de lo contrario remite a 5ta)\n\n(Nota: Según la cantidad final de inscriptos, el horario definitivo puede sufrir adelantos o retrasos de hasta 30 minutos)."
+            },
+            {
+                "tipo": "tarjetaInformativa",
+                "icono": "fas fa-exclamation-triangle",
+                "titulo": "Cierre de Inscripciones y Bajas",
+                "text": "El cierre definitivo será el viernes 12 de junio a las 14:00 hs sin excepción. Las bajas también se recibirán hasta ese mismo límite; de lo contrario, se deberá abonar la inscripción correspondiente. Se recomienda presentarse 1 hora antes de su categoría para calentar y abonar (habrá un máximo de 3 llamados o 10 minutos de espera antes del WO)."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "En cuanto a la premiación, la categoría Primera contará con un premio en efectivo de $100.000, mientras que en todas las demás categorías habrá trofeos, medallas y sorteos de materiales e indumentaria de tenis de mesa. El peloteo previo en mesa antes de iniciar cada partido será estrictamente de 2 minutos."
+            },
+            {
+                "tipo": "tarjetaInformativa",
+                "icono": "fas fa-dollar-sign",
+                "titulo": "Costos de Inscripción",
+                "text": "• Jugadores Asociados: 1 categoría $15.000 / Doble participación $25.000\n• Jugadores NO Asociados: 1 categoría $17.000 / Doble participación $28.000\n\nPor consultas sobre cómo asociarte para acceder a descuentos, jugar la Liga Rosarina o representar a Santa Fe en el circuito nacional, escribinos a: asateme.tdm@gmail.com"
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "Asegurá tu lugar completando tus datos en el formulario oficial del torneo haciendo clic en el siguiente enlace:"
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "<a href='https://docs.google.com/forms/d/e/1FAIpQLSfTx53_GRFZsTAavBSoH4-GqYc6DG-DFPdoj08bEq6OKUb0_w/viewform?usp=publish-editor' target='_blank' rel='noopener noreferrer' class='inline-flex items-center gap-2 bg-asatemeRed hover:bg-asatemeBlue text-white font-bold px-6 py-3 rounded-md shadow transition duration-300 my-2'><i class='fab fa-google mr-1'></i> Completar Formulario de Inscripción</a>"
+            }
+        ]
+    },
+    {
+        "id": "campeonato-argentino-senior-2026",
+        "titulo": "¡Se viene el Campeonato Argentino Senior 2026!",
+        "resumen": "Tenemos el agrado de informarles que la máxima cita nacional de categorías Senior se realizará en el Parque Olímpico de la Juventud (Pabellón América), C.A.B.A., del 22 al 26 de julio.",
+        "fecha": "Junio, 2026",
+        "imagenPortada": "assets/images/nacionalArgentino.jpeg",
+        "mostrarLogoLiga": false,
+        "contenido": [
+            {
+                "tipo": "parrafo",
+                "texto": "Estimados jugadores y delegados de la comunidad del tenis de mesa: Tenemos el agrado de informarles que el Campeonato Argentino de categorías Senior se realizará en las prestigiosas instalaciones del Parque Olímpico de la Juventud (Pabellón América), en la Ciudad Autónoma de Buenos Aires."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "El evento más importante del país para las categorías Master se llevará a cabo del 22 al 26 de julio, contando con la organización oficial de la Federación Argentina de Tenis de Mesa (FATM). Se espera la participación de delegaciones de todas las provincias en lo que promete ser una verdadera fiesta de nuestro deporte."
+            },
+            {
+                "tipo": "tarjetaInformativa",
+                "icono": "fas fa-pen-fancy",
+                "titulo": "Próximo Comunicado",
+                "text": "La próxima semana estaremos enviando de manera formal la invitación oficial junto con el reglamento detallado de la competencia, cronogramas de juego y modalidades de inscripción."
+            }
+        ]
+    }
+]
