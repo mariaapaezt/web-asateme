@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de la Liga - ASATEME</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        asatemeBlue: '#003366',
+                        asatemeRed: '#D32F2F',
+                        asatemeGray: '#F1F5F9',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-asatemeGray font-sans text-gray-800">
+
+    <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-xl">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-12 w-auto object-contain">
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-wide leading-none">ASATEME</h1>
+                    <span class="text-xs text-gray-300 uppercase tracking-widest">Portal de la Liga</span>
+                </div>
+            </a>
+            <a href="index.html" class="text-sm font-semibold hover:text-asatemeRed transition"><i class="fas fa-home mr-1"></i> Inicio</a>
+        </div>
+    </nav>
+
+    <header class="bg-gradient-to-r from-blue-900 to-asatemeBlue text-white py-12 shadow-inner">
+        <div class="container mx-auto px-4 text-center">
+            <i class="fas fa-trophy text-asatemeRed text-5xl mb-3 drop-shadow-md"></i>
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Fixture de Equipos Rosarina 2026</h2>
+            <p class="text-gray-300 text-sm md:text-base mt-2 max-w-xl mx-auto">Seguí el cronograma de partidos, fechas libres y cargá las puntuaciones oficiales del circuito de clubes.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4 justify-between items-center mb-8">
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button id="btn-ligaA" onclick="cambiarLiga('ligaA')" class="flex-1 sm:flex-none px-6 py-2.5 font-bold text-sm rounded-xl transition bg-asatemeBlue text-white shadow-md">Liga A</button>
+                <button id="btn-ligaB" onclick="cambiarLiga('ligaB')" class="flex-1 sm:flex-none px-6 py-2.5 font-bold text-sm rounded-xl transition bg-gray-100 text-gray-600 hover:bg-gray-200">Liga B</button>
+            </div>
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <label for="select-fecha" class="font-bold text-sm text-asatemeBlue uppercase tracking-wider shrink-0">Seleccionar Fecha:</label>
+                <select id="select-fecha" onchange="cargarFecha()" class="w-full sm:w-32 bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-3 rounded-xl font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-asatemeBlue"></select>
+            </div>
+        </div>
+
+        <div id="panel-libre" class="hidden bg-amber-50 border border-amber-200 p-4 rounded-xl flex items-center gap-3 text-amber-800 text-sm font-semibold mb-6 shadow-sm">
+            <i class="fas fa-couch text-xl text-amber-500"></i>
+            <span>Equipo Libre esta jornada: <span id="equipo-libre" class="font-extrabold text-asatemeBlue"></span></span>
+        </div>
+
+        <div id="contenedor-partidos" class="space-y-4">
+            </div>
+    </main>
+
+    <script>
+        let datosLiga = null;
+        let ligaActual = 'ligaA';
+
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('liga.json')
+                .then(res => res.json())
+                .then(data => {
+                    datosLiga = data;
+                    inicializarFiltros();
+                })
+                .catch(err => console.error("Error cargando el fixture:", err));
+        });
+
+        function inicializarFiltros() {
+            const select = document.getElementById('select-fecha');
+            select.innerHTML = "";
+            
+            // Generar dinámicamente las opciones del selector de fechas según la liga elegida
+            datosLiga[ligaActual].fechas.forEach(f => {
+                const opt = document.createElement('option');
+                opt.value = f.numero;
+                opt.textContent = `Fecha ${f.numero}`;
+                select.appendChild(opt);
+            });
+
+            cargarFecha();
+        }
+
+        function cambiarLiga(liga) {
+            ligaActual = liga;
+            
+            // Ajustes visuales de los botones con los colores corporativos
+            document.getElementById('btn-ligaA').className = liga === 'ligaA' ? "px-6 py-2.5 font-bold text-sm rounded-xl transition bg-asatemeBlue text-white shadow-md" : "px-6 py-2.5 font-bold text-sm rounded-xl transition bg-gray-100 text-gray-600 hover:bg-gray-200";
+            document.getElementById('btn-ligaB').className = liga === 'ligaB' ? "px-6 py-2.5 font-bold text-sm rounded-xl transition bg-asatemeBlue text-white shadow-md" : "px-6 py-2.5 font-bold text-sm rounded-xl transition bg-gray-100 text-gray-600 hover:bg-gray-200";
+            
+            inicializarFiltros();
+        }
+
+        function cargarFecha() {
+            const numFecha = parseInt(document.getElementById('select-fecha').value) || 1;
+            const fechaData = datosLiga[ligaActual].fechas.find(f => f.numero === numFecha);
+            const contenedor = document.getElementById('contenedor-partidos');
+            
+            contenedor.innerHTML = "";
+
+            if (!fechaData) return;
+
+            // Mostrar el cartel de equipo libre si corresponde
+            if (fechaData.libre) {
+                document.getElementById('panel-libre').classList.remove('hidden');
+                document.getElementById('equipo-libre').textContent = fechaData.libre;
+            } else {
+                document.getElementById('panel-libre').classList.add('hidden');
+            }
+
+            // Dibujar cada partido en pantalla de manera limpia
+            fechaData.partidos.forEach(p => {
+                const div = document.createElement('div');
+                div.className = "bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center transition hover:shadow-md";
+                
+                const scoreLocal = p.resultadoLocal !== null ? p.resultadoLocal : "-";
+                const scoreVisitante = p.resultadoVisitante !== null ? p.resultadoVisitante : "-";
+
+                div.innerHTML = `
+                    <div class="w-2/5 font-semibold text-gray-700 text-sm md:text-base">${p.local}</div>
+                    <div class="w-1/5 flex justify-center items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border font-bold text-asatemeBlue text-base md:text-lg">
+                        <span>${scoreLocal}</span>
+                        <span class="text-gray-300 text-xs">VS</span>
+                        <span>${scoreVisitante}</span>
+                    </div>
+                    <div class="w-2/5 text-right font-semibold text-gray-700 text-sm md:text-base">${p.visitante}</div>
+                `;
+                contenedor.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
+<!--ESTA COMO MODELO LUEGO BORRAR-->
