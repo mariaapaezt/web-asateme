@@ -44,15 +44,15 @@
             <div class="hidden lg:flex space-x-6 font-semibold text-sm">
                 <a href="#noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
                 <a href="#jugadores" class="hover:text-asatemeRed transition duration-300">Jugadores</a>
-                <a href="#ranking" class="hover:text-asatemeRed transition duration-300">Ranking</a>
+                <a href="#ranking"
+                    class="hover:text-asatemeRed transition duration-300">Ranking</a>
                 <a href="#calendario" class="hover:text-asatemeRed transition duration-300">Calendario</a>
-                <a href="#eventos" class="hover:text-asatemeRed transition duration-300">Eventos</a>
             </div>
 
             <div class="flex items-center gap-3">
-                <a href="#afiliaciones"
-                    class="bg-asatemeRed hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition shadow-md text-sm">
-                    <i class="fas fa-user-plus mr-1"></i> Afiliate
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdBdc_petoieFpV5CcZYIEc4iv2BKG_uIGpsRVDu0iIV0ELyg/viewform?usp=header#afiliaciones" target="_blank" rel="noopener noreferrer" 
+                    class="bg-asatemeRed hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition shadow-md text-sm flex items-center gap-1">
+                    <i class="fas fa-user-plus"></i> Afiliate
                 </a>
                 <button id="menu-toggle" class="lg:hidden text-2xl focus:outline-none">
                     <i class="fas fa-bars"></i>
@@ -105,7 +105,8 @@
             <div class="container mx-auto px-4 md:px-6">
                 <div class="flex justify-between items-end mb-10">
                     <div>
-                        <h2 class="text-3xl md:text-4xl font-bold text-asatemeBlue">Destacados y Referentes</h2>
+                        <h2 class="text-3xl md:text-4xl font-bold text-asatemeBlue">Santafesinos de Selección Nacional
+                        </h2>
                         <div class="w-24 h-1 bg-asatemeRed mt-3"></div>
                     </div>
                 </div>
@@ -172,7 +173,7 @@
         <section id="ranking" class="py-16 bg-gray-50 border-y border-gray-200">
             <div class="container mx-auto px-4 md:px-6">
                 <div class="flex flex-col lg:flex-row gap-8">
-                    
+
                     <!-- COLUMNA IZQUIERDA: SELECTOR DE CATEGORÍAS -->
                     <div class="w-full lg:w-1/4">
                         <div class="bg-white p-6 rounded-xl shadow-md sticky top-24">
@@ -208,22 +209,26 @@
                     <!-- COLUMNA DERECHA: TABLA DE POSICIONES -->
                     <div class="w-full lg:w-3/4">
                         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                            
+
                             <!-- ENCABEZADO DE LA TABLA CON TÍTULO DINÁMICO Y BOTÓN FILTRO -->
-                            <div class="p-6 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center bg-asatemeBlue text-white gap-4">
+                            <div
+                                class="p-6 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center bg-asatemeBlue text-white gap-4">
                                 <div>
                                     <h3 class="text-2xl font-bold" id="ranking-title">
                                         <i class="fas fa-medal mr-2"></i>Top 10 - Primera
                                     </h3>
                                     <!-- Aquí se inyectará el Mes Activo dinámicamente -->
-                                    <p id="ranking-mes-titulo" class="text-xs text-blue-200 mt-1 uppercase tracking-wider font-semibold"></p>
+                                    <p id="ranking-mes-titulo"
+                                        class="text-xs text-blue-200 mt-1 uppercase tracking-wider font-semibold"></p>
                                 </div>
-                                
+
                                 <!-- BOTÓN CLAVE: Cambia entre Top 10 y Completo -->
-                                <button id="btn-toggle-vista" onclick="alternarVistaCompleta()" 
+                                <!-- BOTÓN REFORMADO: Redirecciona a la nueva página llevando la categoría activa -->
+                                <a id="btn-toggle-vista" href="ranking.html?categoria=PRIMERA"
                                     class="bg-asatemeRed hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition shadow-md flex items-center gap-2">
-                                    <i class="fas fa-list-ol"></i> <span id="txt-toggle-vista">Ver Ranking Completo</span>
-                                </button>
+                                    <i class="fas fa-list-ol"></i> <span id="txt-toggle-vista">Ver Ranking
+                                        Completo</span>
+                                </a>
                             </div>
 
                             <!-- CONTENEDOR DE LA TABLA -->
@@ -241,7 +246,8 @@
                                     <tbody class="divide-y divide-gray-100" id="ranking-body">
                                         <tr>
                                             <td colspan="4" class="px-6 py-8 text-center text-gray-500">
-                                                <i class="fas fa-spinner fa-spin mr-2"></i> Cargando posiciones desde Google Sheets...
+                                                <i class="fas fa-spinner fa-spin mr-2"></i> Cargando posiciones desde
+                                                Google Sheets...
                                             </td>
                                         </tr>
                                     </tbody>
@@ -271,9 +277,8 @@
                                     class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase">Abierta</span>
                                 <span class="text-gray-500 font-bold text-sm">Próximamente</span>
                             </div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">Abierto de Santa Fe</h3>
-                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Provincia
-                                de Santa Fe, ARG</p>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Torneo Provicial Asateme</h3>
+                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Complejo deportivo Emilio Lotuff</p>
                         </div>
                     </div>
                     <div
@@ -284,29 +289,14 @@
                                     class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase">Planificado</span>
                                 <span class="text-gray-500 font-bold text-sm">Calendario Anual</span>
                             </div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">Gran Torneo Provincial</h3>
-                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Sedes
-                                Regionales</p>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Campeonato Nacional Argentino</h3>
+                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Buenos Aires</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-        <section id="eventos" class="py-16 bg-gray-50">
-            <div id="afiliaciones"
-                class="container mx-auto px-4 md:px-6 max-w-4xl bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-gray-100 text-center">
-                <h2 class="text-3xl font-bold text-asatemeBlue mb-4">Sistema de Afiliación Provincial</h2>
-                <p class="text-gray-600 mb-8 max-w-xl mx-auto">
-                    Formá parte oficial del tenis de mesa de la provincia. Accedé al circuito puntuable, clínicas
-                    profesionales de entrenamiento y torneos homologados.
-                </p>
-                <button
-                    class="bg-asatemeRed hover:bg-red-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg transition duration-300">
-                    <i class="fas fa-file-signature mr-2"></i>Iniciar Trámite Online
-                </button>
-            </div>
-        </section>
+        
     </main>
 
     <footer class="bg-asatemeBlue text-white py-12 border-t-4 border-asatemeRed">
@@ -315,7 +305,7 @@
             <p class="text-gray-400 text-sm mb-6">Asociación Santafesina de Tenis de Mesa · Regulando el deporte a nivel
                 provincial</p>
             <div class="text-xs text-gray-500">
-                &copy; 2026 ASATEME. Todos los derechos reservados. Desarrollado con enfoque Full Stack.
+                &copy; 2026 ASATEME. Todos los derechos reservados.
             </div>
         </div>
     </footer>
@@ -323,4 +313,5 @@
     <script src="js/ranking.js"></script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

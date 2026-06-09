@@ -14,27 +14,27 @@ async function inicializarBaseDeDatos() {
     try {
         const respuesta = await fetch(RECOPILACION_URL);
         const textoCrudo = await respuesta.text();
-        
+
         // Limpiamos el texto HTML/String que devuelve Google para transformarlo en JSON válido
         const textoJsonValido = textoCrudo.substring(textoCrudo.indexOf('{'), textoCrudo.lastIndexOf('}') + 1);
         const datosParseados = JSON.parse(textoJsonValido);
-        
+
         const filas = datosParseados.table.rows;
-        
+
         // Guardamos el mes (asumiendo que está en la celda E2 de la primera fila de datos)
         if (filas[0] && filas[0].c[4]) {
             // Como no hay columna de mes en esta estructura, dejamos un texto fijo o lo manejás desde el HTML
-        mesActivoGlobal = "Actualizado Junio 2026";
+            mesActivoGlobal = "Actualizado Junio 2026";
         }
 
         // Mapeamos las filas según el orden REAL de tu Google Sheet:
         // Columna 0 (A) = Categoría | Columna 1 (B) = Posición | Columna 2 (C) = Jugador | Columna 3 (D) = Club | Columna 4 (E) = Puntos
         datosRankingGlobal = filas.map(f => ({
             categoria: f.c[0] ? f.c[0].v.trim().toUpperCase() : '',
-            posicion:  f.c[1] ? parseInt(f.c[1].v) : 0,
-            jugador:   f.c[2] ? f.c[2].v : '',
-            club:      f.c[3] ? f.c[3].v : '',
-            puntos:    f.c[4] ? parseInt(f.c[4].v) : 0
+            posicion: f.c[1] ? parseInt(f.c[1].v) : 0,
+            jugador: f.c[2] ? f.c[2].v : '',
+            club: f.c[3] ? f.c[3].v : '',
+            puntos: f.c[4] ? parseInt(f.c[4].v) : 0
         }));
 
         console.log("¡Base de datos cargada con éxito!", datosRankingGlobal);
@@ -43,7 +43,7 @@ async function inicializarBaseDeDatos() {
         renderizarTablaRanking();
 
     } catch (error) {
-        console.error("Hubo un error al conectar con Google Sheets:", error);
+        console.error("Hubo un error al conectar con la base de datos:", error);
         const tablaBody = document.getElementById('ranking-body');
         if (tablaBody) {
             tablaBody.innerHTML = `
@@ -64,7 +64,7 @@ function renderizarTablaRanking() {
 
     // Filtramos por la categoría seleccionada actualmente
     let jugadoresFiltrados = datosRankingGlobal.filter(j => j.categoria === categoriaActual);
-    
+
     // Ordenamos numéricamente por posición por si las dudas
     jugadoresFiltrados.sort((a, b) => a.posicion - b.posicion);
 
@@ -88,7 +88,9 @@ function renderizarTablaRanking() {
                 </td>
             </tr>
         `;
-        actualizarTextosInterfaz(totalJugadoresEnCategoria);
+        if (botonToggle) {
+            botonToggle.href = `ranking.html?categoria=${categoriaActual}`;
+        }
         return;
     }
 
@@ -118,9 +120,9 @@ function renderizarTablaRanking() {
 // Cambia de categoría al hacer clic en los botones de la izquierda
 function cambiarCategoriaYRenderizar(nuevaCategoria) {
     categoriaActual = nuevaCategoria.trim().toUpperCase();
-    
+
     // Al cambiar de categoría, reiniciamos la vista para mostrar primero el Top 10
-    mostrarSoloTop10 = true; 
+    mostrarSoloTop10 = true;
 
     // Actualizamos visualmente cuál botón lateral está seleccionado
     const botones = document.querySelectorAll('#category-buttons button');
