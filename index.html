@@ -40,19 +40,23 @@
                         Mesa</span>
                 </div>
             </div>
-    
+
             <!-- MENÚ COMPUTADORAS: Agregado al lado de Calendario -->
             <div class="hidden lg:flex space-x-6 font-semibold text-sm items-center">
                 <a href="#noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
                 <a href="#jugadores" class="hover:text-asatemeRed transition duration-300">Jugadores</a>
                 <a href="#ranking" class="hover:text-asatemeRed transition duration-300">Ranking</a>
                 <a href="#calendario" class="hover:text-asatemeRed transition duration-300">Calendario</a>
-                <a href="liga-equipos.html"
+                <!-- 
+                    <a href="liga-equipos.html"
                     class="bg-white/10 hover:bg-asatemeRed hover:text-white px-3 py-1.5 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide">
                     <i class="fas fa-trophy text-amber-400"></i> Liga de Equipos
                 </a>
+                -->
+
+                
             </div>
-    
+
             <div class="flex items-center gap-3">
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdBdc_petoieFpV5CcZYIEc4iv2BKG_uIGpsRVDu0iIV0ELyg/viewform?usp=header#afiliaciones"
                     target="_blank" rel="noopener noreferrer"
@@ -64,7 +68,7 @@
                 </button>
             </div>
         </div>
-    
+
         <!-- MENÚ CELULARES: También integrado aquí abajo de forma ordenada -->
         <div id="mobile-menu"
             class="hidden lg:hidden bg-asatemeBlue border-t border-blue-900 px-4 py-4 space-y-3 font-semibold text-sm">
@@ -181,6 +185,13 @@
         <!-- SECCIÓN: RANKING DINÁMICO -->
         <section id="ranking" class="py-16 bg-gray-50 border-y border-gray-200">
             <div class="container mx-auto px-4 md:px-6">
+                <div class="flex justify-between items-end mb-10">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-asatemeBlue">Ranking Provincial de Jugadores
+                        </h2>
+                        <div class="w-24 h-1 bg-asatemeRed mt-3"></div>
+                    </div>
+                </div>
                 <div class="flex flex-col lg:flex-row gap-8">
 
                     <!-- COLUMNA IZQUIERDA: SELECTOR DE CATEGORÍAS -->
@@ -287,7 +298,8 @@
                                 <span class="text-gray-500 font-bold text-sm">Próximamente</span>
                             </div>
                             <h3 class="text-xl font-bold text-gray-800 mb-2">Torneo Provicial Asateme</h3>
-                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Complejo deportivo Emilio Lotuff</p>
+                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Complejo
+                                deportivo Emilio Lotuff</p>
                         </div>
                     </div>
                     <div
@@ -299,13 +311,14 @@
                                 <span class="text-gray-500 font-bold text-sm">Calendario Anual</span>
                             </div>
                             <h3 class="text-xl font-bold text-gray-800 mb-2">Campeonato Nacional Argentino</h3>
-                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Buenos Aires</p>
+                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Buenos
+                                Aires</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        
+
     </main>
 
     <footer class="bg-asatemeBlue text-white py-12 border-t-4 border-asatemeRed">
