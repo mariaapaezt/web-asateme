@@ -44,7 +44,7 @@
             <!-- MENÚ COMPUTADORAS: Agregado al lado de Calendario -->
             <div class="hidden lg:flex space-x-6 font-semibold text-sm items-center">
                 <a href="#noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
-                <a href="#jugadores" class="hover:text-asatemeRed transition duration-300">Jugadores</a>
+                <a href="#destacados" class="hover:text-asatemeRed transition duration-300">Destacados</a>
                 <a href="#ranking" class="hover:text-asatemeRed transition duration-300">Ranking</a>
                 <a href="#calendario" class="hover:text-asatemeRed transition duration-300">Calendario</a>
                 <!-- 
@@ -54,7 +54,7 @@
                 </a>
                 -->
 
-                
+
             </div>
 
             <div class="flex items-center gap-3">
@@ -73,7 +73,7 @@
         <div id="mobile-menu"
             class="hidden lg:hidden bg-asatemeBlue border-t border-blue-900 px-4 py-4 space-y-3 font-semibold text-sm">
             <a href="#noticias" class="block hover:text-asatemeRed">Noticias</a>
-            <a href="#jugadores" class="block hover:text-asatemeRed">Jugadores</a>
+            <a href="#destacados" class="block hover:text-asatemeRed">Destacados</a>
             <a href="#ranking" class="block hover:text-asatemeRed">Ranking</a>
             <a href="#calendario" class="block hover:text-asatemeRed">Calendario</a>
             <a href="liga-equipos.html" class="block text-amber-400 hover:text-asatemeRed font-bold"><i
@@ -83,38 +83,39 @@
     </nav>
 
     <main>
-        <section id="noticias" class="relative h-[500px] md:h-[600px] flex items-center text-white overflow-hidden">
-            <div
-                class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1611250188496-e966043a062e?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center">
-            </div>
-            <div class="absolute inset-0 bg-gradient-to-r from-asatemeBlue via-asatemeBlue/90 to-transparent"></div>
+        <!-- SECCIÓN: NOTICIAS (CARRUSEL DINÁMICO AUTOMÁTICO) -->
+        <section id="noticias" class="relative h-[500px] md:h-[600px] bg-asatemeBlue text-white overflow-hidden">
 
-            <div class="container mx-auto px-4 md:px-6 relative z-10">
-                <div class="max-w-3xl">
-                    <span
-                        class="bg-asatemeRed text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4 inline-block">
-                        <i class="fas fa-bullhorn mr-1"></i> Última Hora
-                    </span>
-                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
-                        Liga de Equipos Rosarina<br /><span class="text-asatemeRed">¡Gran Comienzo!</span>
-                    </h2>
-                    <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl">
-                        Sábado 6 de Junio en el Club Atlético Provincial se dará inicio a la Liga de Equipos Rosarina
-                        con una jornada llena de emoción y competencia. Más de 20 equipos se enfrentarán en una serie de
-                        partidos electrizantes que marcarán el comienzo de esta nueva temporada.
-                    </p>
-                    <div class="flex flex-wrap gap-4">
-                        <a href="noticia-liga.html"
-                            class="bg-white text-asatemeBlue font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300 inline-block text-center">
-                            Leer Noticia Completa
-                        </a>
+            <!-- Contenedor donde JavaScript va a inyectar los Slides -->
+            <div id="carousel-container" class="w-full h-full relative">
+                <!-- Un spinner de carga temporal mientras lee el JSON -->
+                <div class="absolute inset-0 flex items-center justify-center bg-asatemeBlue z-30"
+                    id="carousel-spinner">
+                    <div class="text-center">
+                        <i class="fas fa-circle-notch fa-spin text-4xl text-asatemeRed mb-2"></i>
+                        <p class="text-xs text-gray-300 uppercase tracking-widest">Cargando Novedades...</p>
                     </div>
                 </div>
             </div>
+
+            <!-- Botones de Navegación Flechas (Ocultos en celular, visibles desde MD) -->
+            <button id="prev-slide"
+                class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/20 hover:bg-asatemeRed/80 text-white w-12 h-12 rounded-full items-center justify-center transition duration-300 focus:outline-none">
+                <i class="fas fa-chevron-left text-lg"></i>
+            </button>
+            <button id="next-slide"
+                class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/20 hover:bg-asatemeRed/80 text-white w-12 h-12 rounded-full items-center justify-center transition duration-300 focus:outline-none">
+                <i class="fas fa-chevron-right text-lg"></i>
+            </button>
+
+            <!-- Indicadores de Puntitos (Botones de abajo) -->
+            <div id="carousel-indicators" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                <!-- Se generan dinámicamente con JS -->
+            </div>
         </section>
 
-        <!-- SECCIÓN: JUGADORES (VISTA FIJA EN CUADRÍCULA) -->
-        <section id="jugadores" class="py-16 bg-white">
+        <!-- SECCIÓN: destacados (VISTA FIJA EN CUADRÍCULA) -->
+        <section id="destacados" class="py-16 bg-white">
             <div class="container mx-auto px-4 md:px-6">
                 <div class="flex justify-between items-end mb-10">
                     <div>
@@ -187,7 +188,7 @@
             <div class="container mx-auto px-4 md:px-6">
                 <div class="flex justify-between items-end mb-10">
                     <div>
-                        <h2 class="text-3xl md:text-4xl font-bold text-asatemeBlue">Ranking Provincial de Jugadores
+                        <h2 class="text-3xl md:text-4xl font-bold text-asatemeBlue">Ranking Provincial de destacados
                         </h2>
                         <div class="w-24 h-1 bg-asatemeRed mt-3"></div>
                     </div>
@@ -321,6 +322,35 @@
 
     </main>
 
+    <!-- SECCIÓN: REDES SOCIALES (INSTAGRAM) -->
+    <section class="bg-gray-50 border-t border-b border-gray-100 py-12">
+        <div class="container mx-auto px-4 md:px-6 text-center">
+            <div class="max-w-2xl mx-auto">
+                <!-- Ícono de Instagram con degradado sutil -->
+                <div
+                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white text-3xl mb-4 shadow-md transition duration-300 hover:scale-110">
+                    <i class="fab fa-instagram"></i>
+                </div>
+    
+                <h3 class="text-2xl font-bold text-asatemeBlue mb-2">
+                    ¡Seguinos en Instagram!
+                </h3>
+    
+                <p class="text-gray-600 mb-6 text-sm md:text-base">
+                    Sumate a nuestra comunidad para no perderte las fotos de las fechas, resultados en vivo, sorteos y todas
+                    las novedades del tenis de mesa rosarino.
+                </p>
+    
+                <!-- Botón de Redirección -->
+                <a href="https://www.instagram.com/asateme_tenisdemesa/" target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 bg-asatemeBlue hover:bg-asatemeRed text-white font-bold px-6 py-3 rounded-lg shadow-md transition duration-300 text-sm md:text-base group">
+                    <span>@asateme</span>
+                    <i class="fas fa-external-link-alt text-xs transition duration-300 group-hover:translate-x-1"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <footer class="bg-asatemeBlue text-white py-12 border-t-4 border-asatemeRed">
         <div class="container mx-auto px-4 md:px-6 text-center">
             <p class="font-bold text-lg mb-2">ASATEME</p>
@@ -334,6 +364,158 @@
 
     <script src="js/ranking.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- MOTOR DEL CARRUSEL DINÁMICO DE NOTICIAS -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.getElementById('carousel-container');
+            const indicatorsContainer = document.getElementById('carousel-indicators');
+            const spinner = document.getElementById('carousel-spinner');
+
+            let noticiasDestacadas = [];
+            let currentSlide = 0;
+            let carouselInterval;
+
+            // 1. Cargar datos del JSON
+            fetch('noticias.json')
+                .then(response => response.json())
+                .then(data => {
+                    // Tomamos un máximo de 4 noticias para el carrusel principal
+                    noticiasDestacadas = data.slice(0, 4);
+
+                    if (noticiasDestacadas.length === 0) return;
+
+                    // Limpiar cargador
+                    container.innerHTML = "";
+                    indicatorsContainer.innerHTML = "";
+
+                    // 2. Construir los slides dinámicamente
+                    noticiasDestacadas.forEach((noticia, index) => {
+                        // Crear Elemento Slide
+                        const slide = document.createElement('div');
+                        slide.className = `absolute inset-0 w-full h-full flex items-center transition-all duration-700 ease-in-out transform ${index === 0 ? 'opacity-100 scale-100 z-10 pointer-events-auto' : 'opacity-0 scale-95 z-0 pointer-events-none'
+                            }`;
+                        slide.setAttribute('data-slide-index', index);
+
+                        // Configurar el fondo (Si no tiene imagen, se queda el azul corporativo limpio)
+                        let fondoHTML = `<div class="absolute inset-0 bg-gradient-to-r from-asatemeBlue via-asatemeBlue/95 to-transparent z-[1]"></div>`;
+                        if (noticia.imagenPortada && noticia.imagenPortada.trim() !== "") {
+                            fondoHTML = `
+                                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('${noticia.imagenPortada}')"></div>
+                                <div class="absolute inset-0 bg-gradient-to-r from-asatemeBlue via-asatemeBlue/90 to-transparent z-[1]"></div>
+                            `;
+                        }
+
+                        // Estructura interna del slide (idéntica a tu diseño original)
+                        slide.innerHTML = `
+                            ${fondoHTML}
+                            <div class="container mx-auto px-4 md:px-6 relative z-10">
+                                <div class="max-w-3xl">
+                                    <span class="bg-asatemeRed text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4 inline-block">
+                                        <i class="fas fa-bullhorn mr-1"></i> Última Hora
+                                    </span>
+                                    <h2 class="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight text-white drop-shadow-sm">
+                                        ${noticia.titulo}
+                                    </h2>
+                                    <p class="text-base md:text-lg text-gray-200 mb-8 max-w-2xl">
+                                        ${noticia.resumen || ""}
+                                    </p>
+                                    <div class="flex flex-wrap gap-4">
+                                        <a href="detalle-noticia.html?id=${noticia.id}"
+                                            class="bg-white text-asatemeBlue font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-asatemeRed hover:text-white transition duration-300 inline-block text-center text-sm md:text-base">
+                                            Leer Noticia Completa
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(slide);
+
+                        // Crear Puntito Indicador de abajo
+                        const dot = document.createElement('button');
+                        dot.className = `w-3 h-3 rounded-full transition-all duration-300 ${index === 0 ? 'bg-asatemeRed w-8' : 'bg-white/40 hover:bg-white/80'
+                            }`;
+                        dot.setAttribute('aria-label', `Ir al slide ${index + 1}`);
+                        dot.addEventListener('click', () => goToSlide(index));
+                        indicatorsContainer.appendChild(dot);
+                    });
+
+                    // 3. Encender el temporizador automático
+                    startAutoplay();
+                })
+                .catch(err => {
+                    console.error("Error cargando el carrusel:", err);
+                    if (spinner) spinner.innerHTML = "<p class='text-xs text-red-400'><i class='fas fa-times-circle mr-1'></i> No se pudieron cargar las noticias.</p>";
+                });
+
+            // Lógica de transición de slides
+            function updateCarouselDisplay() {
+                const slides = container.querySelectorAll('[data-slide-index]');
+                const dots = indicatorsContainer.children;
+
+                slides.forEach((slide, idx) => {
+                    if (idx === currentSlide) {
+                        slide.classList.replace('opacity-0', 'opacity-100');
+                        slide.classList.replace('scale-95', 'scale-100');
+                        slide.classList.replace('pointer-events-none', 'pointer-events-auto');
+                        slide.className = slide.className.replace('z-0', 'z-10');
+                    } else {
+                        slide.classList.replace('opacity-100', 'opacity-0');
+                        slide.classList.replace('scale-100', 'scale-95');
+                        slide.classList.replace('pointer-events-auto', 'pointer-events-none');
+                        slide.className = slide.className.replace('z-10', 'z-0');
+                    }
+                });
+
+                // Actualizar barras de abajo
+                Array.from(dots).forEach((dot, idx) => {
+                    if (idx === currentSlide) {
+                        dot.classList.replace('bg-white/40', 'bg-asatemeRed');
+                        dot.classList.add('w-8');
+                    } else {
+                        dot.classList.replace('bg-asatemeRed', 'bg-white/40');
+                        dot.classList.remove('w-8');
+                    }
+                });
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % noticiasDestacadas.length;
+                updateCarouselDisplay();
+            }
+
+            function prevSlide() {
+                currentSlide = (currentSlide - 1 + noticiasDestacadas.length) % noticiasDestacadas.length;
+                updateCarouselDisplay();
+            }
+
+            function goToSlide(index) {
+                currentSlide = index;
+                updateCarouselDisplay();
+                resetAutoplay();
+            }
+
+            function startAutoplay() {
+                carouselInterval = setInterval(nextSlide, 5000); // 5 segundos
+            }
+
+            function resetAutoplay() {
+                clearInterval(carouselInterval);
+                startAutoplay();
+            }
+
+            // Listeners de los botones flecha
+            document.getElementById('next-slide').addEventListener('click', () => {
+                nextSlide();
+                resetAutoplay();
+            });
+            document.getElementById('prev-slide').addEventListener('click', () => {
+                prevSlide();
+                resetAutoplay();
+            });
+        });
+    </script>
+
 </body>
 
 </html>
