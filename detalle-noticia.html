@@ -25,11 +25,53 @@
 
 <body class="bg-asatemeGray font-sans text-gray-800 leading-relaxed">
 
-    <main class="container mx-auto px-4 py-10 max-w-4xl">
-        <a href="index.html#noticias"
-            class="text-asatemeBlue font-bold text-sm inline-flex items-center gap-2 mb-6 hover:text-asatemeRed transition">
-            <i class="fas fa-arrow-left"></i> Volver a Noticias
-        </a>
+    <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-xl">
+        <div class="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-3">
+                    <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-12 w-auto object-contain">
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-extrabold tracking-wide leading-none">ASATEME</h1>
+                        <span class="text-xs text-gray-300 uppercase tracking-widest">Asociación Santafesina de Tenis de
+                            Mesa</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="hidden lg:flex space-x-6 font-semibold text-sm items-center">
+                <a href="index.html#noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
+                <a href="index.html#destacados" class="hover:text-asatemeRed transition duration-300">Destacados</a>
+                <a href="index.html#ranking" class="hover:text-asatemeRed transition duration-300">Ranking</a>
+                <a href="index.html#calendario" class="hover:text-asatemeRed transition duration-300">Calendario</a>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdBdc_petoieFpV5CcZYIEc4iv2BKG_uIGpsRVDu0iIV0ELyg/viewform?usp=header#afiliaciones"
+                    target="_blank" rel="noopener noreferrer"
+                    class="bg-asatemeRed hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition shadow-md text-sm flex items-center gap-1">
+                    <i class="fas fa-user-plus"></i> Afiliate
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 md:px-6 py-10 max-w-4xl">
+
+        <div class="mb-6">
+            <a href="index.html#noticias"
+                class="text-asatemeBlue hover:text-asatemeRed font-bold text-sm inline-flex items-center gap-2 transition">
+                <i class="fas fa-arrow-left"></i> Volver a Noticias
+            </a>
+        </div>
+
+        <div id="error-container" class="hidden bg-white p-8 rounded-2xl shadow-md text-center border border-gray-100">
+            <i class="fas fa-exclamation-circle text-asatemeRed text-5xl mb-4"></i>
+            <h3 class="text-xl font-bold text-asatemeBlue mb-2">Noticia no encontrada</h3>
+            <p class="text-gray-600 mb-6">La publicación que estás intentando buscar no existe o fue movida.</p>
+            <a href="index.html#noticias"
+                class="bg-asatemeBlue text-white px-5 py-2.5 rounded-xl font-bold text-sm transition hover:bg-blue-900">Volver
+                al Inicio</a>
+        </div>
 
         <article id="noticia-article" class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
 
