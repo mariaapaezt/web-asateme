@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liga de Equipos - ASATEME</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        asatemeBlue: '#003366',
+                        asatemeRed: '#D32F2F',
+                        asatemeGray: '#F1F5F9',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body class="bg-asatemeGray font-sans text-gray-800">
+
+    <!-- MENÚ DE NAVEGACIÓN (Idéntico a index.html pero con enlaces corregidos) -->
+    <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-xl">
+        <div class="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-3">
+                    <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-12 w-auto object-contain">
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-extrabold tracking-wide leading-none">ASATEME</h1>
+                        <span class="text-xs text-gray-300 uppercase tracking-widest">Asociación Santafesina de Tenis de
+                            Mesa</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="hidden lg:flex space-x-6 font-semibold text-sm">
+                <a href="index.html#noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
+                <a href="index.html#jugadores" class="hover:text-asatemeRed transition duration-300">Jugadores</a>
+                <a href="index.html#ranking" class="hover:text-asatemeRed transition duration-300">Ranking</a>
+                <a href="index.html#calendario" class="hover:text-asatemeRed transition duration-300">Calendario</a>
+                <a href="liga-equipos.html" class="text-asatemeRed font-bold">Liga de Equipos</a>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="index.html#afiliaciones"
+                    class="bg-asatemeRed hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition shadow-md text-sm">
+                    <i class="fas fa-user-plus mr-1"></i> Afiliate
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CABECERA HERO DE LA LIGA -->
+    <header class="bg-gradient-to-r from-asatemeBlue to-blue-900 text-white py-12 border-b-4 border-asatemeRed">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                    <span
+                        class="bg-asatemeRed text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-3 inline-block">
+                        Temporada 2026
+                    </span>
+                    <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">Liga de Equipos Rosarina</h2>
+                    <p class="text-gray-300 mt-2 max-w-xl">Seguí los resultados, las posiciones y los planteles del
+                        torneo por equipos más importante de la región.</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="#"
+                        class="bg-white text-asatemeBlue hover:bg-gray-100 font-bold px-4 py-2.5 rounded-lg shadow text-sm transition">
+                        <i class="fas fa-file-pdf mr-2 text-asatemeRed"></i>Reglamento Oficial
+                    </a>
+                    <a href="#carga-resultados"
+                        class="bg-asatemeRed hover:bg-red-700 text-white font-bold px-4 py-2.5 rounded-lg shadow text-sm transition">
+                        <i class="fas fa-edit mr-2"></i>Cargar Resultado
+                    </a>
+                </div>
+            </div>
+
+            <!-- TARJETAS DE ESTADÍSTICAS RÁPIDAS -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+                    <p class="text-xs text-gray-300 uppercase font-semibold">Equipos Inscritos</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-1">22 Clubes</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+                    <p class="text-xs text-gray-300 uppercase font-semibold">Zonas de Competencia</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-1">4 Grupos</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+                    <p class="text-xs text-gray-300 uppercase font-semibold">Próxima Fecha</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-1">Fecha 3</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+                    <p class="text-xs text-gray-300 uppercase font-semibold">Sede Central</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-1 text-red-300">Provincial</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVEGACIÓN INTERNA POR PESTAÑAS (TABS) -->
+    <section class="bg-white shadow-sm sticky top-[72px] z-40 border-b">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex space-x-2 md:space-x-6 overflow-x-auto">
+                <button onclick="switchTab('posiciones')" id="tab-posiciones"
+                    class="tab-btn px-4 py-4 text-sm font-bold border-b-2 border-asatemeRed text-asatemeRed whitespace-nowrap">
+                    <i class="fas fa-table mr-2"></i>Tabla de Posiciones
+                </button>
+                <button onclick="switchTab('fixture')" id="tab-fixture"
+                    class="tab-btn px-4 py-4 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-asatemeBlue whitespace-nowrap">
+                    <i class="fas fa-calendar-alt mr-2"></i>Fixture y Resultados
+                </button>
+                <button onclick="switchTab('equipos')" id="tab-equipos"
+                    class="tab-btn px-4 py-4 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-asatemeBlue whitespace-nowrap">
+                    <i class="fas fa-users mr-2"></i>Equipos y Jugadores
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="container mx-auto px-4 md:px-6 py-8 max-w-6xl">
+
+        <!-- CONTENIDO PESTAÑA: POSICIONES -->
+        <!-- CONTENIDO: POSICIONES -->
+        <div id="content-posiciones" class="tab-content active">
+            <!-- Selectores Rápidos de Liga (Filtros Interactivos) -->
+            <div class="mb-6 flex gap-2 justify-center sm:justify-start">
+                <button onclick="switchLiga('LIGA_A')" data-liga="LIGA_A"
+                    class="liga-filter-btn px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all">
+                    Liga A (Campeonato)
+                </button>
+                <button onclick="switchLiga('LIGA_B')" data-liga="LIGA_B"
+                    class="liga-filter-btn px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all">
+                    Liga B (Ascenso)
+                </button>
+            </div>
+
+            <!-- Encabezado de la Sección -->
+            <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                    <h2 id="titulo-liga-actual" class="text-xl font-bold text-asatemeBlue">Liga A (Campeonato)</h2>
+                    <p class="text-sm text-gray-500">Puntajes y estadísticas actualizadas en tiempo real.</p>
+                </div>
+                <span
+                    class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-medium bg-green-100 text-green-800 self-start sm:self-auto">
+                    <span class="w-1.5 h-1.5 inline-block rounded-full bg-green-600 animate-pulse"></span> Torneo Activo
+                </span>
+            </div>
+
+            <!-- Tabla de Posiciones Autónoma -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-gray-50 text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-gray-100">
+                                <th class="py-4 px-4 text-center w-12">Pos</th>
+                                <th class="py-4 px-4">Equipo</th>
+                                <th class="py-4 px-4 text-center">PJ</th>
+                                <th class="py-4 px-4 text-center text-green-600">PG</th>
+                                <th class="py-4 px-4 text-center text-red-600">PP</th>
+                                <th class="py-4 px-4 text-center hidden sm:table-cell">SF</th>
+                                <th class="py-4 px-4 text-center font-bold text-asatemeBlue bg-gray-100/50 w-16">PTS
+                                </th>
+                            </tr>
+                        </thead>
+                        <!-- El motor de JS completará esta sección de manera autónoma -->
+                        <tbody id="tabla-posiciones-body" class="divide-y divide-gray-100 text-sm text-gray-700">
+                            <!-- Filas dinámicas -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENIDO: FIXTURE Y RESULTADOS -->
+        <!-- CONTENIDO: FIXTURE Y RESULTADOS -->
+        <div id="content-fixture" class="tab-content">
+            <!-- Selectores Exclusivos de Liga para el Fixture -->
+            <div class="mb-4 flex gap-2 justify-center sm:justify-start">
+                <button onclick="switchLigaFixture('LIGA_A')" id="btn-fixture-ligaA"
+                    class="px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all">
+                    Liga A (Campeonato)
+                </button>
+                <button onclick="switchLigaFixture('LIGA_B')" id="btn-fixture-ligaB"
+                    class="px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all">
+                    Liga B (Ascenso)
+                </button>
+            </div>
+
+            <!-- Controles de Navegación de Fechas -->
+            <div
+                class="mb-6 bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="text-center sm:text-left">
+                    <h2 id="fixture-titulo-liga"
+                        class="text-lg font-bold text-asatemeBlue flex items-center justify-center sm:justify-start gap-2">
+                        Liga A (Campeonato)
+                    </h2>
+                    <p class="text-xs text-gray-500">Cronograma oficial de partidos y estados de juego.</p>
+                </div>
+
+                <!-- Selector de Fecha de Competición -->
+                <div class="flex items-center gap-3 bg-gray-50 p-1.5 rounded-lg border border-gray-100">
+                    <button onclick="cambiarFechaFixture(-1)"
+                        class="p-2 rounded-md hover:bg-white hover:shadow-sm text-gray-600 transition-all disabled:opacity-30 disabled:pointer-events-none"
+                        id="btn-fecha-prev">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <div class="text-center min-w-[100px]">
+                        <span class="block text-xs uppercase font-bold tracking-wider text-gray-400">Jornada</span>
+                        <span id="txt-fecha-actual" class="text-base font-bold text-gray-800">Fecha 3</span>
+                    </div>
+                    <button onclick="cambiarFechaFixture(1)"
+                        class="p-2 rounded-md hover:bg-white hover:shadow-sm text-gray-600 transition-all disabled:opacity-30 disabled:pointer-events-none"
+                        id="btn-fecha-next">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenedor de Tarjetas de Partidos Dinámicos -->
+            <div id="fixture-partidos-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Las series/partidos se dibujarán aquí -->
+            </div>
+        </div>
+        <!-- CONTENIDO PESTAÑA: EQUIPOS -->
+        <div id="content-equipos" class="tab-content space-y-6">
+            <!-- Barra de Filtro Rápido -->
+            <div
+                class="bg-white p-4 rounded-xl shadow-sm border flex flex-col sm:flex-row gap-3 justify-between items-center">
+                <div class="relative w-full sm:w-72">
+                    <input type="text" placeholder="Buscar club o jugador..."
+                        class="w-full bg-slate-50 border border-gray-200 rounded-lg px-4 py-2 pl-10 text-sm focus:outline-none focus:border-asatemeBlue">
+                    <i class="fas fa-search absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+                </div>
+                <span class="text-xs font-semibold text-gray-400">Mostrando clubes activos de la Asociación</span>
+            </div>
+
+            <!-- Listado de Equipos -->
+            <div class="bg-white rounded-xl shadow-md border overflow-hidden">
+                <div class="p-5 bg-asatemeBlue text-white flex justify-between items-center">
+                    <div>
+                        <h4 class="font-extrabold text-lg">Club Atlético Provincial "A"</h4>
+                        <p class="text-xs text-blue-200">Delegado: Alejandro Martínez</p>
+                    </div>
+                    <span class="text-xs bg-white/20 px-3 py-1 rounded-full font-bold uppercase">Zona A</span>
+                </div>
+                <div class="p-5">
+                    <h5 class="text-xs uppercase font-bold text-gray-400 tracking-wider mb-3">Lista de Buena Fe</h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border">
+                            <i class="fas fa-user text-asatemeBlue bg-white p-2 rounded-full shadow-sm"></i>
+                            <div>
+                                <p class="text-sm font-bold text-gray-800">Isabella Olivarez</p>
+                                <p class="text-xs text-asatemeRed font-semibold">Singlista 1</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border">
+                            <i class="fas fa-user text-asatemeBlue bg-white p-2 rounded-full shadow-sm"></i>
+                            <div>
+                                <p class="text-sm font-bold text-gray-800">Ixchel Guia Monzón</p>
+                                <p class="text-xs text-gray-500">Singlista 2</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border">
+                            <i class="fas fa-user text-asatemeBlue bg-white p-2 rounded-full shadow-sm"></i>
+                            <div>
+                                <p class="text-sm font-bold text-gray-800">Valentino Marcial</p>
+                                <p class="text-xs text-gray-500">Dobles / Suplente</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ZONA DE ACCIÓN: CARGA DE RESULTADOS -->
+        <section id="carga-resultados"
+            class="mt-12 bg-white rounded-2xl shadow-xl border-t-4 border-asatemeRed overflow-hidden">
+            <div class="p-6 md:p-8 text-center max-w-2xl mx-auto">
+                <div
+                    class="bg-red-50 text-asatemeRed w-12 h-12 rounded-full flex items-center justify-center mx-auto text-xl mb-4">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h3 class="text-2xl font-extrabold text-asatemeBlue mb-2">Área para Capitanes y Delegados</h3>
+                <p class="text-gray-600 text-sm mb-6">
+                    Si sos el capitán o delegado asignado de la serie, podés enviar el formulario con la planilla de
+                    resultados oficial firmada al finalizar el encuentro.
+                </p>
+                <div
+                    class="bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg p-3 text-left mb-6 flex gap-3 items-center">
+                    <i class="fas fa-exclamation-triangle text-base text-amber-600"></i>
+                    <span>La carga requiere clave de validación del club y está sujeta a revisión del Tribunal de
+                        Disciplina de ASATEME.</span>
+                </div>
+                <button
+                    class="bg-asatemeBlue hover:bg-blue-800 text-white font-bold px-6 py-3 rounded-xl shadow transition text-sm w-full sm:w-auto">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Acceder al Sistema de Carga
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-asatemeBlue text-white py-8 border-t-4 border-asatemeRed mt-16">
+        <div class="container mx-auto px-4 md:px-6 text-center text-sm">
+            <p class="font-bold">ASATEME</p>
+            <p class="text-gray-400 text-xs mt-1">Asociación Santafesina de Tenis de Mesa</p>
+            <p class="text-gray-500 text-xs mt-4">&copy; 2026 ASATEME. Desarrollado con enfoque Full Stack.</p>
+        </div>
+    </footer>
+
+    <script src="js/liga-logic.js"></script>
+</body>
+
+</html>
