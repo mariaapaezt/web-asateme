@@ -106,6 +106,7 @@
         "galeria": [
             "assets/images/Liga-Equipos.png"
         ],
+
         "mostrarLogoLiga": false,
         "contenido": [
             {
