@@ -4,12 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cargando Noticia... - ASATEME</title>
-
+    <title>ASATEME - Noticia</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600;700;800&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -18,8 +16,7 @@
                         asatemeBlue: '#003366',
                         asatemeRed: '#D32F2F',
                         asatemeGray: '#F1F5F9',
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                    }
                 }
             }
         }
@@ -28,183 +25,92 @@
 
 <body class="bg-asatemeGray font-sans text-gray-800 leading-relaxed">
 
-    <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-xl">
-        <div class="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="flex items-center gap-3">
-                    <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-12 w-auto object-contain">
-                    <div>
-                        <h1 class="text-xl md:text-2xl font-extrabold tracking-wide leading-none">ASATEME</h1>
-                        <span class="text-xs text-gray-300 uppercase tracking-widest">Asociación Santafesina de Tenis de
-                            Mesa</span>
-                    </div>
-                </a>
-            </div>
-
-            <div class="hidden lg:flex space-x-6 font-semibold text-sm items-center">
-                <a href="index.html#noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
-                <a href="index.html#jugadores" class="hover:text-asatemeRed transition duration-300">Jugadores</a>
-                <a href="index.html#ranking" class="hover:text-asatemeRed transition duration-300">Ranking</a>
-                <a href="index.html#calendario" class="hover:text-asatemeRed transition duration-300">Calendario</a>
-            </div>
-
-            <div class="flex items-center gap-3">
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdBdc_petoieFpV5CcZYIEc4iv2BKG_uIGpsRVDu0iIV0ELyg/viewform?usp=header#afiliaciones"
-                    target="_blank" rel="noopener noreferrer"
-                    class="bg-asatemeRed hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition shadow-md text-sm flex items-center gap-1">
-                    <i class="fas fa-user-plus"></i> Afiliate
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <main class="container mx-auto px-4 md:px-6 py-10 max-w-4xl">
-
-        <div class="mb-6">
-            <a href="index.html#noticias"
-                class="text-asatemeBlue hover:text-asatemeRed font-bold text-sm inline-flex items-center gap-2 transition">
-                <i class="fas fa-arrow-left"></i> Volver a Noticias
-            </a>
-        </div>
-
-        <div id="error-container" class="hidden bg-white p-8 rounded-2xl shadow-md text-center border border-gray-100">
-            <i class="fas fa-exclamation-circle text-asatemeRed text-5xl mb-4"></i>
-            <h3 class="text-xl font-bold text-asatemeBlue mb-2">Noticia no encontrada</h3>
-            <p class="text-gray-600 mb-6">La publicación que estás intentando buscar no existe o fue movida.</p>
-            <a href="index.html#noticias"
-                class="bg-asatemeBlue text-white px-5 py-2.5 rounded-xl font-bold text-sm transition hover:bg-blue-900">Volver
-                al Inicio</a>
-        </div>
+    <main class="container mx-auto px-4 py-10 max-w-4xl">
+        <a href="index.html#noticias"
+            class="text-asatemeBlue font-bold text-sm inline-flex items-center gap-2 mb-6 hover:text-asatemeRed transition">
+            <i class="fas fa-arrow-left"></i> Volver a Noticias
+        </a>
 
         <article id="noticia-article" class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
 
-            <div id="banner-portada"
-                class="h-64 md:h-96 bg-gradient-to-r from-blue-900 to-asatemeBlue relative flex items-center justify-center p-8 bg-cover bg-center">
-                <div id="capa-oscura" class="absolute inset-0 bg-black/40 hidden"></div>
-
-                <div class="relative z-10 text-center max-w-2xl">
+            <!-- Banner Azul permanente -->
+            <div id="banner-container"
+                class="relative h-64 md:h-80 bg-asatemeBlue flex items-center justify-center p-8 overflow-hidden">
+                <div id="banner-img-layer" class="absolute inset-0 bg-cover bg-center hidden opacity-50"></div>
+                <div class="relative z-10 max-w-2xl text-center text-white">
                     <div id="logo-liga-container" class="hidden flex justify-center mb-4">
-                        <img src="assets/images/Liga-Equipos.png" alt="Logo Liga de Equipos"
+                        <img src="assets/images/Liga-Equipos.png" alt="Logo"
                             class="h-16 md:h-20 w-auto object-contain drop-shadow-md">
                     </div>
-
-                    <h2 id="noticia-titulo"
-                        class="text-2xl md:text-4xl font-extrabold text-white tracking-tight leading-tight"></h2>
+                    <h2 id="noticia-titulo" class="text-2xl md:text-4xl font-extrabold tracking-tight leading-tight">
+                    </h2>
                 </div>
             </div>
 
+            <!-- Meta info -->
             <div
-                class="px-6 md:px-12 py-4 bg-slate-50 border-b flex flex-wrap gap-4 justify-between items-center text-xs text-gray-500 font-medium">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-calendar-alt text-asatemeRed"></i> <span id="noticia-fecha"></span>
-                </div>
+                class="px-6 md:px-12 py-4 bg-slate-50 border-b flex items-center gap-2 text-xs text-gray-500 font-medium">
+                <i class="fas fa-calendar-alt text-asatemeRed"></i> <span id="noticia-fecha"></span>
             </div>
 
+            <!-- Contenido Dinámico -->
             <div id="noticia-contenido" class="px-6 md:px-12 py-8 space-y-6 text-gray-700 text-base md:text-lg"></div>
         </article>
     </main>
 
-    <footer class="bg-asatemeBlue text-white py-8 border-t-4 border-asatemeRed mt-16">
-        <div class="container mx-auto px-4 md:px-6 text-center text-sm">
-            <p class="font-bold">ASATEME</p>
-            <p class="text-gray-400 text-xs mt-1">Asociación Santafesina de Tenis de Mesa</p>
-            <p class="text-gray-500 text-xs mt-4">&copy; 2026 ASATEME. Portal Informativo Regional.</p>
-        </div>
-    </footer>
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // 1. Obtener el ID de la noticia desde la URL y limpiarlo
             const urlParams = new URLSearchParams(window.location.search);
-            const noticiaId = urlParams.get('id') ? urlParams.get('id').trim() : null;
+            const noticiaId = urlParams.get('id');
+            if (!noticiaId) return;
 
-            if (!noticiaId) {
-                mostrarError();
-                return;
-            }
-
-            // 2. Consumir el archivo JSON local
             fetch('noticias.json')
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(noticias => {
-                    // 3. Buscar la noticia específica comparando IDs limpios
-                    const noticia = noticias.find(n => n.id.trim() === noticiaId);
+                    const noticia = noticias.find(n => n.id === noticiaId);
+                    if (!noticia) return;
 
-                    if (!noticia) {
-                        mostrarError();
-                        return;
-                    }
-
-                    // 4. Inyectar Meta Datos Básicos
-                    document.title = `${noticia.titulo} - ASATEME`;
                     document.getElementById('noticia-titulo').innerText = noticia.titulo;
                     document.getElementById('noticia-fecha').innerText = noticia.fecha;
+                    if (noticia.mostrarLogoLiga) document.getElementById('logo-liga-container').classList.remove('hidden');
 
-                    // 5. Manejar la Imagen de Portada
-                    const banner = document.getElementById('banner-portada');
-                    const capaOscura = document.getElementById('capa-oscura');
-
-                    if (noticia.imagenPortada && noticia.imagenPortada.trim() !== "") {
-                        banner.style.backgroundImage = `url('${noticia.imagenPortada}')`;
-                        capaOscura.classList.remove('hidden');
-                    } else {
-                        banner.style.backgroundImage = '';
-                        capaOscura.classList.add('hidden');
+                    // Lógica Banner: solo activar capa de imagen si es válida
+                    if (noticia.imagenPortada && noticia.imagenPortada.length > 5) {
+                        const imgLayer = document.getElementById('banner-img-layer');
+                        imgLayer.style.backgroundImage = `url('${noticia.imagenPortada}')`;
+                        imgLayer.classList.remove('hidden');
                     }
 
-                    // 6. Mostrar u ocultar el logo de la liga
-                    if (noticia.mostrarLogoLiga) {
-                        document.getElementById('logo-liga-container').classList.remove('hidden');
-                    }
-
-                    // 7. Renderizar los bloques de contenido de manera prolija
-                    const contenedorContenido = document.getElementById('noticia-contenido');
-                    contenedorContenido.innerHTML = "";
-
-                    noticia.contenido.forEach(bloque => {
-                        if (bloque.tipo === 'parrafo') {
-                            const p = document.createElement('p');
-                            p.className = 'text-gray-700 leading-relaxed text-sm md:text-base mb-4';
-                            p.innerHTML = bloque.texto;
-                            contenedorContenido.appendChild(p); // <--- Corregido: antes decía 'contenedor'
-                        }
-                        else if (bloque.tipo === "cita") {
-                            const blockquote = document.createElement('blockquote');
-                            blockquote.className = "border-l-4 border-asatemeRed bg-red-50/50 p-4 rounded-r-xl my-6 italic text-asatemeBlue font-semibold";
-                            blockquote.innerHTML = `"${bloque.texto}"`;
-                            contenedorContenido.appendChild(blockquote);
-                        }
-                        else if (bloque.tipo === "tarjetaInformativa") {
-                            const div = document.createElement('div');
-                            div.className = "bg-slate-50 border p-5 rounded-xl flex flex-col sm:flex-row gap-4 items-center my-6";
-
-                            // Corregido: se adaptó para leer tanto bloque.text como bloque.texto
-                            const contenidoTexto = bloque.text || bloque.texto || "";
-
-                            div.innerHTML = `
-                                <div class="bg-asatemeBlue text-white p-4 rounded-full text-xl flex items-center justify-center w-12 h-12 shrink-0">
-                                    <i class="${bloque.icono || 'fas fa-info-circle'}"></i>
-                                </div>
-                                <div class="w-full">
-                                    <h4 class="font-bold text-asatemeBlue text-sm uppercase tracking-wide">${bloque.titulo}</h4>
-                                    <p class="text-sm text-gray-600 mt-1 whitespace-pre-line">${contenidoTexto}</p>
-                                </div>
-                            `;
-                            contenedorContenido.appendChild(div);
+                    // Renderizado de Contenido
+                    const contenedor = document.getElementById('noticia-contenido');
+                    noticia.contenido.forEach(b => {
+                        if (b.tipo === 'parrafo') {
+                            contenedor.innerHTML += `<p class="leading-relaxed">${b.texto}</p>`;
+                        } else if (b.tipo === 'cita') {
+                            contenedor.innerHTML += `<blockquote class="border-l-4 border-asatemeRed bg-red-50/50 p-4 rounded-r-xl italic text-asatemeBlue font-semibold">"${b.texto}"</blockquote>`;
+                        } else if (b.tipo === 'tarjetaInformativa') {
+                            contenedor.innerHTML += `
+                                <div class="bg-slate-50 border p-5 rounded-xl flex gap-4 items-center my-6">
+                                    <div class="bg-asatemeBlue text-white p-4 rounded-full w-12 h-12 flex items-center justify-center shrink-0">
+                                        <i class="${b.icono}"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-asatemeBlue text-sm uppercase">${b.titulo}</h4>
+                                        <p class="text-sm text-gray-600 mt-1 whitespace-pre-line">${b.text || b.texto}</p>
+                                    </div>
+                                </div>`;
                         }
                     });
-                })
-                .catch(error => {
-                    console.error("Error al cargar el JSON de noticias:", error);
-                    mostrarError();
+
+                    // Imagen pie de página: Solo se crea el DOM si la imagen es válida
+                    if (noticia.imagenPortada && noticia.imagenPortada.length > 5) {
+                        const divFooter = document.createElement('div');
+                        divFooter.className = "mt-12 pt-8 border-t";
+                        divFooter.innerHTML = `<img src="${noticia.imagenPortada}" class="w-full rounded-2xl shadow-lg border">`;
+                        contenedor.appendChild(divFooter);
+                    }
                 });
         });
-
-        function mostrarError() {
-            document.getElementById('noticia-article').classList.add('hidden');
-            document.getElementById('error-container').classList.remove('hidden');
-            document.title = "Noticia no encontrada - ASATEME";
-        }
     </script>
 </body>
 

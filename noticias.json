@@ -5,7 +5,7 @@
         "resumen": "El tenis de mesa en Rosario encuentra en las ligas de equipos un pilar fundamental para su crecimiento integral, permitiendo que todas las personas se acerquen a los clubes a vivir los partidos en primera persona.",
         "fecha": "Junio, 2026",
         "imagenPortada": "assets/images/Liga-Equipos.png",
-        "mostrarLogoLiga": true,
+        "mostrarLogoLiga": false,
         "contenido": [
             {
                 "tipo": "parrafo",
@@ -32,6 +32,42 @@
             {
                 "tipo": "parrafo",
                 "texto": "Finalmente, esta dinámica fomenta el desarrollo de partidos de altísimo nivel durante la semana mediante las visitas interclubes. Esta circulación constante rompe las barreras tradicionales del entrenamiento cerrado y logra que nuestra disciplina sea cada vez más conocida, afianzándose firmemente en las diversas instituciones donde hacen vida nuestros clubes de tenis de mesa en toda la provincia de Santa Fe."
+            }
+        ]
+    },
+    {
+        "id": "recordatorio-afiliaciones-liga-rosarina-2026",
+        "titulo": "Recordatorio: Regularización de Afiliaciones - Liga Rosarina 2026",
+        "resumen": "La Comisión Directiva solicita a delegados y clubes la regularización de las afiliaciones anuales de jugadores y equipos para garantizar el correcto funcionamiento del cronograma y el sistema de rankings.",
+        "fecha": "Junio, 2026",
+        "imagenPortada": "assets/images/Liga-Equipos.png",
+        "mostrarLogoLiga": false,
+        "contenido": [
+            {
+                "tipo": "parrafo",
+                "texto": "Estimados delegados y representantes de clubes: a medida que avanzamos con el calendario de la Liga Rosarina de Tenis de Mesa, queremos agradecerles el enorme esfuerzo y compromiso constante para que nuestro circuito local siga creciendo en nivel y organización."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "Con el fin de mantener el cronograma actualizado, garantizar la integridad de los datos en nuestra página web y asegurar el correcto funcionamiento del sistema de rankings, les recordamos los requisitos administrativos vigentes para esta temporada 2026."
+            },
+            {
+                "tipo": "tarjetaInformativa",
+                "icono": "fas fa-file-invoice-dollar",
+                "titulo": "Requisitos de Afiliación",
+                "text": "• Afiliación de Jugadores: $15.000 (Jugadores de la provincia/ASATEME).\n• Afiliación de Clubes/Equipos: $40.000 (Pago institucional por equipo)."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "Cumplir con estos puntos es fundamental para que podamos gestionar los avales correspondientes, mantener el orden de las fechas y asegurar la participación de todos los competidores sin demoras de último momento."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "Les solicitamos canalizar los pagos y enviar los comprobantes correspondientes a través de las vías habituales a la brevedad. Recordamos a los delegados que también cuentan con la opción de realizar la carga y gestión directamente a través de nuestro sitio web."
+            },
+            {
+                "tipo": "cita",
+                "texto": "¡Muchas gracias por su colaboración y por hacer que el tenis de mesa de la región siga sumando!"
             }
         ]
     },
@@ -80,26 +116,38 @@
         ]
     },
     {
-        "id": "campeonato-argentino-senior-2026",
-        "titulo": "¡Se viene el Campeonato Argentino Senior 2026!",
-        "resumen": "Tenemos el agrado de informarles que la máxima cita nacional de categorías Senior se realizará en el Parque Olímpico de la Juventud (Pabellón América), C.A.B.A., del 22 al 26 de julio.",
+        "id": "convocatoria-nacional-menores-maxis-2026",
+        "titulo": "Convocatoria: Campeonato Nacional de Menores y Maxis 2026",
+        "resumen": "ASATEME abre la inscripción para la delegación que representará a nuestra institución en el próximo Campeonato Nacional de Menores y Maxis, a celebrarse del 22 al 26 de julio.",
         "fecha": "Junio, 2026",
         "imagenPortada": "assets/images/nacionalArgentino.jpeg",
         "mostrarLogoLiga": false,
         "contenido": [
             {
                 "tipo": "parrafo",
-                "texto": "Estimados jugadores y delegados de la comunidad del tenis de mesa: Tenemos el agrado de informarles que el Campeonato Argentino de categorías Senior se realizará en las prestigiosas instalaciones del Parque Olímpico de la Juventud (Pabellón América), en la Ciudad Autónoma de Buenos Aires."
+                "texto": "La Comisión Directiva de ASATEME se complace en anunciar la próxima participación de nuestra delegación en el Campeonato Nacional de Menores y Maxis, que tendrá lugar del 22 al 26 de julio. Invitamos a todos los atletas interesados a sumarse a este gran evento, fundamental para el calendario deportivo de nuestro tenis de mesa."
             },
             {
                 "tipo": "parrafo",
-                "texto": "El evento más importante del país para las categorías Master se llevará a cabo del 22 al 26 de julio, contando con la organización oficial de la Federación Argentina de Tenis de Mesa (FATM). Se espera la participación de delegaciones de todas las provincias en lo que promete ser una verdadera fiesta de nuestro deporte."
+                "texto": "Para facilitar la organización logística y la conformación de las listas por categorías, solicitamos a los jugadores interesados que completen su inscripción a través del formulario disponible en nuestra página web bajo el enlace 'Nacional 2026', detallando su categoría y modalidades de participación (Individual, Dobles y/o Equipos)."
             },
             {
                 "tipo": "tarjetaInformativa",
-                "icono": "fas fa-pen-fancy",
-                "titulo": "Próximo Comunicado",
-                "text": "La próxima semana estaremos enviando de manera formal la invitación oficial junto con el reglamento detallado de la competencia, cronogramas de juego y modalidades de inscripción."
+                "icono": "fas fa-exclamation-circle",
+                "titulo": "Requisitos obligatorios para la inscripción",
+                "text": "Para tramitar los avales ante la Federación y asegurar su lugar, es indispensable contar con la afiliación anual 2026 de ASATEME ($15.000) y la afiliación anual de la FATM. Por favor, adjuntar los comprobantes de pago junto a sus datos al momento de la inscripción."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "Les recordamos la importancia de realizar este proceso con la mayor antelación posible. La gestión temprana de la documentación y los pagos es clave para trabajar con orden y asegurar que todos los representantes de nuestra asociación puedan participar sin contratiempos."
+            },
+            {
+                "tipo": "cita",
+                "texto": "¡Nos espera un gran torneo! Invitamos a cada atleta a ser parte de esta experiencia y representar con orgullo los colores de ASATEME a nivel nacional."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "<a href='https://docs.google.com/forms/d/e/1FAIpQLSdI-SZmaMSyS3ph0CdtyBM5LdEPHrfMjPj7zFCgsyJJbyP1TQ/viewform?usp=header' target='_blank' rel='noopener noreferrer' class='inline-flex items-center gap-2 bg-asatemeRed hover:bg-asatemeBlue text-white font-bold px-6 py-3 rounded-md shadow transition duration-300 my-2'><i class='fab fa-google mr-1'></i> Completar Formulario de Inscripción</a>"
             }
         ]
     }
