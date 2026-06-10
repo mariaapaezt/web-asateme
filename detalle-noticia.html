@@ -144,7 +144,6 @@
                                 </div>`;
                         }
                     });
-<<<<<<< HEAD
                     
                     // 3. Lógica inteligente para mostrar 1 imagen grande o una galería
                     if (noticia.galeria && Array.isArray(noticia.galeria) && noticia.galeria.length > 0) {
@@ -174,14 +173,6 @@
                             divFooter.appendChild(grid);
                         }
 
-=======
-
-                    // Imagen pie de página: Solo se crea el DOM si la imagen es válida
-                    if (noticia.imagenPortada && noticia.imagenPortada.length > 5) {
-                        const divFooter = document.createElement('div');
-                        divFooter.className = "mt-12 pt-8 border-t";
-                        divFooter.innerHTML = `<img src="${noticia.imagenPortada}" class="w-full rounded-2xl shadow-lg border">`;
->>>>>>> 9544b0b (Se agregan nuevas noticias2)
                         contenedor.appendChild(divFooter);
                     }
                 });
