@@ -695,6 +695,7 @@ function conectarEventosFormulario() {
         });
     }
 
+
     // ==========================================
     // 🔥 NUEVO: LÓGICA PARA MOSTRAR/OCULTAR PIN (EL OJITO)
     // ==========================================

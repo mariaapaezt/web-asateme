@@ -107,7 +107,6 @@
             if (!noticiaId) return;
 
             fetch('data/noticias.json')
-
                 .then(res => res.json())
                 .then(noticias => {
                     const noticia = noticias.find(n => n.id === noticiaId);

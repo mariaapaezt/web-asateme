@@ -146,6 +146,25 @@
                             readonly
                             class="w-20 text-center bg-gray-100 border-2 border-gray-200 rounded-2xl py-3 text-2xl font-black text-gray-400 focus:outline-none transition-all">
                     </div>
+<<<<<<< HEAD
+=======
+                    <div class="bg-red-50 border border-red-100 rounded-xl p-3.5 space-y-2">
+                    <span class="block text-[11px] font-bold text-red-700 uppercase tracking-wide">
+                        <i class="fas fa-exclamation-triangle mr-1"></i> ¿Hubo No Presentación (Walkover)?
+                    </span>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200 cursor-pointer text-xs font-semibold select-none">
+                            <input type="checkbox" id="wo-local-check" onchange="manejarCambioWO('LOCAL')" class="w-4 h-4 rounded-sm text-asatemeRed focus:ring-asatemeRed">
+                            <span>W.O. Local</span>
+                        </label>
+                        <label class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200 cursor-pointer text-xs font-semibold select-none">
+                            <input type="checkbox" id="wo-visitante-check" onchange="manejarCambioWO('VISITANTE')" class="w-4 h-4 rounded-sm text-asatemeRed focus:ring-asatemeRed">
+                            <span>W.O. Visitante</span>
+                        </label>
+                    </div>
+                </div>
+                </div>
+>>>>>>> 649be82 (Se termina la parte de carga de resultados y la tabla de posisiones de la liga de equipos)
 
                     <div class="col-span-2 bg-red-50 border border-red-100 rounded-xl p-3.5 space-y-2 mt-2">
                         <span class="block text-[11px] font-bold text-red-700 uppercase tracking-wide">
@@ -188,12 +207,14 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-1.5">Clave de
-                        Validación del Club</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-1.5">
+                        Clave de Validación del Club
+                    </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                             <i class="fas fa-lock text-xs"></i>
                         </span>
+                
                         <input type="password" id="token-club-input" required placeholder="Ingresá el PIN secreto"
                             class="w-full bg-gray-50 border border-gray-300 rounded-xl pl-9 pr-10 py-2.5 text-sm focus:outline-none focus:border-asatemeBlue focus:bg-white transition-all font-semibold text-gray-800">
                         <button type="button" onclick="toggleVisibilidadToken()"
@@ -211,8 +232,18 @@
         </form>
     </main>
 
+<<<<<<< HEAD
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
+=======
+    <!-- 1. Librería externa oficial de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 2. Tu archivo de conexión centralizado (Crea la conexión) -->
+    <script src="js/supabase-config.js"></script>
+    
+    <!-- 3. El script de lógica específico de esta página (Usa la conexión) -->
+>>>>>>> 649be82 (Se termina la parte de carga de resultados y la tabla de posisiones de la liga de equipos)
     <script src="js/carga-logic.js"></script>
 
 </body>
