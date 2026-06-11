@@ -72,7 +72,7 @@
         <!-- MENÚ CELULARES: También integrado aquí abajo de forma ordenada -->
         <div id="mobile-menu"
             class="hidden lg:hidden bg-asatemeBlue border-t border-blue-900 px-4 py-4 space-y-3 font-semibold text-sm">
-            <a href="#noticias" class="block hover:text-asatemeRed">Noticias</a>
+            <a href="#mas-noticias" class="block hover:text-asatemeRed">Noticias</a>
             <a href="#destacados" class="block hover:text-asatemeRed">Destacados</a>
             <a href="#ranking" class="block hover:text-asatemeRed">Ranking</a>
             <a href="#calendario" class="block hover:text-asatemeRed">Calendario</a>
@@ -380,27 +380,26 @@
             let currentSlide = 0;
             let carouselInterval;
 
-            // 1. Carga de datos unificada y distribución inteligente
-            try {
-                const response = await fetch('noticias.json');
-                const data = await response.json();
+            // 1. Cargar datos del JSON
+            fetch('data/noticias.json')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data || data.length === 0) throw new Error("No hay noticias cargadas.");
 
-                if (!data || data.length === 0) throw new Error("No hay noticias cargadas.");
+                    // 🌟 Segmentamos: Las primeras 4 van al Carrusel, las demás a la sección inferior
+                    const limiteCarrusel = 4;
+                    noticiasCarrusel = data.slice(0, limiteCarrusel);
+                    noticiasRestantes = data.slice(limiteCarrusel);
 
-                // 🌟 Segmentamos: Las primeras 4 o 5 van al Carrusel, las demás a la sección inferior
-                const limiteCarrusel = 4;
-                noticiasCarrusel = data.slice(0, limiteCarrusel);
-                noticiasRestantes = data.slice(limiteCarrusel);
-
-                // Inicializar ambos componentes de forma independiente
-                initCarousel();
-                renderNoticiasSecundarias();
-
-            } catch (err) {
-                console.error("Error al cargar las novedades de la liga:", err);
-                if (spinner) spinner.innerHTML = "<p class='text-red-400 font-semibold p-4'>Error al sincronizar las novedades</p>";
-                if (gridContainer) gridContainer.innerHTML = "<p class='text-gray-500 text-sm col-span-full text-center py-6'>No se pudieron cargar las noticias secundarias.</p>";
-            }
+                    // Inicializar ambos componentes de forma independiente
+                    initCarousel();
+                    renderNoticiasSecundarias();
+                })
+                .catch(err => {
+                    console.error("Error al cargar las novedades de la liga:", err);
+                    if (spinner) spinner.innerHTML = "<p class='text-red-400 font-semibold p-4'>Error al sincronizar las novedades</p>";
+                    if (gridContainer) gridContainer.innerHTML = "<p class='text-gray-500 text-sm col-span-full text-center py-6'>No se pudieron cargar las noticias secundarias.</p>";
+                });
 
             // 2. Inicialización y Render del Carrusel Principal
             function initCarousel() {
