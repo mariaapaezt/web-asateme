@@ -45,7 +45,6 @@
         }
     </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body class="bg-asatemeGray font-sans text-gray-800">
@@ -165,26 +164,24 @@
                 </span>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr
-                                class="bg-gray-50 text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-gray-100">
-                                <th class="py-4 px-4 text-center w-12">Pos</th>
-                                <th class="py-4 px-4">Equipo</th>
-                                <th class="py-4 px-4 text-center">PJ</th>
-                                <th class="py-4 px-4 text-center text-green-600">PG</th>
-                                <th class="py-4 px-4 text-center text-red-600">PP</th>
-                                <th class="py-4 px-4 text-center hidden sm:table-cell">SF</th>
-                                <th class="py-4 px-4 text-center font-bold text-asatemeBlue bg-gray-100/50 w-16">PTS
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-posiciones-body" class="divide-y divide-gray-100 text-sm text-gray-700">
-                        </tbody>
-                    </table>
-                </div>
+            <div class="overflow-x-auto bg-white rounded-xl border border-gray-200 shadow-sm">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr
+                            class="bg-gray-50 border-b border-gray-200 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                            <th class="py-3 px-4 w-12 text-center">Pos</th>
+                            <th class="py-3 px-4 text-left min-w-[180px]">Club</th>
+                            <th class="py-3 px-4 text-center" title="Series Jugadas">SJ</th>
+                            <th class="py-3 px-4 text-center text-green-600 font-bold" title="Series Ganadas">SG</th>
+                            <th class="py-3 px-4 text-center text-red-600 font-bold" title="Series Perdidas">SP</th>
+                            <th class="py-3 px-4 text-center text-blue-600" title="Partidos Individuales Ganados">PG</th>
+                            <th class="py-3 px-4 text-center text-amber-600" title="Partidos Individuales Perdidos">PP</th>
+                            <th class="py-3 px-4 text-center font-black text-gray-700 bg-gray-100/50 w-16">Pts</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-posiciones-body" class="divide-y divide-gray-100 text-sm">
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -317,6 +314,13 @@
         </div>
     </footer>
 
+    <!-- 1. Librería externa oficial de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 2. Tu archivo de conexión centralizado (Crea la conexión) -->
+    <script src="js/supabase-config.js"></script>
+    
+    <!-- 3. El script de lógica específico de esta página (Usa la conexión) -->
     <script src="js/liga-logic.js"></script>
 </body>
 
