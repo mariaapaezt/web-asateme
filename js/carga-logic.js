@@ -57,6 +57,10 @@ async function inicializarPantallaCarga() {
             console.error("❌ Error en tabla 'jugadores':", resJugadores.error);
             return;
         }
+        if (resJugadores.error) {
+            console.error("❌ Error en tabla 'jugadores':", resJugadores.error);
+            return;
+        }
 
         PARTIDOS_BACKUP = resPartidos.data || [];
         console.log(`✅ Fixture descargado con éxito. Cantidad de partidos: ${PARTIDOS_BACKUP.length}`);

@@ -669,6 +669,24 @@ function renderJugadoresDelEquipo(equipoId) {
                     <p class="text-xs font-bold text-gray-800 truncate leading-snug">${jugador.nombre}</p>
                     <p class="text-[10px] font-semibold text-gray-400 tracking-wide uppercase mt-0.5">Lista Oficial</p>
                 </div>
+            `;
+        }
+
+        // Estructura de la tarjeta del equipo con el ajuste h-full para estirado uniforme
+        const tarjeta = `
+            <div onclick="verJugadoresEquipo('${equipo.id}')" data-id="${equipo.id}" class="card-equipo-btn bg-white rounded-xl border ${bordeEspecial} p-4 flex flex-col justify-between h-full hover:shadow-md transition-all duration-200 cursor-pointer ${opacidadClase}">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gray-50 border border-gray-100 rounded-xl p-1 flex items-center justify-center shrink-0">
+                        <img src="${equipo.logo}" alt="Logo ${equipo.nombre}" class="w-full h-full object-contain rounded">
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="font-bold text-gray-800 text-sm leading-tight truncate">${equipo.nombre}</h3>
+                        <p class="text-gray-500 text-xs mt-0.5 truncate">Delegado: ${equipo.delegado || 'Sin asignar'}</p>
+                    </div>
+                </div>
+                
+                <!-- Bloque de alerta alineado y con el texto exacto que me pasaste -->
+                ${alertaHTML}
             </div>
         `;
     }); // <-- Acá se cerraba correctamente el bucle de jugadores
