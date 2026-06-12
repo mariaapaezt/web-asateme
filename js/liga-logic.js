@@ -53,6 +53,7 @@ async function cargarDatosDesdeSupabase() {
                 LIGAS_DATA[equipo.liga] = [];
             }
             LIGAS_DATA[equipo.liga].push(equipo);
+            
         });
 
         // Todo salió bien: Dibujamos la app de forma normal
