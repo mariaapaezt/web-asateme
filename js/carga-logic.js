@@ -7,7 +7,6 @@ let EQUIPOS_MAPA = {};
 let JUGADORES_LOCALES = [];
 let JUGADORES_VISITANTES = [];
 
-
 let FILTROS_CARGA = {
     liga: 'LIGA_A',
     fechaNum: 1,
@@ -51,6 +50,10 @@ async function inicializarPantallaCarga() {
         }
         if (resJugadores.error) {
             console.error("❌ Error en tabla 'jugadores':", resJugadores.error.message);
+            return;
+        }
+        if (resJugadores.error) {
+            console.error("❌ Error en tabla 'jugadores':", resJugadores.error);
             return;
         }
 

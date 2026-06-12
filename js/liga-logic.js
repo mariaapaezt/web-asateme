@@ -574,7 +574,6 @@ function renderEquipos() {
 
     container.innerHTML = html;
 }
-
 /**
  * Dibuja la nómina de jugadores en el panel inferior desplegable
  */
@@ -607,7 +606,7 @@ function renderJugadoresDelEquipo(equipoId) {
                 </div>
             </div>
         `;
-    }); // <-- Acá se cerraba correctamente el bucle de jugadores
+    });
 
     container.innerHTML = html;
 }
