@@ -11,7 +11,6 @@ let EQUIPOS_MAP = {};
 // =============================================================================
 // 2. CONTROLADORES DE INTERFAZ (Funciones vinculadas a los 'onclick' del HTML)
 // =============================================================================
-
 /**
  * Controla el cambio de pestañas principales (Posiciones, Fixture, Equipos)
  */
