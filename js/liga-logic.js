@@ -446,7 +446,6 @@ function renderFixture() {
         // CRUCE RELACIONAL: Extraemos los datos completos del mapa (nombre y logo vacío si falla)
         const datosLocal = EQUIPOS_MAP[String(partido.local_id)] || { nombre: `Equipo (${partido.local_id})`, logo: '' };
         const datosVisitante = EQUIPOS_MAP[String(partido.visitante_id)] || { nombre: `Equipo (${partido.visitante_id})`, logo: '' };
-
         const nombreL = datosLocal.nombre;
         const nombreV = datosVisitante.nombre;
         const letraL = nombreL.charAt(0).toUpperCase();
@@ -516,6 +515,7 @@ function renderEquipos() {
     const container = document.getElementById('equipos-grid-container');
     if (!container) return;
 
+    // Leemos el estado global tal como lo hacía tu app originalmente
     const ligaActual = APP_STATE.currentLigaEquipos;
     const textoBusqueda = APP_STATE.filtroTextoEquipos.toLowerCase().trim();
 
@@ -608,7 +608,7 @@ function renderJugadoresDelEquipo(equipoId) {
                 </div>
             </div>
         `;
-    });
+    }); // <-- Acá se cerraba correctamente el bucle de jugadores
 
     container.innerHTML = html;
 }

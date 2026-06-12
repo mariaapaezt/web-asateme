@@ -6,6 +6,7 @@ let EQUIPOS_MAPA = {};
 let JUGADORES_LOCALES = [];
 let JUGADORES_VISITANTES = [];
 
+
 let FILTROS_CARGA = {
     liga: 'LIGA_A',
     fechaNum: 1,
@@ -43,6 +44,10 @@ async function inicializarPantallaCarga() {
         }
         if (resEquipos.error) {
             console.error("❌ Error en tabla 'equipos':", resEquipos.error.message);
+            return;
+        }
+        if (resJugadores.error) {
+            console.error("❌ Error en tabla 'jugadores':", resJugadores.error);
             return;
         }
 
@@ -162,7 +167,6 @@ async function manejarCambioPartido(partidoId) {
         if (seccionIttf) seccionIttf.classList.add('hidden');
         return;
     }
-
     const partido = PARTIDOS_BACKUP.find(p => String(p.id) === String(partidoId));
     if (!partido) return;
 
