@@ -23,10 +23,10 @@ async function cargarDatosDesdeSupabase() {
     try {
         console.log("📥 Descargando datos desde el cliente global de Supabase...");
 
-        // Mostramos un spinner o estado visual de "Cargando..." antes de empezar (Buena práctica de UX)
+        // Mostramos el spinner de carga prolijo en las tres pestañas
         mostrarEstadoDeCarga();
 
-        // Validamos primero que el cliente exista para evitar crasheos si falló la config
+        // Validamos primero que el cliente exista
         if (!window.supabaseClient) {
             throw new Error("El cliente de Supabase no está inicializado.");
         }
@@ -37,7 +37,6 @@ async function cargarDatosDesdeSupabase() {
             window.supabaseClient.from('jugadores').select('*')
         ]);
 
-        // Si alguna consulta de Supabase devolvió un error de estructura o permisos
         if (resEquipos.error || resFixture.error || resJugadores.error) {
             const errorDetalle = resEquipos.error || resFixture.error || resJugadores.error;
             throw new Error(`Supabase Error: ${errorDetalle.message}`);
@@ -53,15 +52,13 @@ async function cargarDatosDesdeSupabase() {
                 LIGAS_DATA[equipo.liga] = [];
             }
             LIGAS_DATA[equipo.liga].push(equipo);
-            
         });
 
-        // Todo salió bien: Dibujamos la app de forma normal
+        // Todo salió bien: Renderizamos la app de forma normal
         renderApp();
 
     } catch (error) {
         console.error("💥 Error crítico capturado:", error);
-        // Llamamos a la función encargada de avisarle de forma elegante al usuario
         mostrarMensajeErrorPantalla(
             "No se pudieron cargar las posiciones ni el fixture en este momento. " +
             "Por favor, verificá tu conexión a internet e intentalo de nuevo."
@@ -79,11 +76,9 @@ function mostrarEstadoDeCarga() {
         </div>
     `;
 
-    // Insertamos el loader en los contenedores principales
     ['tabla-posiciones-body', 'fixture-partidos-container', 'equipos-grid-container'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            // Si es una tabla, envolvemos el loader en una estructura de fila válida
             if (id === 'tabla-posiciones-body') {
                 el.innerHTML = `<tr><td colspan="8">${loaderHtml}</td></tr>`;
             } else {
@@ -281,7 +276,6 @@ function renderApp() {
     renderEquipos();
 }
 
-// REALIZA TODA LA MATEMÁTICA EN VIVO DEL REGLAMENTO DE ASATEME
 function calcularTablaPosiciones(liga) {
     const equiposBase = LIGAS_DATA[liga] || [];
 
@@ -307,7 +301,6 @@ function calcularTablaPosiciones(liga) {
         const sLocal = partido.score_local || 0;
         const sVisitante = partido.score_visitante || 0;
 
-        // --- ESCENARIO 1: HUBO WALKOVER ---
         if (partido.walkover && partido.walkover.trim() !== "") {
             if (partido.walkover === "LOCAL") {
                 visitante.sj += 1;
@@ -317,7 +310,7 @@ function calcularTablaPosiciones(liga) {
 
                 local.sp += 1;
                 local.pp += 5;
-                local.pts += 0; // Penalización por WO
+                local.pts += 0;
             } else if (partido.walkover === "VISITANTE") {
                 local.sj += 1;
                 local.sg += 1;
@@ -326,10 +319,9 @@ function calcularTablaPosiciones(liga) {
 
                 visitante.sp += 1;
                 visitante.pp += 5;
-                visitante.pts += 0; // Penalización por WO
+                visitante.pts += 0;
             }
         }
-        // --- ESCENARIO 2: PARTIDO DISPUTADO NORMAL ---
         else {
             local.sj += 1;
             visitante.sj += 1;
@@ -353,7 +345,6 @@ function calcularTablaPosiciones(liga) {
         }
     });
 
-    // Criterio de ordenamiento: 1° Pts campeonato, 2° Diferencia partidos individuales
     tablaCalculada.sort((a, b) => {
         if (b.pts !== a.pts) return b.pts - a.pts;
         const difA = a.pg - a.pp;
@@ -442,44 +433,80 @@ function renderFixture() {
     partidosFiltrados.forEach(partido => {
         const todosLosEquipos = Object.values(LIGAS_DATA).flat();
 
-        const local = todosLosEquipos.find(e => e.id === partido.local_id) || { nombre: partido.local_id };
-        const visitante = todosLosEquipos.find(e => e.id === partido.visitante_id) || { nombre: partido.visitante_id };
+        const local = todosLosEquipos.find(e => e.id === partido.local_id) || { id: partido.local_id, nombre: partido.local_id };
+        const visitante = todosLosEquipos.find(e => e.id === partido.visitante_id) || { id: partido.visitante_id, nombre: partido.visitante_id };
+
+        // =====================================================================
+        // REGLA DE NEGOCIO: Validamos si ambos equipos tienen el mínimo de jugadores
+        // =====================================================================
+        const validacionLocal = LigaService.validarRequisitosEquipo(local.id, JUGADORES_DATA);
+        const validacionVisitante = LigaService.validarRequisitosEquipo(visitante.id, JUGADORES_DATA);
+
+        const ambosEquiposValidos = validacionLocal.valido && validacionVisitante.valido;
 
         const esFinalizado = partido.estado === "Finalizado";
-        const badgeClass = esFinalizado
-            ? "bg-green-100 text-green-800 border border-green-200"
-            : "bg-blue-100 text-blue-800 border border-blue-200";
+
+        // Determinamos el estilo del estado (Badge)
+        let badgeClass = "";
+        let estadoTexto = partido.estado;
+
+        if (esFinalizado) {
+            badgeClass = "bg-green-100 text-green-800 border border-green-200";
+        } else if (!ambosEquiposValidos) {
+            // Si no está finalizado y falta gente, lo marcamos como inhabilitado para carga
+            badgeClass = "bg-amber-100 text-amber-800 border border-amber-200 font-bold animate-pulse";
+            estadoTexto = "Falta Plantel";
+        } else {
+            badgeClass = "bg-blue-100 text-blue-800 border border-blue-200";
+        }
 
         let scoreLocalTxt = partido.score_local !== null ? partido.score_local : "-";
         let scoreVisitanteTxt = partido.score_visitante !== null ? partido.score_visitante : "-";
 
+        // Armamos el texto de advertencia si corresponde
         let subtextoWO = "";
         if (partido.walkover && partido.walkover.trim() !== "") {
             subtextoWO = `<p class="text-[10px] text-red-500 font-bold mt-1"><i class="fas fa-exclamation-triangle"></i> Resuelto por W.O. (Ausente: ${partido.walkover})</p>`;
             scoreLocalTxt = partido.walkover === "LOCAL" ? "0" : "5";
             scoreVisitanteTxt = partido.walkover === "VISITANTE" ? "0" : "5";
+        } else if (!esFinalizado && !ambosEquiposValidos) {
+            // Si le falta completar jugadores a alguno, listamos quién está en falta
+            let quienesFaltan = [];
+            if (!validacionLocal.valido) quienesFaltan.push(local.nombre);
+            if (!validacionVisitante.valido) quienesFaltan.push(visitante.nombre);
+
+            subtextoWO = `<p class="text-[10px] text-amber-600 font-semibold mt-1"><i class="fas fa-user-slash"></i> Carga bloqueada.</p>`;
         }
 
+        // Variable para controlar si el botón de cargar resultado (si tenés uno) debería ocultarse o bloquearse
+        // Si en tu diseño actual el click en la tarjeta abre el modal de carga de puntos, 
+        // usamos la variable 'ambosEquiposValidos' o 'esFinalizado' para dejar pasar o no el evento.
+        const clickAccion = (esFinalizado || !ambosEquiposValidos)
+            ? ""
+            : `onclick="abrirModalCargaResultado('${partido.id}')"`; // Ajustá el nombre de tu función si usás otra
+
+        const cursorClase = (esFinalizado || !ambosEquiposValidos) ? "cursor-not-allowed" : "hover:shadow-md cursor-pointer";
+
         const tarjetaHtml = `
-            <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-all duration-200">
+            <div ${clickAccion} class="bg-white rounded-xl border border-gray-200 p-5 shadow-xs flex flex-col justify-between transition-all duration-200 ${cursorClase}">
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
                     <div class="space-y-0.5">
                         <p class="text-xs font-bold text-gray-500">${partido.fecha_txt}</p>
                         ${subtextoWO}
                     </div>
                     <span class="text-[11px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${badgeClass}">
-                        ${partido.estado}
+                        ${estadoTexto}
                     </span>
                 </div>
                 <div class="space-y-3 my-2">
                     <div class="flex justify-between items-center">
-                        <span class="font-semibold text-gray-900 text-sm truncate pr-4">${local.nombre}</span>
+                        <span class="font-semibold text-gray-900 text-sm truncate pr-4 ${!validacionLocal.valido && !esFinalizado ? 'text-red-400 line-through' : ''}">${local.nombre}</span>
                         <span class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center font-black text-sm text-gray-800 ${esFinalizado && parseInt(scoreLocalTxt) > parseInt(scoreVisitanteTxt) ? 'bg-amber-50 border-amber-200 text-amber-900' : ''}">
                             ${scoreLocalTxt}
                         </span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="font-semibold text-gray-900 text-sm truncate pr-4">${visitante.nombre}</span>
+                        <span class="font-semibold text-gray-900 text-sm truncate pr-4 ${!validacionVisitante.valido && !esFinalizado ? 'text-red-400 line-through' : ''}">${visitante.nombre}</span>
                         <span class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center font-black text-sm text-gray-800 ${esFinalizado && parseInt(scoreVisitanteTxt) > parseInt(scoreLocalTxt) ? 'bg-amber-50 border-amber-200 text-amber-900' : ''}">
                             ${scoreVisitanteTxt}
                         </span>
@@ -494,47 +521,90 @@ function renderFixture() {
 function renderEquipos() {
     const container = document.getElementById('equipos-grid-container');
     if (!container) return;
+
     container.innerHTML = '';
 
+    // Leemos el estado global tal como lo hacía tu app originalmente
     const ligaActual = APP_STATE.currentLigaEquipos;
-    const equiposDeLiga = LIGAS_DATA[ligaActual] || [];
-    const query = APP_STATE.filtroTextoEquipos.toLowerCase().trim();
+    const equiposBase = LIGAS_DATA[ligaActual] || [];
 
-    const equiposFiltrados = equiposDeLiga.filter(e => e.nombre.toLowerCase().includes(query));
+    // Filtramos por el input de búsqueda de tu app
+    const textoFiltro = APP_STATE.filtroTextoEquipos.toLowerCase().trim();
+    const equiposFiltrados = equiposBase.filter(e => e.nombre.toLowerCase().includes(textoFiltro));
 
     if (equiposFiltrados.length === 0) {
-        container.innerHTML = `
-            <div class="w-full bg-white rounded-xl p-6 text-center border border-dashed border-gray-200">
-                <p class="text-sm text-gray-500 font-medium">No se encontraron equipos que coincidan.</p>
-            </div>
-        `;
+        container.innerHTML = `<p class="text-xs italic text-gray-400 p-4 col-span-full text-center">No se encontraron equipos.</p>`;
         return;
     }
 
     equiposFiltrados.forEach(equipo => {
-        const esSeleccionado = APP_STATE.equipoSeleccionadoId === equipo.id;
-        const borderCls = esSeleccionado ? 'border-asatemeBlue ring-2 ring-blue-100' : 'border-gray-200';
+        // Usamos la capa de servicio con el patrón de diseño para validar el reglamento de 2 jugadores mínimos
+        const estadoInscripcion = LigaService.validarRequisitosEquipo(equipo.id, JUGADORES_DATA);
 
-        const rutaLogo = equipo.logo && equipo.logo.trim() !== ''
-            ? equipo.logo
-            : 'https://placehold.co/40x40/f1f5f9/003366?text=Club';
+        let alertaHTML = '';
+        let opacidadClase = '';
+        let bordeEspecial = equipo.id === APP_STATE.equipoSeleccionadoId ? 'border-asatemeBlue ring-2 ring-blue-100' : 'border-gray-200';
 
-        const tarjetaHtml = `
-            <div data-id="${equipo.id}" onclick="verJugadoresEquipo('${equipo.id}')" 
-                class="card-equipo-btn bg-white border ${borderCls} rounded-xl p-4 flex items-center gap-3 shadow-xs min-w-[260px] flex-1 cursor-pointer hover:border-asatemeBlue/40 hover:shadow-xs transition-all duration-200">
-                <div class="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center shrink-0 border border-gray-100">
-                    <img src="${rutaLogo}" alt="Logo ${equipo.nombre}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/40x40/f1f5f9/d32f2f?text=Err'">
+        if (!estadoInscripcion.valido) {
+            opacidadClase = 'opacity-85';
+            alertaHTML = `
+                <div class="mt-3 bg-red-50 border border-red-200 text-red-700 px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 min-h-[6px]">
+                    <i class="fas fa-exclamation-triangle shrink-0 text-red-500"></i>
+                    <span><strong class="font-bold"></strong>Mínimo 2 jugadores.</span>
                 </div>
-                <div class="truncate">
-                    <p class="font-bold text-gray-800 text-sm leading-tight truncate">${equipo.nombre}</p>
-                    <p class="text-xs font-semibold text-gray-400 mt-0.5 truncate">Delegado: ${equipo.delegado}</p>
+            `;
+        } else {
+            alertaHTML = `
+                <div class="mt-3 bg-green-50 border border-green-200 text-green-700 px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 min-h-[36px]">
+                    <i class="fas fa-check-circle shrink-0 text-green-500"></i>
+                    <span>Plantel verificado</span>
                 </div>
+            `;
+        }
+
+        // Estructura de la tarjeta del equipo con el ajuste h-full para estirado uniforme
+        const tarjeta = `
+            <div onclick="verJugadoresEquipo('${equipo.id}')" data-id="${equipo.id}" class="card-equipo-btn bg-white rounded-xl border ${bordeEspecial} p-4 flex flex-col justify-between h-full hover:shadow-md transition-all duration-200 cursor-pointer ${opacidadClase}">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gray-50 border border-gray-100 rounded-xl p-1 flex items-center justify-center shrink-0">
+                        <img src="${equipo.logo}" alt="Logo ${equipo.nombre}" class="w-full h-full object-contain rounded">
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="font-bold text-gray-800 text-sm leading-tight truncate">${equipo.nombre}</h3>
+                        <p class="text-gray-500 text-xs mt-0.5 truncate">Delegado: ${equipo.delegado || 'Sin asignar'}</p>
+                    </div>
+                </div>
+                
+                <!-- Bloque de alerta alineado y con el texto exacto que me pasaste -->
+                ${alertaHTML}
             </div>
         `;
-        container.innerHTML += tarjetaHtml;
+        
+        container.innerHTML += tarjeta;
     });
-
-    if (APP_STATE.equipoSeleccionadoId) {
-        verJugadoresEquipo(APP_STATE.equipoSeleccionadoId);
-    }
 }
+
+// =============================================================================
+// PATRÓN REPOSITORY/SERVICE: Validación y Estado de Equipos
+// =============================================================================
+
+/**
+ * Servicio encargado de aplicar las reglas de negocio de la liga
+ */
+const LigaService = {
+    /**
+     * Valida si un equipo cumple con los requisitos mínimos para competir
+     * @param {string} equipoId 
+     * @param {Array} listaJugadores 
+     * @returns {Object} { valido: boolean, cantidad: number }
+     */
+    validarRequisitosEquipo(equipoId, listaJugadores) {
+        const jugadoresDelEquipo = listaJugadores.filter(j => j.equipo_id === equipoId);
+        const cantidad = jugadoresDelEquipo.length;
+
+        return {
+            valido: cantidad >= 2, // Mínimo 2 jugadores reglamentarios
+            cantidad: cantidad
+        };
+    }
+};

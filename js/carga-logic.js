@@ -7,6 +7,7 @@
 
 let PARTIDOS_BACKUP = [];
 let EQUIPOS_MAPA = {};
+let JUGADORES_BACKUP = []; // <-- Nueva lista en memoria para validar requisitos
 
 let FILTROS_CARGA = {
     liga: 'LIGA_A',
@@ -20,10 +21,11 @@ let FILTROS_CARGA = {
 async function inicializarPantallaCarga() {
     console.log("📥 Intentando descargar datos desde Supabase mediante el cliente global...");
     try {
-        // Usamos window.supabaseClient compartido en lugar de la variable local duplicada
-        const [resPartidos, resEquipos] = await Promise.all([
+        // Traemos también la tabla de jugadores para hacer la validación reglamentaria
+        const [resPartidos, resEquipos, resJugadores] = await Promise.all([
             window.supabaseClient.from('fixture').select('*'),
-            window.supabaseClient.from('equipos').select('id, nombre')
+            window.supabaseClient.from('equipos').select('id, nombre'),
+            window.supabaseClient.from('jugadores').select('id, equipo_id')
         ]);
 
         if (resPartidos.error) {
@@ -34,9 +36,15 @@ async function inicializarPantallaCarga() {
             console.error("❌ Error en tabla 'equipos':", resEquipos.error);
             return;
         }
+        if (resJugadores.error) {
+            console.error("❌ Error en tabla 'jugadores':", resJugadores.error);
+            return;
+        }
 
         PARTIDOS_BACKUP = resPartidos.data;
+        JUGADORES_BACKUP = resJugadores.data;
         console.log(`✅ Partidos cargados con éxito (${PARTIDOS_BACKUP.length} encontrados)`);
+        console.log(`✅ Jugadores cargados con éxito (${JUGADORES_BACKUP.length} encontrados)`);
 
         EQUIPOS_MAPA = {};
         resEquipos.data.forEach(eq => {
@@ -50,6 +58,15 @@ async function inicializarPantallaCarga() {
     } catch (error) {
         console.error("💥 Error crítico inesperado en la conexión:", error);
     }
+}
+
+// Helper interno para validar si un equipo cumple con el mínimo de 2 competidores
+function verificarMinimoJugadores(equipoId) {
+    const cantidad = JUGADORES_BACKUP.filter(j => j.equipo_id === equipoId).length;
+    return {
+        valido: cantidad >= 2,
+        cantidad: cantidad
+    };
 }
 
 // =========================================================================
@@ -119,8 +136,11 @@ function manejarCambioPartido(partidoId) {
 
     const partido = PARTIDOS_BACKUP.find(p => p.id == partidoId);
     if (partido) {
-        lblLocal.textContent = EQUIPOS_MAPA[partido.local_id] || "Local";
-        lblVisitante.textContent = EQUIPOS_MAPA[partido.visitante_id] || "Visitante";
+        const nombreLocalActual = EQUIPOS_MAPA[partido.local_id] || "Local";
+        const nombreVisitanteActual = EQUIPOS_MAPA[partido.visitante_id] || "Visitante";
+
+        lblLocal.textContent = nombreLocalActual;
+        lblVisitante.textContent = nombreVisitanteActual;
 
         document.getElementById('score-local-input').value = partido.score_local !== null ? partido.score_local : "";
         document.getElementById('score-visitante-input').value = partido.score_visitante !== null ? partido.score_visitante : "";
@@ -129,7 +149,11 @@ function manejarCambioPartido(partidoId) {
         document.getElementById('wo-local-check').checked = false;
         document.getElementById('wo-visitante-check').checked = false;
 
-        // VALIDACIÓN DE SEGURIDAD: Si el partido ya fue finalizado previamente, bloqueamos acciones
+        // Validamos si cumplen el reglamento de jugadores
+        const validacionLocal = verificarMinimoJugadores(partido.local_id);
+        const validacionVisitante = verificarMinimoJugadores(partido.visitante_id);
+
+        // 1. VALIDACIÓN DE SEGURIDAD INTERNA: Si el partido ya fue finalizado previamente
         if (partido.estado === "Finalizado") {
             console.warn(`🔒 El partido ID ${partidoId} ya está finalizado. Bloqueando reenvío.`);
 
@@ -143,8 +167,28 @@ function manejarCambioPartido(partidoId) {
                 btnSubmit.className = "w-full bg-gray-400 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md cursor-not-allowed transition-all text-center block";
                 btnSubmit.textContent = "🔒 Serie Finalizada y Registrada";
             }
-        } else {
-            // Si está pendiente, liberamos todo de forma normal
+        }
+        // 2. NUEVA VALIDACIÓN: Si falta plantel en alguno de los dos equipos
+        else if (!validacionLocal.valido || !validacionVisitante.valido) {
+            let infractores = [];
+            if (!validacionLocal.valido) infractores.push(nombreLocalActual);
+            if (!validacionVisitante.valido) infractores.push(nombreVisitanteActual);
+
+            console.warn(`🚫 Carga bloqueada. Faltan jugadores en: ${infractores.join(' y ')}`);
+
+            document.getElementById('score-local-input').disabled = true;
+            document.getElementById('score-visitante-input').disabled = true;
+            document.getElementById('wo-local-check').disabled = true;
+            document.getElementById('wo-visitante-check').disabled = true;
+
+            if (btnSubmit) {
+                btnSubmit.disabled = true;
+                btnSubmit.className = "w-full bg-amber-500 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md cursor-not-allowed transition-all text-center block";
+                btnSubmit.textContent = `⚠️ Carga Bloqueada: Plantel Incompleto`;
+            }
+        }
+        // 3. Si está impecable, se habilita de forma normal
+        else {
             document.getElementById('score-local-input').disabled = false;
             document.getElementById('score-visitante-input').disabled = false;
             document.getElementById('wo-local-check').disabled = false;
@@ -236,7 +280,6 @@ function conectarEventosFormulario() {
         });
     }
 
-    // AJUSTE: Vinculamos el submit del formulario para capturar el botón de envío
     const formEnvio = document.getElementById('form-envio-planilla');
     if (formEnvio) {
         formEnvio.addEventListener('submit', procesarEnvioResultado);
@@ -248,7 +291,6 @@ function validarMarcadorTenisDeMesa(scoreLocal, scoreVisitante, esWO) {
     if (esWO) return true;
     if (isNaN(scoreLocal) || isNaN(scoreVisitante) || scoreLocal < 0 || scoreVisitante < 0) return false;
 
-    // REGLA ESTRICTA: Se deben disputar los 5 partidos individuales de la serie sí o sí
     const totalPartidos = scoreLocal + scoreVisitante;
     if (totalPartidos !== 5) return false;
 
@@ -275,6 +317,18 @@ async function procesarEnvioResultado(event) {
 
     if (partidoSeleccionado && partidoSeleccionado.estado === "Finalizado") {
         alert("Esta serie ya fue enviada y se encuentra cerrada.");
+        return;
+    }
+
+    // 🛑 CANDADO DE SEGURIDAD DEFINITIVO SOBRE EL SUBMIT
+    const validacionLocal = verificarMinimoJugadores(partidoSeleccionado.local_id);
+    const validacionVisitante = verificarMinimoJugadores(partidoSeleccionado.visitante_id);
+
+    if (!validacionLocal.valido || !validacionVisitante.valido) {
+        const nLocal = EQUIPOS_MAPA[partidoSeleccionado.local_id] || "Local";
+        const nVisitante = EQUIPOS_MAPA[partidoSeleccionado.visitante_id] || "Visitante";
+
+        alert(`❌ Envío cancelado por reglamento.\nUno o ambos equipos no disponen del mínimo de 2 jugadores cargados.\n\n• ${nLocal}: ${validacionLocal.cantidad} jugadores.\n• ${nVisitante}: ${validacionVisitante.cantidad} jugadores.`);
         return;
     }
 
@@ -316,7 +370,6 @@ async function procesarEnvioResultado(event) {
     try {
         console.log("🔐 Validando credenciales del club...");
 
-        // Usamos window.supabaseClient global
         const { data: equiposValidados, error: errToken } = await window.supabaseClient
             .from('equipos')
             .select('id, nombre, token')
@@ -339,7 +392,6 @@ async function procesarEnvioResultado(event) {
         const extension = archivoActa.name.split('.').pop();
         const nombreLimpioArchivo = `acta_${partidoId}_${Date.now()}.${extension}`;
 
-        // Usamos window.supabaseClient global
         const { data: resStorage, error: errStorage } = await window.supabaseClient
             .storage
             .from('planillas')
@@ -353,7 +405,6 @@ async function procesarEnvioResultado(event) {
             throw new Error("No se pudo subir la foto de la planilla.");
         }
 
-        // Usamos window.supabaseClient global
         const { data: resUrl } = window.supabaseClient
             .storage
             .from('planillas')
@@ -368,7 +419,6 @@ async function procesarEnvioResultado(event) {
 
         console.log("💾 Actualizando el registro del partido en la tabla fixture...");
 
-        // Usamos window.supabaseClient global
         const { error: errUpdate } = await window.supabaseClient
             .from('fixture')
             .update({
