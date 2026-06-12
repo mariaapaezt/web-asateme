@@ -671,7 +671,7 @@ function renderJugadoresDelEquipo(equipoId) {
                 </div>
             </div>
         `;
-    });
+    }); // <-- Acá se cerraba correctamente el bucle de jugadores
 
     container.innerHTML = html;
 }

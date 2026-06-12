@@ -6,6 +6,7 @@ let EQUIPOS_MAPA = {};
 let JUGADORES_LOCALES = [];
 let JUGADORES_VISITANTES = [];
 
+
 let FILTROS_CARGA = {
     liga: 'LIGA_A',
     fechaNum: 1,
