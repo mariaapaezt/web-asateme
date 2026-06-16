@@ -53,6 +53,10 @@ async function inicializarPantallaCarga() {
             console.error("❌ Error en tabla 'jugadores':", resJugadores.error.message);
             return;
         }
+        if (resJugadores.error) {
+            console.error("❌ Error en tabla 'jugadores':", resJugadores.error);
+            return;
+        }
 
         PARTIDOS_BACKUP = resPartidos.data || [];
         console.log(`✅ Fixture descargado con éxito. Cantidad de partidos: ${PARTIDOS_BACKUP.length}`);
@@ -720,7 +724,6 @@ function conectarEventosFormulario() {
     } else {
         console.warn("⚠️ [UI Sync] No se pudo conectar el ojito. Verificá los IDs/clases del input de PIN.");
     }
-    // ==========================================
 
     const formEnvio = document.getElementById('form-envio-planilla');
     if (formEnvio) {
