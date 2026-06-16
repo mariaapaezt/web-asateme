@@ -33,14 +33,16 @@
     <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-xl">
         <div class="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-12 w-auto object-contain">
-                <div>
-                    <h1 class="text-xl md:text-2xl font-extrabold tracking-wide leading-none">ASATEME</h1>
-                    <span class="text-xs text-gray-300 uppercase tracking-widest">Asociación Santafesina de Tenis de
-                        Mesa</span>
-                </div>
+                <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition duration-150 group">
+                    <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-10 w-auto object-contain">
+                    <div>
+                        <h1
+                            class="text-lg md:text-xl font-extrabold tracking-wide leading-none group-hover:text-gray-200 transition">
+                            ASATEME</h1>
+                        <span class="text-[10px] text-gray-300 uppercase tracking-widest block mt-0.5">Asociación Santafesina de Tenis de Mesa</span>
+                    </div>
+                </a>
             </div>
-
             <!-- MENÚ COMPUTADORAS: Agregado al lado de Calendario -->
             <div class="hidden lg:flex space-x-6 font-semibold text-sm items-center">
                 <a href="#mas-noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
@@ -204,23 +206,23 @@
                             </h3>
                             <!-- Cambiamos los botones para que apunten a tus categorías reales -->
                             <div class="space-y-2" id="category-buttons">
-                                <button onclick="cambiarCategoriaYRenderizar('PRIMERA')" id="btn-PRIMERA"
+                                <button onclick="RankingController.cambiarCategoria('PRIMERA')" id="btn-PRIMERA"
                                     class="w-full text-left px-4 py-3 rounded-lg bg-asatemeBlue text-white font-semibold transition active-category-btn">
                                     Primera
                                 </button>
-                                <button onclick="cambiarCategoriaYRenderizar('SEGUNDA')" id="btn-SEGUNDA"
+                                <button onclick="RankingController.cambiarCategoria('SEGUNDA')" id="btn-SEGUNDA"
                                     class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
                                     Segunda
                                 </button>
-                                <button onclick="cambiarCategoriaYRenderizar('TERCERA')" id="btn-TERCERA"
+                                <button onclick="RankingController.cambiarCategoria('TERCERA')" id="btn-TERCERA"
                                     class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
                                     Tercera
                                 </button>
-                                <button onclick="cambiarCategoriaYRenderizar('CUARTA')" id="btn-CUARTA"
+                                <button onclick="RankingController.cambiarCategoria('CUARTA')" id="btn-CUARTA"
                                     class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
                                     Cuarta
                                 </button>
-                                <button onclick="cambiarCategoriaYRenderizar('QUINTA')" id="btn-QUINTA"
+                                <button onclick="RankingController.cambiarCategoria('QUINTA')" id="btn-QUINTA"
                                     class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
                                     Quinta
                                 </button>
@@ -239,7 +241,7 @@
                                     <h3 class="text-2xl font-bold" id="ranking-title">
                                         <i class="fas fa-medal mr-2"></i>Top 10 - Primera
                                     </h3>
-                                        
+
                                     <!-- Aquí se inyectará el Mes Activo dinámicamente -->
                                     <p id="ranking-mes-titulo"
                                         class="text-xs text-blue-200 mt-1 uppercase tracking-wider font-semibold"></p>
@@ -362,9 +364,6 @@
             </div>
         </div>
     </footer>
-
-    <script src="js/ranking.js"></script>
-    <script src="js/main.js"></script>
 
     <!-- MOTOR DEL CARRUSEL DINÁMICO DE NOTICIAS -->
     <!-- MOTOR DEL CARRUSEL DINÁMICO DE NOTICIAS + GRILLA DE NOVEDADES -->
@@ -520,6 +519,16 @@
             }
         });
     </script>
+
+    <!-- ========================================== -->
+    <!-- SCRIPTS                                    -->
+    <!-- ========================================== -->
+    <!-- 1. Cargamos primero la lógica general, menú responsive y configuración base -->
+    <script src="js/main.js" defer></script>
+
+    <!-- 2. Cargamos después la lógica específica del ranking que dependerá del DOM listo -->
+    <script src="js/ranking.js" defer></script>
+
 
 </body>
 
