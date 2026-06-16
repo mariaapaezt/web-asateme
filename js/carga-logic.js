@@ -102,7 +102,7 @@ function actualizarDesplegablePartidos() {
         return matchesLiga && matchesFecha;
     });
 
-    selectPartido.innerHTML = '<option value="">-- Seleccioná la serie en juego --</option>';
+g    selectPartido.innerHTML = '<option value="">-- Seleccioná la serie en juego --</option>';
 
     if (partidosFiltrados.length === 0) {
         selectPartido.innerHTML = '<option value="">No hay partidos agendados para este filtro.</option>';
