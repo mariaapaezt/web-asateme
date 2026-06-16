@@ -33,14 +33,16 @@
     <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-xl">
         <div class="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-12 w-auto object-contain">
-                <div>
-                    <h1 class="text-xl md:text-2xl font-extrabold tracking-wide leading-none">ASATEME</h1>
-                    <span class="text-xs text-gray-300 uppercase tracking-widest">Asociación Santafesina de Tenis de
-                        Mesa</span>
-                </div>
+                <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition duration-150 group">
+                    <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-10 w-auto object-contain">
+                    <div>
+                        <h1
+                            class="text-lg md:text-xl font-extrabold tracking-wide leading-none group-hover:text-gray-200 transition">
+                            ASATEME</h1>
+                        <span class="text-[10px] text-gray-300 uppercase tracking-widest block mt-0.5">Asociación Santafesina de Tenis de Mesa</span>
+                    </div>
+                </a>
             </div>
-
             <!-- MENÚ COMPUTADORAS: Agregado al lado de Calendario -->
             <div class="hidden lg:flex space-x-6 font-semibold text-sm items-center">
                 <a href="#mas-noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
@@ -523,6 +525,16 @@
             }
         });
     </script>
+
+    <!-- ========================================== -->
+    <!-- SCRIPTS                                    -->
+    <!-- ========================================== -->
+    <!-- 1. Cargamos primero la lógica general, menú responsive y configuración base -->
+    <script src="js/main.js" defer></script>
+
+    <!-- 2. Cargamos después la lógica específica del ranking que dependerá del DOM listo -->
+    <script src="js/ranking.js" defer></script>
+
 
 </body>
 

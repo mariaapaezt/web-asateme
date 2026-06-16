@@ -61,7 +61,7 @@ const RankingService = {
 const RankingState = {
     jugadoresGlobales: [],
     categoriaActual: "PRIMERA",
-    mostrarSoloTop10: true, 
+    mostrarSoloTop10: true,
     mesActivo: "Cargando...",
 
     obtenerDatosProcesados() {
