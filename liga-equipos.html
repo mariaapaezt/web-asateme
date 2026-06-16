@@ -71,9 +71,10 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <a href="index.html#afiliaciones"
-                    class="bg-asatemeRed hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition shadow-md text-sm">
-                    <i class="fas fa-user-plus mr-1"></i> Afiliate
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdBdc_petoieFpV5CcZYIEc4iv2BKG_uIGpsRVDu0iIV0ELyg/viewform?usp=header#afiliaciones"
+                    target="_blank" rel="noopener noreferrer"
+                    class="bg-asatemeRed hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition shadow-md text-sm flex items-center gap-1">
+                    <i class="fas fa-user-plus"></i> Afiliate
                 </a>
             </div>
         </div>
@@ -106,7 +107,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                 <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
                     <p class="text-xs text-gray-300 uppercase font-semibold">Equipos Inscritos</p>
-                    <p class="text-2xl md:text-3xl font-bold mt-1">22 Clubes</p>
+                    <p id="contador-equipos-total" class="text-2xl md:text-3xl font-bold mt-1">0 Clubes</p>
                 </div>
                 <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
                     <p class="text-xs text-gray-300 uppercase font-semibold">Zonas de Competencia</p>
@@ -149,7 +150,7 @@
                 </button>
                 <button onclick="switchLiga('LIGA_B')" data-liga="LIGA_B"
                     class="liga-filter-btn px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all">
-                    Liga B 
+                    Liga B
                 </button>
             </div>
 
@@ -174,8 +175,10 @@
                             <th class="py-3 px-4 text-center" title="Series Jugadas">SJ</th>
                             <th class="py-3 px-4 text-center text-green-600 font-bold" title="Series Ganadas">SG</th>
                             <th class="py-3 px-4 text-center text-red-600 font-bold" title="Series Perdidas">SP</th>
-                            <th class="py-3 px-4 text-center text-blue-600" title="Partidos Individuales Ganados">PG</th>
-                            <th class="py-3 px-4 text-center text-amber-600" title="Partidos Individuales Perdidos">PP</th>
+                            <th class="py-3 px-4 text-center text-blue-600" title="Partidos Individuales Ganados">PG
+                            </th>
+                            <th class="py-3 px-4 text-center text-amber-600" title="Partidos Individuales Perdidos">PP
+                            </th>
                             <th class="py-3 px-4 text-center font-black text-gray-700 bg-gray-100/50 w-16">Pts</th>
                         </tr>
                     </thead>
@@ -189,11 +192,11 @@
             <div class="mb-4 flex gap-2 justify-center sm:justify-start">
                 <button onclick="switchLigaFixture('LIGA_A')" id="btn-fixture-ligaA"
                     class="px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all">
-                    Liga A 
+                    Liga A
                 </button>
                 <button onclick="switchLigaFixture('LIGA_B')" id="btn-fixture-ligaB"
                     class="px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all">
-                    Liga B 
+                    Liga B
                 </button>
             </div>
 
@@ -202,7 +205,7 @@
                 <div class="text-center sm:text-left">
                     <h2 id="fixture-titulo-liga"
                         class="text-lg font-bold text-asatemeBlue flex items-center justify-center sm:justify-start gap-2">
-                        Liga A 
+                        Liga A
                     </h2>
                     <p class="text-xs text-gray-500">Cronograma oficial de partidos y estados de juego.</p>
                 </div>
@@ -316,10 +319,10 @@
 
     <!-- 1. Librería externa oficial de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+
     <!-- 2. Tu archivo de conexión centralizado (Crea la conexión) -->
     <script src="js/supabase-config.js"></script>
-    
+
     <!-- 3. El script de lógica específico de esta página (Usa la conexión) -->
     <script src="js/liga-logic.js"></script>
 </body>

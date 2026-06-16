@@ -1,152 +1,47 @@
-// ==========================================
-// 1. ESTADO CENTRAL DE LA PÁGINA PRINCIPAL
-// ==========================================
+// =============================================================================
+// 1. VARIABLES GLOBALES (ESTADO EN MEMORIA)
+// =============================================================================
+let LIGAS_DATA = { LIGA_A: [], LIGA_B: [] }; // Equipos agrupados por clave de liga
+let FIXTURE_DATA = [];                      // Lista pura de partidos (esquema real)
+let JUGADORES_DATA = [];                    // Lista pura de jugadores (esquema real)
 
-// Variables globales en memoria
-let LIGAS_DATA = {};
-let FIXTURE_DATA = [];
-let JUGADORES_DATA = [];
+// Diccionario auxiliar plano para cruzar IDs de equipos con sus nombres rápidamente
+let EQUIPOS_MAP = {};
 
-if (typeof APP_STATE === 'undefined') {
-    window.APP_STATE = {
-        currentTab: 'posiciones',
-        currentLigaPosiciones: 'LIGA_A',
-        currentLigaFixture: 'LIGA_A',
-        currentLigaEquipos: 'LIGA_A',
-        currentFechaFiltro: 1,
-        filtroTextoEquipos: '',
-        equipoSeleccionadoId: null
-    };
-}
+// =============================================================================
+// 2. CONTROLADORES DE INTERFAZ (Funciones vinculadas a los 'onclick' del HTML)
+// =============================================================================
 
-async function cargarDatosDesdeSupabase() {
-    try {
-        console.log("📥 Descargando datos desde el cliente global de Supabase...");
-
-        // Mostramos el spinner de carga prolijo en las tres pestañas
-        mostrarEstadoDeCarga();
-
-        // Validamos primero que el cliente exista
-        if (!window.supabaseClient) {
-            throw new Error("El cliente de Supabase no está inicializado.");
-        }
-
-        const [resEquipos, resFixture, resJugadores] = await Promise.all([
-            window.supabaseClient.from('equipos').select('*'),
-            window.supabaseClient.from('fixture').select('*'),
-            window.supabaseClient.from('jugadores').select('*')
-        ]);
-
-        if (resEquipos.error || resFixture.error || resJugadores.error) {
-            const errorDetalle = resEquipos.error || resFixture.error || resJugadores.error;
-            throw new Error(`Supabase Error: ${errorDetalle.message}`);
-        }
-
-        // Guardamos los datos puros en las variables globales
-        FIXTURE_DATA = resFixture.data;
-        JUGADORES_DATA = resJugadores.data;
-
-        LIGAS_DATA = {};
-        resEquipos.data.forEach(equipo => {
-            if (!LIGAS_DATA[equipo.liga]) {
-                LIGAS_DATA[equipo.liga] = [];
-            }
-            LIGAS_DATA[equipo.liga].push(equipo);
-        });
-
-        // Todo salió bien: Renderizamos la app de forma normal
-        renderApp();
-
-    } catch (error) {
-        console.error("💥 Error crítico capturado:", error);
-        mostrarMensajeErrorPantalla(
-            "No se pudieron cargar las posiciones ni el fixture en este momento. " +
-            "Por favor, verificá tu conexión a internet e intentalo de nuevo."
-        );
-    }
-}
-
-// --- FUNCIONES AUXILIARES DE UX (ESTADOS VISUALES DE CARGA Y ERROR) ---
-
-function mostrarEstadoDeCarga() {
-    const loaderHtml = `
-        <div class="text-center py-10 flex flex-col items-center justify-center gap-3 text-gray-500 animate-pulse">
-            <i class="fas fa-spinner fa-spin text-2xl text-asatemeBlue"></i>
-            <p class="text-sm font-medium">Actualizando datos en tiempo real...</p>
-        </div>
-    `;
-
-    ['tabla-posiciones-body', 'fixture-partidos-container', 'equipos-grid-container'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            if (id === 'tabla-posiciones-body') {
-                el.innerHTML = `<tr><td colspan="8">${loaderHtml}</td></tr>`;
-            } else {
-                el.innerHTML = loaderHtml;
-            }
-        }
-    });
-}
-
-function mostrarMensajeErrorPantalla(mensaje) {
-    const errorHtml = `
-        <div class="max-w-md mx-auto my-6 p-4 bg-red-50 border border-red-200 rounded-xl text-center shadow-xs">
-            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 text-red-600">
-                <i class="fas fa-exclamation-circle text-lg"></i>
-            </div>
-            <p class="text-sm text-red-700 font-semibold mb-3">${mensaje}</p>
-            <button onclick="cargarDatosDesdeSupabase()" class="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all shadow-xs cursor-pointer">
-                <i class="fas fa-sync-alt mr-1"></i> Reintentar conexión
-            </button>
-        </div>
-    `;
-
-    ['tabla-posiciones-body', 'fixture-partidos-container', 'equipos-grid-container'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            if (id === 'tabla-posiciones-body') {
-                el.innerHTML = `<tr><td colspan="8" class="py-6">${errorHtml}</td></tr>`;
-            } else {
-                el.innerHTML = errorHtml;
-            }
-        }
-    });
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    cargarDatosDesdeSupabase();
-
-    const inputBusqueda = document.getElementById('input-busqueda-equipos');
-    if (inputBusqueda) {
-        inputBusqueda.addEventListener('input', (e) => {
-            APP_STATE.filtroTextoEquipos = e.target.value;
-            renderEquipos();
-        });
-    }
-});
-
-// ==========================================
-// 2. FUNCIONES DE CONTROL (LOGICA INTERNA)
-// ==========================================
-
+/**
+ * Controla el cambio de pestañas principales (Posiciones, Fixture, Equipos)
+ */
 function switchTab(tabId) {
     APP_STATE.currentTab = tabId;
 
+    // Ocultar contenidos y limpiar estados activos de botones
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('border-asatemeRed', 'text-asatemeRed');
         btn.classList.add('border-transparent', 'text-gray-500');
     });
 
-    document.getElementById(`content-${tabId}`).classList.add('active');
+    // Activar el contenedor seleccionado
+    const contentEl = document.getElementById(`content-${tabId}`);
+    if (contentEl) contentEl.classList.add('active');
+
+    // Resaltar el botón clickeado
     const activeBtn = document.getElementById(`tab-${tabId}`);
     if (activeBtn) {
         activeBtn.className = "tab-btn px-4 py-4 text-sm font-bold border-b-2 border-asatemeRed text-asatemeRed whitespace-nowrap";
     }
 
+    // Orquestar renderizado de la solapa activa
     renderApp();
 }
 
+/**
+ * Controla el filtro de Ligas dentro de la pestaña de Posiciones
+ */
 function switchLiga(ligaId) {
     APP_STATE.currentLigaPosiciones = ligaId;
 
@@ -158,17 +53,27 @@ function switchLiga(ligaId) {
         }
     });
 
-    renderApp();
+    renderPosiciones();
 }
 
+/**
+ * Controla las flechas de navegación de jornadas en el Fixture
+ */
 function cambiarFechaFixture(direccion) {
     const nuevaFecha = APP_STATE.currentFechaFiltro + direccion;
-    if (nuevaFecha >= 1 && nuevaFecha <= 5) {
+
+    // Rango dinámico basado en la columna 'fecha_numero' de tu base de datos
+    const maxFecha = FIXTURE_DATA.length > 0 ? Math.max(...FIXTURE_DATA.map(p => Number(p.fecha_numero || 1))) : 5;
+
+    if (nuevaFecha >= 1 && nuevaFecha <= maxFecha) {
         APP_STATE.currentFechaFiltro = nuevaFecha;
         renderFixture();
     }
 }
 
+/**
+ * Controla el filtro de Ligas dentro del Fixture
+ */
 function switchLigaFixture(ligaId) {
     APP_STATE.currentLigaFixture = ligaId;
 
@@ -176,16 +81,19 @@ function switchLigaFixture(ligaId) {
     const btnB = document.getElementById('btn-fixture-ligaB');
 
     if (ligaId === 'LIGA_A') {
-        btnA.className = "px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all";
-        btnB.className = "px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all";
+        if (btnA) btnA.className = "px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all";
+        if (btnB) btnB.className = "px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all";
     } else {
-        btnB.className = "px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all";
-        btnA.className = "px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all";
+        if (btnB) btnB.className = "px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all";
+        if (btnA) btnA.className = "px-4 py-1.5 text-xs font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all";
     }
 
     renderFixture();
 }
 
+/**
+ * Controla el filtro de Ligas dentro de la sección de Equipos/Planteles
+ */
 function seleccionarLigaEquipos(ligaId) {
     APP_STATE.currentLigaEquipos = ligaId;
     APP_STATE.equipoSeleccionadoId = null;
@@ -194,68 +102,48 @@ function seleccionarLigaEquipos(ligaId) {
     const btnB = document.getElementById('btn-equipos-ligaB');
 
     if (ligaId === 'LIGA_A') {
-        btnA.className = "px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all cursor-pointer";
-        btnB.className = "px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all cursor-pointer";
+        if (btnA) btnA.className = "px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all cursor-pointer";
+        if (btnB) btnB.className = "px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all cursor-pointer";
     } else {
-        btnB.className = "px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all cursor-pointer";
-        btnA.className = "px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all cursor-pointer";
+        if (btnB) btnB.className = "px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all cursor-pointer";
+        if (btnA) btnA.className = "px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all cursor-pointer";
     }
 
     cerrarDetalleJugadores();
     renderEquipos();
 }
 
-function verJugadoresEquipo(equipoId) {
-    APP_STATE.equipoSeleccionadoId = equipoId;
+/**
+ * Controla la selección de un equipo específico para desplegar su plantilla
+ * Nota: El ID del equipo en tu BD viene en formato TEXT
+ */
+function verDetalleEquipo(equipoId, btnElement) {
+    APP_STATE.equipoSeleccionadoId = String(equipoId);
 
+    // Resaltar visualmente la tarjeta del equipo seleccionado
     document.querySelectorAll('.card-equipo-btn').forEach(card => {
-        if (card.dataset.id === equipoId) {
-            card.classList.add('border-asatemeBlue', 'ring-2', 'ring-blue-100');
-        } else {
-            card.classList.remove('border-asatemeBlue', 'ring-2', 'ring-blue-100');
-        }
+        card.classList.remove('border-asatemeBlue', 'ring-2', 'ring-blue-100');
     });
-
-    const ligaActual = APP_STATE.currentLigaEquipos;
-    const equipo = LIGAS_DATA[ligaActual].find(e => e.id === equipoId);
-
-    if (!equipo) return;
-
-    const nombreContainer = document.getElementById('nombre-equipo-seleccionado');
-    if (nombreContainer) nombreContainer.innerText = equipo.nombre;
-
-    const jugadoresContainer = document.getElementById('jugadores-equipo-container');
-    if (jugadoresContainer) {
-        jugadoresContainer.innerHTML = '';
-
-        const jugadoresFiltrados = JUGADORES_DATA.filter(j => j.equipo_id === equipoId);
-
-        if (jugadoresFiltrados.length === 0) {
-            jugadoresContainer.innerHTML = `<p class="text-xs italic text-gray-400 p-2">No hay jugadores cargados en este equipo.</p>`;
-            return;
-        }
-
-        jugadoresFiltrados.forEach(j => {
-            const blockHtml = `
-                <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3 shadow-xs">
-                    <div class="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 shrink-0">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="font-bold text-gray-800 text-sm leading-tight">${j.nombre}</p>
-                    </div>
-                </div>
-            `;
-            jugadoresContainer.innerHTML += blockHtml;
-        });
+    if (btnElement) {
+        btnElement.classList.add('border-asatemeBlue', 'ring-2', 'ring-blue-100');
     }
 
-    const seccionDetalle = document.getElementById('seccion-detalle-jugadores');
-    if (seccionDetalle) seccionDetalle.classList.remove('hidden');
+    // Buscar los datos en memoria para rellenar la cabecera
+    const ligaActual = APP_STATE.currentLigaEquipos;
+    const club = LIGAS_DATA[ligaActual].find(e => String(e.id) === String(equipoId));
+
+    const nombreHeader = document.getElementById('nombre-equipo-seleccionado');
+    if (nombreHeader && club) {
+        nombreHeader.textContent = club.nombre;
+    }
+
+    // Renderizar la grilla interna de jugadores correspondientes
+    renderJugadoresDelEquipo(equipoId);
 }
 
+/**
+ * Controla el cierre del panel inferior de Listas de Buena Fe
+ */
 function cerrarDetalleJugadores() {
     APP_STATE.equipoSeleccionadoId = null;
     const seccionDetalle = document.getElementById('seccion-detalle-jugadores');
@@ -266,345 +154,481 @@ function cerrarDetalleJugadores() {
     });
 }
 
-// ==========================================
-// 3. RENDERIZADORES REUTILIZABLES (VISTAS)
-// ==========================================
+// =============================================================================
+// 3. CONSULTAS ASÍNCRONAS A SUPABASE (Alineadas estrictamente al esquema relacional)
+// =============================================================================
+
+async function cargarDatosDesdeSupabase() {
+    try {
+        console.log("⏳ Conectando con Supabase y descargando datos...");
+
+        if (typeof supabase === 'undefined') {
+            throw new Error("La instancia 'supabase' no está definida. Revisá js/supabase-config.js");
+        }
+
+        const [resEquipos, resFixture, resJugadores] = await Promise.all([
+            supabase.from('equipos').select('*'),
+            supabase.from('fixture').select('*'),
+            supabase.from('jugadores').select('*')
+        ]);
+
+        if (resEquipos.error) throw resEquipos.error;
+        if (resFixture.error) throw resFixture.error;
+        if (resJugadores.error) throw resJugadores.error;
+
+        FIXTURE_DATA = resFixture.data || [];
+        JUGADORES_DATA = resJugadores.data || [];
+
+        let listaEquipos = resEquipos.data || [];
+
+        // Reemplazá el bloque donde se armaba EQUIPOS_MAP por este:
+        EQUIPOS_MAP = {};
+        listaEquipos.forEach(e => {
+            EQUIPOS_MAP[String(e.id)] = {
+                nombre: e.nombre,
+                logo: e.logo || 'assets/logos/generic-pingpong.png'
+            };
+
+            // Inicializamos las estadísticas en 0 para calcularlas dinámicamente...
+            e.sj = 0;
+            e.sg = 0;
+            e.sp = 0;
+            e.pg = 0;
+            e.pp = 0;
+            e.pts = 0;
+        });
+        // 🧠 PROCESAMIENTO LOGIC: Recorremos los partidos finalizados para calcular la tabla real
+        FIXTURE_DATA.forEach(partido => {
+            if (partido.estado && partido.estado.toLowerCase() === 'finalizado') {
+                const locId = String(partido.local_id);
+                const visId = String(partido.visitante_id);
+
+                const eqLocal = listaEquipos.find(e => String(e.id) === locId);
+                const eqVisitante = listaEquipos.find(e => String(e.id) === visId);
+
+                if (eqLocal && eqVisitante) {
+                    const scoreLoc = Number(partido.score_local || 0);
+                    const scoreVis = Number(partido.score_visitante || 0);
+
+                    // 1. Sumar partidos individuales ganados y perdidos
+                    eqLocal.pg += scoreLoc;
+                    eqLocal.pp += scoreVis;
+                    eqVisitante.pg += scoreVis;
+                    eqVisitante.pp += scoreLoc;
+
+                    // 2. Sumar serie jugada
+                    eqLocal.sj += 1;
+                    eqVisitante.sj += 1;
+
+                    // 3. Determinar quién ganó la serie (Criterio estándar: 3 pts al ganador, 1 al perdedor)
+                    if (scoreLoc > scoreVis) {
+                        eqLocal.sg += 1;
+                        eqLocal.pts += 3; // Ganador de la serie
+
+                        eqVisitante.sp += 1;
+                        eqVisitante.pts += 1; // Perdedor de la serie suma 1 por presentarse (o adaptalo a tu reglamento)
+                    } else if (scoreVis > scoreLoc) {
+                        eqVisitante.sg += 1;
+                        eqVisitante.pts += 3;
+
+                        eqLocal.sp += 1;
+                        eqLocal.pts += 1;
+                    } else {
+                        // Empate (si el reglamento de tu liga lo permite)
+                        eqLocal.pts += 2;
+                        eqVisitante.pts += 2;
+                    }
+                }
+            }
+        });
+
+        // Agrupar y ordenar equipos por puntos calculados de forma descendente
+        LIGAS_DATA = {
+            LIGA_A: listaEquipos.filter(e => e.liga === 'LIGA_A').sort((a, b) => b.pts - a.pts),
+            LIGA_B: listaEquipos.filter(e => e.liga === 'LIGA_B').sort((a, b) => b.pts - a.pts)
+        };
+
+        console.log("✅ Datos calculados dinámicamente con éxito en tiempo real.");
+
+        // 🚀 NUEVA LÍNEA: Calculamos el total sumando ambas listas y actualizamos el HTML
+        const totalEquiposInscritos = LIGAS_DATA.LIGA_A.length + LIGAS_DATA.LIGA_B.length;
+        const elContador = document.getElementById('contador-equipos-total');
+        if (elContador) {
+            elContador.textContent = `${totalEquiposInscritos} Clubes`;
+        }
+
+        renderPosiciones();
+        renderApp();
+
+    } catch (error) {
+        console.error("❌ Error crítico al inicializar los datos de la liga:", error.message);
+        mostrarErrorVisual(error.message);
+    }
+}
+
+function mostrarErrorVisual(mensaje) {
+    const contenedores = ['tabla-posiciones-body', 'fixture-partidos-container', 'equipos-grid-container'];
+    contenedores.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.innerHTML = `
+                <div class="col-span-full py-8 text-center text-red-500 font-medium bg-white rounded-xl border p-4 shadow-xs">
+                    <i class="fas fa-exclamation-circle mr-2"></i> Error de Sincronización: ${mensaje}
+                </div>
+            `;
+        }
+    });
+}
+
+// =============================================================================
+// 4. RENDERIZADORES COMPONENTES DE INTERFAZ
+// =============================================================================
 
 function renderApp() {
-    renderPosiciones();
-    renderFixture();
-    renderEquipos();
-}
+    // Si APP_STATE no está definido o no tiene pestaña, por defecto vamos a posiciones
+    const tabActiva = (typeof APP_STATE !== 'undefined' && APP_STATE.currentTab) || 'posiciones';
 
-function calcularTablaPosiciones(liga) {
-    const equiposBase = LIGAS_DATA[liga] || [];
-
-    const tablaCalculada = equiposBase.map(e => ({
-        id: e.id,
-        nombre: e.nombre,
-        sj: 0,  // Series Jugadas
-        sg: 0,  // Series Ganadas
-        sp: 0,  // Series Perdidas
-        pg: 0,  // Partidos individuales Ganados
-        pp: 0,  // Partidos individuales Perdidos
-        pts: 0  // Puntos del Campeonato
-    }));
-
-    const partidosJugados = FIXTURE_DATA.filter(p => p.liga === liga && p.estado === "Finalizado");
-
-    partidosJugados.forEach(partido => {
-        const local = tablaCalculada.find(e => e.id === partido.local_id);
-        const visitante = tablaCalculada.find(e => e.id === partido.visitante_id);
-
-        if (!local || !visitante) return;
-
-        const sLocal = partido.score_local || 0;
-        const sVisitante = partido.score_visitante || 0;
-
-        if (partido.walkover && partido.walkover.trim() !== "") {
-            if (partido.walkover === "LOCAL") {
-                visitante.sj += 1;
-                visitante.sg += 1;
-                visitante.pg += 5;
-                visitante.pts += 2;
-
-                local.sp += 1;
-                local.pp += 5;
-                local.pts += 0;
-            } else if (partido.walkover === "VISITANTE") {
-                local.sj += 1;
-                local.sg += 1;
-                local.pg += 5;
-                local.pts += 2;
-
-                visitante.sp += 1;
-                visitante.pp += 5;
-                visitante.pts += 0;
-            }
-        }
-        else {
-            local.sj += 1;
-            visitante.sj += 1;
-
-            local.pg += sLocal;
-            local.pp += sVisitante;
-            visitante.pg += sVisitante;
-            visitante.pp += sLocal;
-
-            if (sLocal > sVisitante) {
-                local.sg += 1;
-                local.pts += 2;
-                visitante.sp += 1;
-                visitante.pts += 1;
-            } else {
-                visitante.sg += 1;
-                visitante.pts += 2;
-                local.sp += 1;
-                local.pts += 1;
-            }
-        }
-    });
-
-    tablaCalculada.sort((a, b) => {
-        if (b.pts !== a.pts) return b.pts - a.pts;
-        const difA = a.pg - a.pp;
-        const difB = b.pg - b.pp;
-        return difB - difA;
-    });
-
-    return tablaCalculada;
-}
-
-function renderPosiciones() {
-    const ligaActual = APP_STATE.currentLigaPosiciones;
-
-    const tituloLayout = document.getElementById('titulo-liga-actual');
-    if (tituloLayout) {
-        tituloLayout.innerText = ligaActual === 'LIGA_A' ? 'Liga A ' : 'Liga B ';
+    if (tabActiva === 'posiciones') {
+        renderPosiciones();
+    } else if (tabActiva === 'fixture') {
+        renderFixture();
+    } else if (tabActiva === 'equipos') {
+        renderEquipos();
     }
+}
 
-    const equiposClasificados = calcularTablaPosiciones(ligaActual);
+/**
+ * Dibuja la Tabla de Posiciones usando las columnas estrictas del esquema
+ */
+/**
+ * Dibuja la Tabla de Posiciones alineada con las columnas del HTML
+ */
+/**
+ * Dibuja la Tabla de Posiciones alineada con las columnas del HTML e incluyendo logos
+ */
+/**
+ * Dibuja la Tabla de Posiciones usando el mapa unificado (nombre + logo)
+ */
+function renderPosiciones() {
+    const tablaBody = document.getElementById('tabla-posiciones-body');
+    const tituloLiga = document.getElementById('titulo-liga-actual');
 
-    const tbody = document.getElementById('tabla-posiciones-body');
-    if (!tbody) return;
-    tbody.innerHTML = '';
+    if (!tablaBody) return;
 
-    if (equiposClasificados.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="8" class="py-8 text-center text-gray-400 italic">
-                    No hay equipos registrados en esta liga actualmente.
-                </td>
-            </tr>
-        `;
+    const ligaActual = (typeof APP_STATE !== 'undefined' && APP_STATE.currentLigaPosiciones) || 'LIGA_A';
+    if (tituloLiga) tituloLiga.textContent = ligaActual === 'LIGA_A' ? 'Liga A' : 'Liga B';
+
+    const equiposFiltrados = LIGAS_DATA[ligaActual] || [];
+
+    if (equiposFiltrados.length === 0) {
+        tablaBody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-gray-400">No hay registros de posiciones para esta liga.</td></tr>`;
         return;
     }
 
-    equiposClasificados.forEach((equipo, index) => {
-        const posicion = index + 1;
-        let posBadge = `<span class="font-bold text-gray-500">${posicion}</span>`;
-        if (posicion === 1) posBadge = `<span class="w-6 h-6 rounded-full bg-amber-100 text-amber-800 font-bold flex items-center justify-center text-xs mx-auto">1</span>`;
-        if (posicion === 2) posBadge = `<span class="w-6 h-6 rounded-full bg-slate-100 text-slate-800 font-bold flex items-center justify-center text-xs mx-auto">2</span>`;
+    let html = '';
+    equiposFiltrados.forEach((equipo, index) => {
+        let claseMedalla = "text-gray-500";
+        if (index === 0) claseMedalla = "bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full text-xs";
+        else if (index === 1) claseMedalla = "bg-gray-200 text-gray-800 font-bold px-2 py-0.5 rounded-full text-xs";
+        else if (index === 2) claseMedalla = "bg-amber-600/10 text-amber-800 font-bold px-2 py-0.5 rounded-full text-xs";
 
-        const filaHtml = `
-            <tr class="hover:bg-gray-50/70 transition-colors text-center">
-                <td class="py-4 px-4 text-center">${posBadge}</td>
-                <td class="py-4 px-4 text-left font-medium text-gray-900 truncate max-w-[200px]">${equipo.nombre}</td>
-                <td class="py-4 px-4 text-gray-600 font-semibold">${equipo.sj}</td>
-                <td class="py-4 px-4 font-bold text-green-600 bg-green-50/20">${equipo.sg}</td>
-                <td class="py-4 px-4 font-bold text-red-600 bg-red-50/20">${equipo.sp}</td>
-                <td class="py-4 px-4 text-gray-700 font-medium">${equipo.pg}</td>
-                <td class="py-4 px-4 text-gray-700 font-medium">${equipo.pp}</td>
-                <td class="py-4 px-4 font-black text-asatemeBlue bg-gray-50/80 text-base border-l border-gray-100">${equipo.pts}</td>
+        // Obtenemos los datos desde nuestro mapa unificado
+        const datosEquipo = EQUIPOS_MAP[String(equipo.id)] || { nombre: equipo.nombre, logo: '' };
+
+        const pos = index + 1;
+        const nombreFinal = datosEquipo.nombre || "Club";
+        const primeraLetra = nombreFinal.charAt(0).toUpperCase();
+
+        // 🛡️ ESCUDO ANTI-PARPADEO: Si no hay logo o está vacío, genera el círculo con la inicial
+        const logoHTML = (datosEquipo.logo && datosEquipo.logo !== 'assets/logos/generic-pingpong.png' && datosEquipo.logo.trim() !== "")
+            ? `<img src="${datosEquipo.logo}" alt="${nombreFinal}" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-7 h-7 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-xs font-bold uppercase\'>${primeraLetra}</div>';">`
+            : `<div class="w-7 h-7 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-xs font-bold uppercase">${primeraLetra}</div>`;
+
+        const seriesJugadas = equipo.sj ?? 0;
+        const seriesGanadas = equipo.sg ?? 0;
+        const seriesPerdidas = equipo.sp ?? 0;
+        const partidosGanados = equipo.pg ?? 0;
+        const partidosPerdidos = equipo.pp ?? 0;
+        const puntos = equipo.pts ?? 0;
+
+        html += `
+            <tr class="hover:bg-gray-50/70 transition-colors text-center border-b border-gray-100 last:border-0">
+                <td class="py-3 px-4 font-bold text-sm"><span class="${claseMedalla}">${pos}</span></td>
+                
+                <td class="py-3 px-4 text-left font-semibold text-gray-900 flex items-center gap-3">
+                    <div class="w-7 h-7 min-w-7 rounded-full overflow-hidden flex items-center justify-center border bg-white shadow-2xs">
+                        ${logoHTML}
+                    </div>
+                    <span>${nombreFinal}</span>
+                </td>
+                
+                <td class="py-3 px-4 text-gray-600 font-medium">${seriesJugadas}</td>
+                <td class="py-3 px-4 font-semibold text-green-600">${seriesGanadas}</td>
+                <td class="py-3 px-4 font-semibold text-red-600">${seriesPerdidas}</td>
+                <td class="py-3 px-4 text-blue-600 font-medium">${partidosGanados}</td>
+                <td class="py-3 px-4 text-amber-600 font-medium">${partidosPerdidos}</td>
+                <td class="py-3 px-4 font-extrabold text-gray-800 bg-gray-50/50">${puntos}</td>
             </tr>
         `;
-        tbody.innerHTML += filaHtml;
+    });
+
+    tablaBody.innerHTML = html;
+}
+
+function mostrarErrorVisual(mensaje) {
+    const contenedores = ['tabla-posiciones-body', 'fixture-partidos-container', 'equipos-grid-container'];
+    contenedores.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.innerHTML = `
+                <div class="col-span-full py-8 text-center text-red-500 font-medium bg-white rounded-xl border p-4 shadow-xs">
+                    <i class="fas fa-exclamation-circle mr-2"></i> Error de Sincronización: ${mensaje}
+                </div>
+            `;
+        }
     });
 }
 
+// =============================================================================
+// 4. RENDERIZADORES COMPONENTES DE INTERFAZ
+// =============================================================================
+
+function renderApp() {
+    if (APP_STATE.currentTab === 'posiciones') {
+        renderPosiciones();
+    } else if (APP_STATE.currentTab === 'fixture') {
+        renderFixture();
+    } else if (APP_STATE.currentTab === 'equipos') {
+        renderEquipos();
+    }
+}
+
+
+/**
+ * Dibuja la Sección del Fixture cruzando los IDs relacionales locales y visitantes
+ */
+/**
+ * Dibuja la Sección del Fixture cruzando los IDs relacionales e incluyendo los logos de los equipos
+ */
 function renderFixture() {
+    const container = document.getElementById('fixture-partidos-container');
+    const txtFecha = document.getElementById('txt-fecha-actual');
+    const tituloLiga = document.getElementById('fixture-titulo-liga');
+    const btnPrev = document.getElementById('btn-fecha-prev');
+    const btnNext = document.getElementById('btn-fecha-next');
+
+    if (!container) return;
+
     const ligaActual = APP_STATE.currentLigaFixture;
     const fechaActual = APP_STATE.currentFechaFiltro;
 
-    const tituloLiga = document.getElementById('fixture-titulo-liga');
-    if (tituloLiga) tituloLiga.innerText = ligaActual === 'LIGA_A' ? 'Liga A ' : 'Liga B ';
+    if (txtFecha) txtFecha.textContent = `Fecha ${fechaActual}`;
+    if (tituloLiga) tituloLiga.textContent = ligaActual === 'LIGA_A' ? 'Liga A' : 'Liga B';
 
-    const txtFecha = document.getElementById('txt-fecha-actual');
-    if (txtFecha) txtFecha.innerText = `Fecha ${fechaActual}`;
+    const partidosFiltrados = FIXTURE_DATA.filter(p => p.liga === ligaActual && Number(p.fecha_numero) === Number(fechaActual));
 
-    document.getElementById('btn-fecha-prev').disabled = (fechaActual === 1);
-    document.getElementById('btn-fecha-next').disabled = (fechaActual === 5);
-
-    const partidosFiltrados = FIXTURE_DATA.filter(p => p.liga === ligaActual && p.fecha_numero === fechaActual);
-
-    const container = document.getElementById('fixture-partidos-container');
-    if (!container) return;
-    container.innerHTML = '';
+    const totalFechas = FIXTURE_DATA.length > 0 ? Math.max(...FIXTURE_DATA.map(p => Number(p.fecha_numero || 1))) : 5;
+    if (btnPrev) btnPrev.disabled = (fechaActual === 1);
+    if (btnNext) btnNext.disabled = (fechaActual >= totalFechas);
 
     if (partidosFiltrados.length === 0) {
         container.innerHTML = `
-            <div class="col-span-full bg-white rounded-xl p-8 text-center border border-dashed border-gray-200">
-                <p class="text-sm text-gray-500 font-medium">No hay partidos agendados para la Fecha ${fechaActual} en esta liga.</p>
+            <div class="col-span-full bg-white p-8 text-center text-gray-400 border rounded-xl shadow-xs">
+                <i class="far fa-calendar-times text-2xl mb-2 block text-gray-300"></i>
+                No hay encuentros programados para la Fecha ${fechaActual} de esta zona.
             </div>
         `;
         return;
     }
 
+    let html = '';
     partidosFiltrados.forEach(partido => {
-        const todosLosEquipos = Object.values(LIGAS_DATA).flat();
+        // CRUCE RELACIONAL: Extraemos los datos completos del mapa (nombre y logo vacío si falla)
+        const datosLocal = EQUIPOS_MAP[String(partido.local_id)] || { nombre: `Equipo (${partido.local_id})`, logo: '' };
+        const datosVisitante = EQUIPOS_MAP[String(partido.visitante_id)] || { nombre: `Equipo (${partido.visitante_id})`, logo: '' };
+        const nombreL = datosLocal.nombre;
+        const nombreV = datosVisitante.nombre;
+        const letraL = nombreL.charAt(0).toUpperCase();
+        const letraV = nombreV.charAt(0).toUpperCase();
 
-        const local = todosLosEquipos.find(e => e.id === partido.local_id) || { id: partido.local_id, nombre: partido.local_id };
-        const visitante = todosLosEquipos.find(e => e.id === partido.visitante_id) || { id: partido.visitante_id, nombre: partido.visitante_id };
+        // 🛡️ ESCUDO LOCAL ANTI-PARPADEO
+        const imgLocalHTML = (datosLocal.logo && datosLocal.logo !== 'assets/logos/generic-pingpong.png' && datosLocal.logo.trim() !== "")
+            ? `<img src="${datosLocal.logo}" alt="${nombreL}" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase\'>${letraL}</div>';">`
+            : `<div class="w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase">${letraL}</div>`;
 
-        // =====================================================================
-        // REGLA DE NEGOCIO: Validamos si ambos equipos tienen el mínimo de jugadores
-        // =====================================================================
-        const validacionLocal = LigaService.validarRequisitosEquipo(local.id, JUGADORES_DATA);
-        const validacionVisitante = LigaService.validarRequisitosEquipo(visitante.id, JUGADORES_DATA);
+        // 🛡️ ESCUDO VISITANTE ANTI-PARPADEO
+        const imgVisHTML = (datosVisitante.logo && datosVisitante.logo !== 'assets/logos/generic-pingpong.png' && datosVisitante.logo.trim() !== "")
+            ? `<img src="${datosVisitante.logo}" alt="${nombreV}" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase\'>${letraV}</div>';">`
+            : `<div class="w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase">${letraV}</div>`;
 
-        const ambosEquiposValidos = validacionLocal.valido && validacionVisitante.valido;
+        const esFinalizado = (partido.estado && partido.estado.toLowerCase() === 'finalizado');
 
-        const esFinalizado = partido.estado === "Finalizado";
-
-        // Determinamos el estilo del estado (Badge)
-        let badgeClass = "";
-        let estadoTexto = partido.estado;
-
+        let estadoBadge = `<span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">${partido.estado || 'Pendiente'}</span>`;
         if (esFinalizado) {
-            badgeClass = "bg-green-100 text-green-800 border border-green-200";
-        } else if (!ambosEquiposValidos) {
-            // Si no está finalizado y falta gente, lo marcamos como inhabilitado para carga
-            badgeClass = "bg-amber-100 text-amber-800 border border-amber-200 font-bold animate-pulse";
-            estadoTexto = "Falta Plantel";
-        } else {
-            badgeClass = "bg-blue-100 text-blue-800 border border-blue-200";
+            estadoBadge = `<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">Finalizado</span>`;
         }
 
-        let scoreLocalTxt = partido.score_local !== null ? partido.score_local : "-";
-        let scoreVisitanteTxt = partido.score_visitante !== null ? partido.score_visitante : "-";
-
-        // Armamos el texto de advertencia si corresponde
-        let subtextoWO = "";
-        if (partido.walkover && partido.walkover.trim() !== "") {
-            subtextoWO = `<p class="text-[10px] text-red-500 font-bold mt-1"><i class="fas fa-exclamation-triangle"></i> Resuelto por W.O. (Ausente: ${partido.walkover})</p>`;
-            scoreLocalTxt = partido.walkover === "LOCAL" ? "0" : "5";
-            scoreVisitanteTxt = partido.walkover === "VISITANTE" ? "0" : "5";
-        } else if (!esFinalizado && !ambosEquiposValidos) {
-            // Si le falta completar jugadores a alguno, listamos quién está en falta
-            let quienesFaltan = [];
-            if (!validacionLocal.valido) quienesFaltan.push(local.nombre);
-            if (!validacionVisitante.valido) quienesFaltan.push(visitante.nombre);
-
-            subtextoWO = `<p class="text-[10px] text-amber-600 font-semibold mt-1"><i class="fas fa-user-slash"></i> Carga bloqueada.</p>`;
-        }
-
-        // Variable para controlar si el botón de cargar resultado (si tenés uno) debería ocultarse o bloquearse
-        // Si en tu diseño actual el click en la tarjeta abre el modal de carga de puntos, 
-        // usamos la variable 'ambosEquiposValidos' o 'esFinalizado' para dejar pasar o no el evento.
-        const clickAccion = (esFinalizado || !ambosEquiposValidos)
-            ? ""
-            : `onclick="abrirModalCargaResultado('${partido.id}')"`; // Ajustá el nombre de tu función si usás otra
-
-        const cursorClase = (esFinalizado || !ambosEquiposValidos) ? "cursor-not-allowed" : "hover:shadow-md cursor-pointer";
-
-        const tarjetaHtml = `
-            <div ${clickAccion} class="bg-white rounded-xl border border-gray-200 p-5 shadow-xs flex flex-col justify-between transition-all duration-200 ${cursorClase}">
-                <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
-                    <div class="space-y-0.5">
-                        <p class="text-xs font-bold text-gray-500">${partido.fecha_txt}</p>
-                        ${subtextoWO}
-                    </div>
-                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${badgeClass}">
-                        ${estadoTexto}
+        html += `
+            <div class="bg-white rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-all p-4 flex flex-col justify-between">
+                <div class="flex justify-between items-center border-b border-gray-100 pb-2 mb-3">
+                    <span class="text-xs font-semibold text-gray-400 flex items-center gap-1.5">
+                        <i class="far fa-clock"></i> ${partido.fecha_txt || 'Serie Oficial'}
                     </span>
+                    ${estadoBadge}
                 </div>
-                <div class="space-y-3 my-2">
-                    <div class="flex justify-between items-center">
-                        <span class="font-semibold text-gray-900 text-sm truncate pr-4 ${!validacionLocal.valido && !esFinalizado ? 'text-red-400 line-through' : ''}">${local.nombre}</span>
-                        <span class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center font-black text-sm text-gray-800 ${esFinalizado && parseInt(scoreLocalTxt) > parseInt(scoreVisitanteTxt) ? 'bg-amber-50 border-amber-200 text-amber-900' : ''}">
-                            ${scoreLocalTxt}
-                        </span>
+                
+                <div class="grid grid-cols-7 items-center text-sm gap-2">
+                    <div class="col-span-3 flex items-center justify-end gap-2 font-bold text-gray-800 tracking-tight truncate">
+                        <span class="truncate">${nombreL}</span>
+                        <div class="w-6 h-6 min-w-6 rounded-full overflow-hidden border bg-white flex items-center justify-center p-0.5 shadow-3xs">
+                            ${imgLocalHTML}
+                        </div>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="font-semibold text-gray-900 text-sm truncate pr-4 ${!validacionVisitante.valido && !esFinalizado ? 'text-red-400 line-through' : ''}">${visitante.nombre}</span>
-                        <span class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center font-black text-sm text-gray-800 ${esFinalizado && parseInt(scoreVisitanteTxt) > parseInt(scoreLocalTxt) ? 'bg-amber-50 border-amber-200 text-amber-900' : ''}">
-                            ${scoreVisitanteTxt}
-                        </span>
+                    
+                    <div class="col-span-1 flex justify-center items-center gap-1 font-black text-base text-gray-900 bg-gray-50 py-1 px-2 rounded-lg border">
+                        <span>${esFinalizado ? (partido.score_local ?? 0) : '-'}</span>
+                        <span class="text-xs text-gray-300 font-normal">:</span>
+                        <span>${esFinalizado ? (partido.score_visitante ?? 0) : '-'}</span>
+                    </div>
+                    
+                    <div class="col-span-3 flex items-center justify-start gap-2 font-bold text-gray-800 tracking-tight truncate">
+                        <div class="w-6 h-6 min-w-6 rounded-full overflow-hidden border bg-white flex items-center justify-center p-0.5 shadow-3xs">
+                            ${imgVisHTML}
+                        </div>
+                        <span class="truncate">${nombreV}</span>
                     </div>
                 </div>
             </div>
         `;
-        container.innerHTML += tarjetaHtml;
     });
+
+    container.innerHTML = html;
 }
 
+/**
+ * Dibuja los Equipos validando que cuenten con mínimo 2 jugadores vinculados por 'equipo_id'
+ */
+/**
+ * Dibuja las Tarjetas de Equipos incluyendo sus logos oficiales
+ */
 function renderEquipos() {
     const container = document.getElementById('equipos-grid-container');
     if (!container) return;
 
-    container.innerHTML = '';
-
     // Leemos el estado global tal como lo hacía tu app originalmente
     const ligaActual = APP_STATE.currentLigaEquipos;
-    const equiposBase = LIGAS_DATA[ligaActual] || [];
+    const textoBusqueda = APP_STATE.filtroTextoEquipos.toLowerCase().trim();
 
-    // Filtramos por el input de búsqueda de tu app
-    const textoFiltro = APP_STATE.filtroTextoEquipos.toLowerCase().trim();
-    const equiposFiltrados = equiposBase.filter(e => e.nombre.toLowerCase().includes(textoFiltro));
+    let equipos = LIGAS_DATA[ligaActual] || [];
+    if (textoBusqueda !== '') {
+        equipos = equipos.filter(e => e.nombre.toLowerCase().includes(textoBusqueda));
+    }
 
-    if (equiposFiltrados.length === 0) {
-        container.innerHTML = `<p class="text-xs italic text-gray-400 p-4 col-span-full text-center">No se encontraron equipos.</p>`;
+    if (equipos.length === 0) {
+        container.innerHTML = `
+            <div class="w-full bg-white p-8 text-center text-gray-400 border rounded-xl shadow-xs">
+                <i class="fas fa-search text-xl mb-2 block text-gray-300"></i> No se encontraron equipos.
+            </div>
+        `;
         return;
     }
 
-    equiposFiltrados.forEach(equipo => {
-        // Usamos la capa de servicio con el patrón de diseño para validar el reglamento de 2 jugadores mínimos
-        const estadoInscripcion = LigaService.validarRequisitosEquipo(equipo.id, JUGADORES_DATA);
+    let html = '';
+    equipos.forEach(equipo => {
+        const idClub = String(equipo.id);
+        const cantJugadores = JUGADORES_DATA.filter(j => String(j.equipo_id) === idClub).length;
 
-        let alertaHTML = '';
-        let opacidadClase = '';
-        let bordeEspecial = equipo.id === APP_STATE.equipoSeleccionadoId ? 'border-asatemeBlue ring-2 ring-blue-100' : 'border-gray-200';
-
-        if (!estadoInscripcion.valido) {
-            opacidadClase = 'opacity-85';
-            alertaHTML = `
-                <div class="mt-3 bg-red-50 border border-red-200 text-red-700 px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 min-h-[6px]">
-                    <i class="fas fa-exclamation-triangle shrink-0 text-red-500"></i>
-                    <span><strong class="font-bold"></strong>Mínimo 2 jugadores.</span>
-                </div>
-            `;
+        let badgeValidacion = '';
+        if (cantJugadores < 2) {
+            badgeValidacion = `<span class="text-[10px] text-red-500 font-semibold block mt-0.5"><i class="fas fa-exclamation-triangle"></i> Incompleto (Min. 2)</span>`;
         } else {
-            alertaHTML = `
-                <div class="mt-3 bg-green-50 border border-green-200 text-green-700 px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 min-h-[36px]">
-                    <i class="fas fa-check-circle shrink-0 text-green-500"></i>
-                    <span>Plantel verificado</span>
-                </div>
-            `;
+            badgeValidacion = `<span class="text-[10px] text-green-600 font-semibold block mt-0.5"><i class="fas fa-check-circle"></i> ${cantJugadores} Jugadores</span>`;
         }
 
-        // Estructura de la tarjeta del equipo con el ajuste h-full para estirado uniforme
-        const tarjeta = `
-            <div onclick="verJugadoresEquipo('${equipo.id}')" data-id="${equipo.id}" class="card-equipo-btn bg-white rounded-xl border ${bordeEspecial} p-4 flex flex-col justify-between h-full hover:shadow-md transition-all duration-200 cursor-pointer ${opacidadClase}">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-gray-50 border border-gray-100 rounded-xl p-1 flex items-center justify-center shrink-0">
-                        <img src="${equipo.logo}" alt="Logo ${equipo.nombre}" class="w-full h-full object-contain rounded">
+        const esSeleccionado = APP_STATE.equipoSeleccionadoId === idClub;
+        const clasesBordeActivo = esSeleccionado ? 'border-asatemeBlue ring-2 ring-blue-100' : 'border-gray-200 hover:border-gray-300 hover:shadow-md';
+
+        const nombreEquipo = equipo.nombre || "Club";
+        const primeraLetraEquip = nombreEquipo.charAt(0).toUpperCase();
+
+        // 🛡️ ESCUDO ANTI-PARPADEO PARA LA GRILLA DE EQUIPOS
+        const imgEquipoHTML = (equipo.logo && equipo.logo !== 'assets/logos/generic-pingpong.png' && equipo.logo.trim() !== "")
+            ? `<img src="${equipo.logo}" alt="${nombreEquipo}" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-9 h-9 rounded-lg bg-asatemeBlue text-white flex items-center justify-center font-bold text-sm uppercase\'>${primeraLetraEquip}</div>';">`
+            : `<div class="w-9 h-9 rounded-lg bg-asatemeBlue text-white flex items-center justify-center font-bold text-sm uppercase">${primeraLetraEquip}</div>`;
+
+        html += `
+            <button onclick="verDetalleEquipo('${idClub}', this)" 
+                class="card-equipo-btn text-left bg-white border rounded-xl p-4 flex items-center justify-between transition-all cursor-pointer w-full sm:w-[calc(50%-8px)] md:w-[calc(33.33%-11px)] ${clasesBordeActivo}">
+                <div class="flex items-center gap-3 truncate">
+                    <div class="w-9 h-9 min-w-9 bg-white rounded-lg flex items-center justify-center p-1 border overflow-hidden shadow-2xs">
+                        ${imgEquipoHTML}
                     </div>
-                    <div class="min-w-0 flex-1">
-                        <h3 class="font-bold text-gray-800 text-sm leading-tight truncate">${equipo.nombre}</h3>
-                        <p class="text-gray-500 text-xs mt-0.5 truncate">Delegado: ${equipo.delegado || 'Sin asignar'}</p>
+                    <div class="truncate">
+                        <span class="block font-bold text-gray-800 text-sm tracking-tight truncate">${nombreEquipo}</span>
+                        ${badgeValidacion}
                     </div>
                 </div>
-                
-                <!-- Bloque de alerta alineado y con el texto exacto que me pasaste -->
-                ${alertaHTML}
+                <i class="fas fa-chevron-right text-gray-300 text-xs pl-2"></i>
+            </button>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+/**
+ * Dibuja la nómina de jugadores en el panel inferior desplegable
+ */
+function renderJugadoresDelEquipo(equipoId) {
+    const container = document.getElementById('jugadores-equipo-container');
+    const seccionDetalle = document.getElementById('seccion-detalle-jugadores');
+
+    if (!container || !seccionDetalle) return;
+
+    // Filtrar estrictamente sobre la FK 'equipo_id' (String)
+    const jugadores = JUGADORES_DATA.filter(j => String(j.equipo_id) === String(equipoId));
+
+    seccionDetalle.classList.remove('hidden');
+
+    if (jugadores.length === 0) {
+        container.innerHTML = `<div class="col-span-full py-4 text-center text-sm text-gray-400 font-medium">No hay jugadores registrados oficialmente en este equipo.</div>`;
+        return;
+    }
+
+    let html = '';
+    jugadores.forEach(jugador => {
+        html += `
+            <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-2xs flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xs">
+                    <i class="fas fa-user text-xs"></i>
+                </div>
+                <div class="truncate">
+                    <p class="text-xs font-bold text-gray-800 truncate leading-snug">${jugador.nombre}</p>
+                    <p class="text-[10px] font-semibold text-gray-400 tracking-wide uppercase mt-0.5">Lista Oficial</p>
+                </div>
             </div>
         `;
-        
-        container.innerHTML += tarjeta;
-    });
+    }); // <-- Acá se cerraba correctamente el bucle de jugadores
+
+    container.innerHTML = html;
 }
 
 // =============================================================================
-// PATRÓN REPOSITORY/SERVICE: Validación y Estado de Equipos
+// 5. INICIALIZADOR DE EVENTOS DOM (Ciclo de vida al cargar la página)
 // =============================================================================
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("🚀 Estructura básica de UI lista.");
 
-/**
- * Servicio encargado de aplicar las reglas de negocio de la liga
- */
-const LigaService = {
-    /**
-     * Valida si un equipo cumple con los requisitos mínimos para competir
-     * @param {string} equipoId 
-     * @param {Array} listaJugadores 
-     * @returns {Object} { valido: boolean, cantidad: number }
-     */
-    validarRequisitosEquipo(equipoId, listaJugadores) {
-        const jugadoresDelEquipo = listaJugadores.filter(j => j.equipo_id === equipoId);
-        const cantidad = jugadoresDelEquipo.length;
-
-        return {
-            valido: cantidad >= 2, // Mínimo 2 jugadores reglamentarios
-            cantidad: cantidad
-        };
+    const inputBusqueda = document.getElementById('input-busqueda-equipos');
+    if (inputBusqueda) {
+        inputBusqueda.addEventListener('input', (e) => {
+            APP_STATE.filtroTextoEquipos = e.target.value;
+            if (APP_STATE.currentTab === 'equipos') {
+                renderEquipos();
+            }
+        });
     }
-};
+
+    // DISPARO INICIAL: Conectar y descargar información limpia de la BD
+    cargarDatosDesdeSupabase();
+});
