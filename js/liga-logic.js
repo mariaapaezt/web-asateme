@@ -181,7 +181,6 @@ async function cargarDatosDesdeSupabase() {
 
         let listaEquipos = resEquipos.data || [];
 
-        // Reemplazá el bloque donde se armaba EQUIPOS_MAP por este:
         EQUIPOS_MAP = {};
         listaEquipos.forEach(e => {
             EQUIPOS_MAP[String(e.id)] = {
@@ -197,6 +196,7 @@ async function cargarDatosDesdeSupabase() {
             e.pp = 0;
             e.pts = 0;
         });
+
         // 🧠 PROCESAMIENTO LOGIC: Recorremos los partidos finalizados para calcular la tabla real
         FIXTURE_DATA.forEach(partido => {
             if (partido.estado && partido.estado.toLowerCase() === 'finalizado') {
@@ -207,36 +207,59 @@ async function cargarDatosDesdeSupabase() {
                 const eqVisitante = listaEquipos.find(e => String(e.id) === visId);
 
                 if (eqLocal && eqVisitante) {
-                    const scoreLoc = Number(partido.score_local || 0);
-                    const scoreVis = Number(partido.score_visitante || 0);
 
-                    // 1. Sumar partidos individuales ganados y perdidos
-                    eqLocal.pg += scoreLoc;
-                    eqLocal.pp += scoreVis;
-                    eqVisitante.pg += scoreVis;
-                    eqVisitante.pp += scoreLoc;
-
-                    // 2. Sumar serie jugada
+                    // 1. Sumar serie jugada/computada a ambos para el historial
                     eqLocal.sj += 1;
                     eqVisitante.sj += 1;
 
-                    // 3. Determinar quién ganó la serie (Criterio estándar: 3 pts al ganador, 1 al perdedor)
-                    if (scoreLoc > scoreVis) {
-                        eqLocal.sg += 1;
-                        eqLocal.pts += 3; // Ganador de la serie
+                    // 🛠️ DETECTOR ULTRA ESTRICTO DE WALKOVER (WO)
+                    // Forzamos a leer de manera limpia la columna walkover de Supabase
+                    const quienFalto = partido.walkover ? String(partido.walkover).toUpperCase().trim() : null;
 
-                        eqVisitante.sp += 1;
-                        eqVisitante.pts += 1; // Perdedor de la serie suma 1 por presentarse (o adaptalo a tu reglamento)
-                    } else if (scoreVis > scoreLoc) {
-                        eqVisitante.sg += 1;
-                        eqVisitante.pts += 3;
-
+                    if (quienFalto === 'LOCAL') {
+                        // El local NO se presentó (WO)
                         eqLocal.sp += 1;
-                        eqLocal.pts += 1;
-                    } else {
-                        // Empate (si el reglamento de tu liga lo permite)
-                        eqLocal.pts += 2;
-                        eqVisitante.pts += 2;
+                        eqLocal.pts += 0;     // 👈 Penalizado con CERO puntos
+
+                        eqVisitante.sg += 1;
+                        eqVisitante.pts += 3;  // 👈 GANADOR ASEGURA SUS 3 PUNTOS
+                    }
+                    else if (quienFalto === 'VISITANTE') {
+                        // El visitante NO se presentó (WO)
+                        eqVisitante.sp += 1;
+                        eqVisitante.pts += 0;  // 👈 Penalizado con CERO puntos
+
+                        eqLocal.sg += 1;
+                        eqLocal.pts += 3;      // 👈 GANADOR ASEGURA SUS 3 PUNTOS
+                    }
+                    else {
+                        // --- LÓGICA REGLAMENTARIA NORMAL (Si se jugó en la mesa) ---
+                        const scoreLoc = Number(partido.score_local || 0);
+                        const scoreVis = Number(partido.score_visitante || 0);
+
+                        // Sumar sets/partidos individuales solo si se jugó
+                        eqLocal.pg += scoreLoc;
+                        eqLocal.pp += scoreVis;
+                        eqVisitante.pg += scoreVis;
+                        eqVisitante.pp += scoreLoc;
+
+                        if (scoreLoc > scoreVis) {
+                            eqLocal.sg += 1;
+                            eqLocal.pts += 3; // Ganador de la serie
+
+                            eqVisitante.sp += 1;
+                            eqVisitante.pts += 1; // Perdedor por jugar suma 1
+                        } else if (scoreVis > scoreLoc) {
+                            eqVisitante.sg += 1;
+                            eqVisitante.pts += 3; // Ganador de la serie
+
+                            eqLocal.sp += 1;
+                            eqLocal.pts += 1; // Perdedor por jugar suma 1
+                        } else {
+                            // Empate reglamentario
+                            eqLocal.pts += 2;
+                            eqVisitante.pts += 2;
+                        }
                     }
                 }
             }
