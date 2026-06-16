@@ -195,6 +195,7 @@ async function cargarDatosDesdeSupabase() {
             e.pp = 0;
             e.pts = 0;
         });
+
         // 🧠 PROCESAMIENTO LOGIC: Recorremos los partidos finalizados para calcular la tabla real
         FIXTURE_DATA.forEach(partido => {
             if (partido.estado && partido.estado.toLowerCase() === 'finalizado') {
