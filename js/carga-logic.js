@@ -34,9 +34,11 @@ async function inicializarPantallaCarga() {
     }
 
     try {
-        const [resPartidos, resEquipos] = await Promise.all([
+        // Traemos las tres tablas en paralelo para que resJugadores exista
+        const [resPartidos, resEquipos, resJugadores] = await Promise.all([
             window.supabase.from('fixture').select('*'),
-            window.supabase.from('equipos').select('*')
+            window.supabase.from('equipos').select('*'),
+            window.supabase.from('jugadores').select('*')
         ]);
 
         if (resPartidos.error) {
@@ -48,7 +50,7 @@ async function inicializarPantallaCarga() {
             return;
         }
         if (resJugadores.error) {
-            console.error("❌ Error en tabla 'jugadores':", resJugadores.error);
+            console.error("❌ Error en tabla 'jugadores':", resJugadores.error.message);
             return;
         }
 
@@ -103,7 +105,7 @@ function actualizarDesplegablePartidos() {
         return matchesLiga && matchesFecha;
     });
 
-g    selectPartido.innerHTML = '<option value="">-- Seleccioná la serie en juego --</option>';
+        selectPartido.innerHTML = '<option value="">-- Seleccioná la serie en juego --</option>';
 
     if (partidosFiltrados.length === 0) {
         selectPartido.innerHTML = '<option value="">No hay partidos agendados para este filtro.</option>';
