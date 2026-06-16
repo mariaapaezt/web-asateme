@@ -1,6 +1,7 @@
 // ==========================================
 // 1. ESTADO CENTRAL DE LA PÁGINA DE CARGA
 // ==========================================
+
 let PARTIDOS_BACKUP = [];
 let EQUIPOS_MAPA = {};
 let JUGADORES_LOCALES = [];
