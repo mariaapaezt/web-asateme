@@ -465,7 +465,7 @@ function renderFixture() {
 
     let html = '';
     partidosFiltrados.forEach(partido => {
-        // CRUCE RELACIONAL: Extraemos los datos completos del mapa (nombre y logo vacío si falla)
+        // CRUCE RELACIONAL: Extraemos los datos completos del mapa
         const datosLocal = EQUIPOS_MAP[String(partido.local_id)] || { nombre: `Equipo (${partido.local_id})`, logo: '' };
         const datosVisitante = EQUIPOS_MAP[String(partido.visitante_id)] || { nombre: `Equipo (${partido.visitante_id})`, logo: '' };
         const nombreL = datosLocal.nombre;
@@ -486,47 +486,90 @@ function renderFixture() {
         const esFinalizado = (partido.estado && partido.estado.toLowerCase() === 'finalizado');
 
         let estadoBadge = `<span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">${partido.estado || 'Pendiente'}</span>`;
+
+        // Inicializamos las estrellas/trofeos vacíos
+        let trofeoLocal = '';
+        let trofeoVisitante = '';
+        let botonDesplegableHTML = '';
+        let contenedorDetalleHTML = '';
+
         if (esFinalizado) {
             estadoBadge = `<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">Finalizado</span>`;
+
+            // Determinamos el ganador de la serie para poner el detalle visual impactante
+            const scoreL = Number(partido.score_local || 0);
+            const scoreV = Number(partido.score_visitante || 0);
+            if (scoreL > scoreV) {
+                trofeoLocal = `<i class="fas fa-trophy text-xs text-amber-500 mr-1 animate-pulse" title="Ganador de la serie"></i>`;
+            } else if (scoreV > scoreL) {
+                trofeoVisitante = `<i class="fas fa-trophy text-xs text-amber-500 ml-1 animate-pulse" title="Ganador de la serie"></i>`;
+            }
+
+            // Agregamos el botón prolijo abajo de la tarjeta
+            botonDesplegableHTML = `
+                <div class="border-t border-gray-100 mt-4 pt-2 flex justify-center">
+                    <button onclick="toggleDetallePartido('${partido.id}')" 
+                            class="text-[11px] font-bold text-asatemeBlue hover:text-asatemeRed transition flex items-center gap-1 focus:outline-none py-1 px-3 rounded-md hover:bg-gray-50">
+                        <i id="icono-detalle-${partido.id}" class="fas fa-chevron-down transition-transform duration-200"></i> 
+                        <span>Ver resultados</span>
+                    </button>
+                </div>
+            `;
+
+            // Dejamos el contenedor listo (y oculto con hidden) para inyectar los sets en el siguiente paso
+            contenedorDetalleHTML = `
+                <div id="contenedor-detalle-${partido.id}" class="hidden border-t border-gray-150 bg-gray-50/60 rounded-b-xl p-3 mt-2 space-y-2">
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
+                        <i class="fas fa-clipboard-list"></i> Detalle de la planilla
+                    </div>
+                    <div id="planilla-rows-${partido.id}" class="space-y-2">
+                        <p class="text-xs text-gray-400 italic">Cargando detalles...</p>
+                    </div>
+                </div>
+            `;
         }
 
         html += `
             <div class="bg-white rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-all p-4 flex flex-col justify-between">
-                <div class="flex justify-between items-center border-b border-gray-100 pb-2 mb-3">
-                    <span class="text-xs font-semibold text-gray-400 flex items-center gap-1.5">
-                        <i class="far fa-clock"></i> ${partido.fecha_txt || 'Serie Oficial'}
-                    </span>
-                    ${estadoBadge}
-                </div>
-                
-                <div class="grid grid-cols-7 items-center text-sm gap-2">
-                    <div class="col-span-3 flex items-center justify-end gap-2 font-bold text-gray-800 tracking-tight truncate">
-                        <span class="truncate">${nombreL}</span>
-                        <div class="w-6 h-6 min-w-6 rounded-full overflow-hidden border bg-white flex items-center justify-center p-0.5 shadow-3xs">
-                            ${imgLocalHTML}
-                        </div>
+                <div>
+                    <div class="flex justify-between items-center border-b border-gray-100 pb-2 mb-3">
+                        <span class="text-xs font-semibold text-gray-400 flex items-center gap-1.5">
+                            <i class="far fa-clock"></i> ${partido.fecha_txt || 'Serie Oficial'}
+                        </span>
+                        ${estadoBadge}
                     </div>
                     
-                    <div class="col-span-1 flex justify-center items-center gap-1 font-black text-base text-gray-900 bg-gray-50 py-1 px-2 rounded-lg border">
-                        <span>${esFinalizado ? (partido.score_local ?? 0) : '-'}</span>
-                        <span class="text-xs text-gray-300 font-normal">:</span>
-                        <span>${esFinalizado ? (partido.score_visitante ?? 0) : '-'}</span>
-                    </div>
-                    
-                    <div class="col-span-3 flex items-center justify-start gap-2 font-bold text-gray-800 tracking-tight truncate">
-                        <div class="w-6 h-6 min-w-6 rounded-full overflow-hidden border bg-white flex items-center justify-center p-0.5 shadow-3xs">
-                            ${imgVisHTML}
+                    <div class="grid grid-cols-7 items-center text-sm gap-2">
+                        <div class="col-span-3 flex items-center justify-end gap-2 font-bold text-gray-800 tracking-tight truncate">
+                            <span class="truncate">${trofeoLocal}${nombreL}</span>
+                            <div class="w-6 h-6 min-w-6 rounded-full overflow-hidden border bg-white flex items-center justify-center p-0.5 shadow-3xs">
+                                ${imgLocalHTML}
+                            </div>
                         </div>
-                        <span class="truncate">${nombreV}</span>
+                        
+                        <div class="col-span-1 flex justify-center items-center gap-1 font-black text-base text-gray-900 bg-gray-50 py-1 px-2 rounded-lg border">
+                            <span>${esFinalizado ? (partido.score_local ?? 0) : '-'}</span>
+                            <span class="text-xs text-gray-300 font-normal">:</span>
+                            <span>${esFinalizado ? (partido.score_visitante ?? 0) : '-'}</span>
+                        </div>
+                        
+                        <div class="col-span-3 flex items-center justify-start gap-2 font-bold text-gray-800 tracking-tight truncate">
+                            <div class="w-6 h-6 min-w-6 rounded-full overflow-hidden border bg-white flex items-center justify-center p-0.5 shadow-3xs">
+                                ${imgVisHTML}
+                            </div>
+                            <span class="truncate">${nombreV}${trofeoVisitante}</span>
+                        </div>
                     </div>
                 </div>
+
+                ${botonDesplegableHTML}
+                ${contenedorDetalleHTML}
             </div>
         `;
     });
 
     container.innerHTML = html;
 }
-
 /**
  * Dibuja los Equipos validando que cuenten con mínimo 2 jugadores vinculados por 'equipo_id'
  */
@@ -649,6 +692,153 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // Variable global en tu archivo de estados para cachear los detalles ya descargados
+    if (typeof FIXTURE_DETALLES_CACHE === 'undefined') {
+        var FIXTURE_DETALLES_CACHE = {};
+    }
+
+    /**
+     * Alterna la visibilidad del detalle de la serie y descarga los sets bajo demanda si es necesario
+     */
+    async function toggleDetallePartido(partidoId) {
+        const contenedor = document.getElementById(`contenedor-detalle-${partidoId}`);
+        const icono = document.getElementById(`icono-detalle-${partidoId}`);
+        const contenedorPlanilla = document.getElementById(`planilla-rows-${partidoId}`);
+
+        if (!contenedor || !contenedorPlanilla) return;
+
+        const esOculto = contenedor.classList.contains('hidden');
+
+        if (esOculto) {
+            // 1. Abrimos el contenedor visual e invertimos el chevron
+            contenedor.classList.remove('hidden');
+            if (icono) icono.classList.add('rotate-180');
+
+            // 2. ¿Ya descargamos estos detalles antes? (Uso de Caché)
+            let detalles = FIXTURE_DETALLES_CACHE[partidoId];
+
+            if (!detalles) {
+                try {
+                    contenedorPlanilla.innerHTML = `
+                    <div class="text-center py-2 text-xs text-gray-400 flex items-center justify-center gap-2">
+                        <i class="fas fa-spinner animate-spin text-asatemeBlue"></i> Cargando partidos de la planilla...
+                    </div>
+                `;
+
+                    // 3. Consulta asíncrona y quirúrgica a Supabase por la FK 'partido_id'
+                    const { data, error } = await supabase
+                        .from('fixture_detalles')
+                        .select('*')
+                        .eq('partido_id', Number(partidoId))
+                        .order('orden', { ascending: true });
+
+                    if (error) throw error;
+
+                    detalles = data || [];
+                    // Guardamos en memoria para futuras aperturas
+                    FIXTURE_DETALLES_CACHE[partidoId] = detalles;
+
+                } catch (err) {
+                    console.error("❌ Error al traer detalles de la planilla:", err.message);
+                    contenedorPlanilla.innerHTML = `
+                    <div class="text-center py-2 text-xs text-red-500 font-semibold">
+                        <i class="fas fa-exclamation-triangle mr-1"></i> No se pudo cargar la planilla.
+                    </div>
+                `;
+                    return;
+                }
+            }
+
+            // 4. Si no hay registros cargados aún en esa planilla
+            if (detalles.length === 0) {
+                contenedorPlanilla.innerHTML = `
+                <p class="text-xs text-gray-400 italic py-2 text-center bg-white border border-dashed rounded-lg">
+                    Partido ganado por W.O.
+                </p>
+            `;
+                return;
+            }
+
+            // 5. Construcción dinámica del HTML (Apalancado en tu esquema de base de datos)
+            let htmlPlanilla = '';
+
+            detalles.forEach(d => {
+                // Resolución de nombres usando tu array global JUGADORES_DATA cargado al inicio
+                const nomLocal1 = obtenerNombreJugador(d.local_jugador1_id);
+                const nomLocal2 = d.local_jugador2_id ? ` / ${obtenerNombreJugador(d.local_jugador2_id)}` : '';
+                const parejaLocal = `${nomLocal1}${nomLocal2}`;
+
+                const nomVis1 = obtenerNombreJugador(d.visitante_jugador1_id);
+                const nomVis2 = d.visitante_jugador2_id ? ` / ${obtenerNombreJugador(d.visitante_jugador2_id)}` : '';
+                const parejaVisitante = `${nomVis1}${nomVis2}`;
+
+                // Arrays nativos de puntos por set traídos desde PostgreSQL
+                const arrSetsLocal = d.sets_local || [];
+                const arrSetsVisitante = d.sets_visitante || [];
+
+                const ganoLocal = Number(d.score_sets_local || 0) > Number(d.score_sets_visitante || 0);
+
+                // Mapeamos los sets en paralelo de manera limpia
+                let setsHTML = '';
+                arrSetsLocal.forEach((puntosL, idx) => {
+                    const puntosV = arrSetsVisitante[idx] ?? 0;
+                    setsHTML += `
+                    <div class="text-center min-w-[24px] bg-gray-50 rounded px-1 py-0.5 border border-gray-100">
+                        <div class="text-[8px] text-gray-400 font-bold">S${idx + 1}</div>
+                        <div class="text-[11px] ${Number(puntosL) > Number(puntosV) ? 'font-black text-gray-950' : 'text-gray-400 font-medium'}">${puntosL}</div>
+                        <div class="text-[11px] ${Number(puntosV) > Number(puntosL) ? 'font-black text-gray-950' : 'text-gray-400 font-medium'}">${puntosV}</div>
+                    </div>
+                `;
+                });
+
+                htmlPlanilla += `
+                <div class="bg-white p-2.5 rounded-lg border border-gray-150 shadow-3xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="text-xs min-w-0 flex-1">
+                        <div class="font-bold text-gray-400 text-[9px] uppercase tracking-wider mb-0.5">${d.modalidad || 'Partido'}</div>
+                        <div class="truncate ${ganoLocal ? 'font-bold text-gray-900' : 'text-gray-500'}">
+                            <span class="inline-block w-1.5 h-1.5 rounded-full ${ganoLocal ? 'bg-green-500' : 'bg-transparent'} mr-1.5"></span>
+                            ${parejaLocal}
+                        </div>
+                        <div class="truncate ${!ganoLocal ? 'font-bold text-gray-900' : 'text-gray-500'} mt-0.5">
+                            <span class="inline-block w-1.5 h-1.5 rounded-full ${!ganoLocal ? 'bg-green-500' : 'bg-transparent'} mr-1.5"></span>
+                            ${parejaVisitante}
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 justify-end shrink-0">
+                        <div class="flex gap-1">
+                            ${setsHTML || '<span class="text-[10px] text-gray-400 italic">Sin sets</span>'}
+                        </div>
+
+                        <div class="ml-1 px-2 py-1.5 bg-asatemeBlue/5 text-asatemeBlue rounded font-black text-xs min-w-[38px] text-center border border-asatemeBlue/10">
+                            ${d.score_sets_local ?? 0} - ${d.score_sets_visitante ?? 0}
+                        </div>
+                    </div>
+                </div>
+            `;
+            });
+
+            contenedorPlanilla.innerHTML = htmlPlanilla;
+
+        } else {
+            // Cierre prolijo del panel si se vuelve a presionar el botón
+            contenedor.classList.add('hidden');
+            if (icono) icono.classList.remove('rotate-180');
+        }
+    }
+
+    /**
+     * Helper para resolver los nombres de los jugadores basándose en el JUGADORES_DATA global
+     */
+    function obtenerNombreJugador(jugadorId) {
+        if (!jugadorId) return 'W.O. / Sin asignar';
+        const jugador = JUGADORES_DATA.find(j => Number(j.id) === Number(jugadorId));
+        return jugador ? jugador.nombre : `Jugador (${jugadorId})`;
+    }
+
+    // Hacemos que la función sea visible para el HTML sin importar el módulo o el scope
+    window.toggleDetallePartido = toggleDetallePartido;
 
     // DISPARO INICIAL: Conectar y descargar información limpia de la BD
     cargarDatosDesdeSupabase();
