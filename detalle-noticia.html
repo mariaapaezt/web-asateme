@@ -143,12 +143,35 @@
                                 </div>`;
                         }
                     });
-
-                    // Imagen pie de página: Solo se crea el DOM si la imagen es válida
-                    if (noticia.imagenPortada && noticia.imagenPortada.length > 5) {
+                    
+                    // 3. Lógica inteligente para mostrar 1 imagen grande o una galería
+                    if (noticia.galeria && Array.isArray(noticia.galeria) && noticia.galeria.length > 0) {
                         const divFooter = document.createElement('div');
-                        divFooter.className = "mt-12 pt-8 border-t";
-                        divFooter.innerHTML = `<img src="${noticia.imagenPortada}" class="w-full rounded-2xl shadow-lg border">`;
+                        divFooter.className = "mt-12 pt-8 border-t border-gray-200";
+
+                        if (noticia.galeria.length === 1) {
+                            // --- CASO 1: UNA SOLA IMAGEN (Grande) ---
+                            divFooter.innerHTML = `
+            <div class="w-full">
+                <img src="${noticia.galeria[0]}" class="w-full rounded-2xl shadow-lg border border-gray-200 object-cover">
+            </div>
+        `;
+                        } else {
+                            // --- CASO 2: VARIAS IMÁGENES (Galería en Grid) ---
+                            divFooter.innerHTML = `<h3 class="text-lg font-bold text-asatemeBlue mb-4">Galería de imágenes</h3>`;
+                            const grid = document.createElement('div');
+                            grid.className = "grid grid-cols-2 md:grid-cols-3 gap-4";
+
+                            noticia.galeria.forEach(imgUrl => {
+                                grid.innerHTML += `
+                <div class="aspect-square bg-gray-100 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                    <img src="${imgUrl}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                </div>
+            `;
+                            });
+                            divFooter.appendChild(grid);
+                        }
+
                         contenedor.appendChild(divFooter);
                     }
                 });

@@ -7,7 +7,6 @@ let EQUIPOS_MAPA = {};
 let JUGADORES_LOCALES = [];
 let JUGADORES_VISITANTES = [];
 
-
 let FILTROS_CARGA = {
     liga: 'LIGA_A',
     fechaNum: 1,
@@ -724,6 +723,7 @@ function conectarEventosFormulario() {
     } else {
         console.warn("⚠️ [UI Sync] No se pudo conectar el ojito. Verificá los IDs/clases del input de PIN.");
     }
+    // ==========================================
 
     const formEnvio = document.getElementById('form-envio-planilla');
     if (formEnvio) {

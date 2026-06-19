@@ -45,7 +45,7 @@
             </div>
             <!-- MENÚ COMPUTADORAS: Agregado al lado de Calendario -->
             <div class="hidden lg:flex space-x-6 font-semibold text-sm items-center">
-                <a href="#noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
+                <a href="#mas-noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
                 <a href="#destacados" class="hover:text-asatemeRed transition duration-300">Destacados</a>
                 <a href="#ranking" class="hover:text-asatemeRed transition duration-300">Ranking</a>
                 <a href="#calendario" class="hover:text-asatemeRed transition duration-300">Calendario</a>
@@ -74,13 +74,12 @@
         <!-- MENÚ CELULARES: También integrado aquí abajo de forma ordenada -->
         <div id="mobile-menu"
             class="hidden lg:hidden bg-asatemeBlue border-t border-blue-900 px-4 py-4 space-y-3 font-semibold text-sm">
-            <a href="#noticias" class="block hover:text-asatemeRed">Noticias</a>
+            <a href="#mas-noticias" class="block hover:text-asatemeRed">Noticias</a>
             <a href="#destacados" class="block hover:text-asatemeRed">Destacados</a>
             <a href="#ranking" class="block hover:text-asatemeRed">Ranking</a>
             <a href="#calendario" class="block hover:text-asatemeRed">Calendario</a>
-            <a href="liga-equipos.html" class="block text-amber-400 hover:text-asatemeRed font-bold"><i
-                    class="fas fa-trophy mr-1"></i> Liga de Equipos</a>
-            <a href="#eventos" class="block hover:text-asatemeRed">Eventos</a>
+            <!--<a href="liga-equipos.html" class="block text-amber-400 hover:text-asatemeRed font-bold"><i
+                    class="fas fa-trophy mr-1"></i> Liga de Equipos</a>-->
         </div>
     </nav>
 
@@ -185,6 +184,8 @@
                 </div>
             </div>
         </section>
+
+
         <!-- SECCIÓN: RANKING DINÁMICO -->
         <section id="ranking" class="py-16 bg-gray-50 border-y border-gray-200">
             <div class="container mx-auto px-4 md:px-6">
@@ -284,7 +285,16 @@
                 </div>
             </div>
         </section>
-
+        <!-- SECCIÓN: LISTADO DE MÁS NOTICIAS -->
+        <section id="mas-noticias" class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4 md:px-6">
+                <h2 class="text-3xl font-bold text-asatemeBlue mb-8">Más Novedades</h2>
+                <div id="lista-noticias-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Aquí el JS inyectará las noticias que NO están en el carrusel -->
+                </div>
+            </div>
+        </section>
+        
         <section id="calendario" class="py-16 bg-white">
             <div class="container mx-auto px-4 md:px-6">
                 <div class="text-center mb-12">
@@ -293,19 +303,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                    <div
-                        class="bg-white rounded-xl shadow-lg border-l-4 border-green-500 overflow-hidden card-hover border border-gray-100">
-                        <div class="p-6">
-                            <div class="flex justify-between items-center mb-4">
-                                <span
-                                    class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase">Abierta</span>
-                                <span class="text-gray-500 font-bold text-sm">Próximamente</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">Torneo Provicial Asateme</h3>
-                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Complejo
-                                deportivo Emilio Lotuff</p>
-                        </div>
-                    </div>
+                
                     <div
                         class="bg-white rounded-xl shadow-lg border-l-4 border-asatemeBlue overflow-hidden card-hover border border-gray-100">
                         <div class="p-6">
@@ -315,6 +313,7 @@
                                 <span class="text-gray-500 font-bold text-sm">Calendario Anual</span>
                             </div>
                             <h3 class="text-xl font-bold text-gray-800 mb-2">Campeonato Nacional Argentino</h3>
+                            <h4 class="text-gray-600">22 al 26 de Julio</h4>
                             <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Buenos
                                 Aires</p>
                         </div>
@@ -367,13 +366,16 @@
     </footer>
 
     <!-- MOTOR DEL CARRUSEL DINÁMICO DE NOTICIAS -->
+    <!-- MOTOR DEL CARRUSEL DINÁMICO DE NOTICIAS + GRILLA DE NOVEDADES -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", async function () {
             const container = document.getElementById('carousel-container');
             const indicatorsContainer = document.getElementById('carousel-indicators');
             const spinner = document.getElementById('carousel-spinner');
+            const gridContainer = document.getElementById('lista-noticias-grid');
 
-            let noticiasDestacadas = [];
+            let noticiasCarrusel = [];
+            let noticiasRestantes = [];
             let currentSlide = 0;
             let carouselInterval;
 
@@ -381,139 +383,140 @@
             fetch('data/noticias.json')
                 .then(response => response.json())
                 .then(data => {
-                    // Tomamos un máximo de 4 noticias para el carrusel principal
-                    noticiasDestacadas = data.slice(0, 4);
+                    if (!data || data.length === 0) throw new Error("No hay noticias cargadas.");
 
-                    if (noticiasDestacadas.length === 0) return;
+                    // 🌟 Segmentamos: Las primeras 4 van al Carrusel, las demás a la sección inferior
+                    const limiteCarrusel = 4;
+                    noticiasCarrusel = data.slice(0, limiteCarrusel);
+                    noticiasRestantes = data.slice(limiteCarrusel);
 
-                    // Limpiar cargador
-                    container.innerHTML = "";
-                    indicatorsContainer.innerHTML = "";
+                    // Inicializar ambos componentes de forma independiente
+                    initCarousel();
+                    renderNoticiasSecundarias();
+                })
+                .catch(err => {
+                    console.error("Error al cargar las novedades de la liga:", err);
+                    if (spinner) spinner.innerHTML = "<p class='text-red-400 font-semibold p-4'>Error al sincronizar las novedades</p>";
+                    if (gridContainer) gridContainer.innerHTML = "<p class='text-gray-500 text-sm col-span-full text-center py-6'>No se pudieron cargar las noticias secundarias.</p>";
+                });
 
-                    // 2. Construir los slides dinámicamente
-                    noticiasDestacadas.forEach((noticia, index) => {
-                        // Crear Elemento Slide
-                        const slide = document.createElement('div');
-                        slide.className = `absolute inset-0 w-full h-full flex items-center transition-all duration-700 ease-in-out transform ${index === 0 ? 'opacity-100 scale-100 z-10 pointer-events-auto' : 'opacity-0 scale-95 z-0 pointer-events-none'
-                            }`;
-                        slide.setAttribute('data-slide-index', index);
+            // 2. Inicialización y Render del Carrusel Principal
+            function initCarousel() {
+                container.innerHTML = "";
+                indicatorsContainer.innerHTML = "";
 
-                        // Configurar el fondo (Si no tiene imagen, se queda el azul corporativo limpio)
-                        let fondoHTML = `<div class="absolute inset-0 bg-gradient-to-r from-asatemeBlue via-asatemeBlue/95 to-transparent z-[1]"></div>`;
-                        if (noticia.imagenPortada && noticia.imagenPortada.trim() !== "") {
-                            fondoHTML = `
-                                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('${noticia.imagenPortada}')"></div>
-                                <div class="absolute inset-0 bg-gradient-to-r from-asatemeBlue via-asatemeBlue/90 to-transparent z-[1]"></div>
-                            `;
-                        }
-
-                        // Estructura interna del slide (idéntica a tu diseño original)
-                        slide.innerHTML = `
-                            ${fondoHTML}
-                            <div class="container mx-auto px-4 md:px-6 relative z-10">
-                                <div class="max-w-3xl">
-                                    <span class="bg-asatemeRed text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4 inline-block">
-                                        <i class="fas fa-bullhorn mr-1"></i> Última Hora
-                                    </span>
-                                    <h2 class="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight text-white drop-shadow-sm">
-                                        ${noticia.titulo}
-                                    </h2>
-                                    <p class="text-base md:text-lg text-gray-200 mb-8 max-w-2xl">
-                                        ${noticia.resumen || ""}
-                                    </p>
-                                    <div class="flex flex-wrap gap-4">
-                                        <a href="detalle-noticia.html?id=${noticia.id}"
-                                            class="bg-white text-asatemeBlue font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-asatemeRed hover:text-white transition duration-300 inline-block text-center text-sm md:text-base">
-                                            Leer Noticia Completa
-                                        </a>
-                                    </div>
+                noticiasCarrusel.forEach((noticia, i) => {
+                    // Crear Slide con diseño adaptivo y optimizado
+                    const slide = document.createElement('div');
+                    slide.className = `absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${i === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`;
+                    slide.innerHTML = `
+                            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('${noticia.imagenPortada}')"></div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-asatemeBlue/95 via-asatemeBlue/70 to-transparent"></div>
+                            <div class="container mx-auto px-6 h-full flex items-center relative z-10">
+                                <div class="max-w-2xl text-white">
+                                    <span class="bg-asatemeRed text-white text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded mb-4 inline-block">Destacado</span>
+                                    <h2 class="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight drop-shadow-md">${noticia.titulo}</h2>
+                                    <p class="mb-6 text-gray-200 text-sm md:text-base max-w-xl line-clamp-3">${noticia.resumen || ''}</p>
+                                    <a href="detalle-noticia.html?id=${noticia.id}" class="inline-block bg-asatemeRed hover:bg-red-700 px-8 py-3 rounded-lg font-bold tracking-wide transition transform hover:-translate-y-0.5 shadow-lg">Leer más</a>
                                 </div>
                             </div>
                         `;
-                        container.appendChild(slide);
+                    container.appendChild(slide);
 
-                        // Crear Puntito Indicador de abajo
-                        const dot = document.createElement('button');
-                        dot.className = `w-3 h-3 rounded-full transition-all duration-300 ${index === 0 ? 'bg-asatemeRed w-8' : 'bg-white/40 hover:bg-white/80'
-                            }`;
-                        dot.setAttribute('aria-label', `Ir al slide ${index + 1}`);
-                        dot.addEventListener('click', () => goToSlide(index));
-                        indicatorsContainer.appendChild(dot);
-                    });
-
-                    // 3. Encender el temporizador automático
-                    startAutoplay();
-                })
-                .catch(err => {
-                    console.error("Error cargando el carrusel:", err);
-                    if (spinner) spinner.innerHTML = "<p class='text-xs text-red-400'><i class='fas fa-times-circle mr-1'></i> No se pudieron cargar las noticias.</p>";
+                    // Crear Indicador Dinámico inferior
+                    const dot = document.createElement('button');
+                    dot.className = `h-2.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-asatemeRed w-8' : 'bg-white/40 w-2.5'}`;
+                    dot.setAttribute('aria-label', `Ir a noticia ${i + 1}`);
+                    dot.onclick = () => goToSlide(i);
+                    indicatorsContainer.appendChild(dot);
                 });
 
-            // Lógica de transición de slides
-            function updateCarouselDisplay() {
-                const slides = container.querySelectorAll('[data-slide-index]');
-                const dots = indicatorsContainer.children;
+                // Flechas de control nativas del HTML viejo
+                const prevBtn = document.getElementById('prev-slide');
+                const nextBtn = document.getElementById('next-slide');
 
-                slides.forEach((slide, idx) => {
-                    if (idx === currentSlide) {
-                        slide.classList.replace('opacity-0', 'opacity-100');
-                        slide.classList.replace('scale-95', 'scale-100');
-                        slide.classList.replace('pointer-events-none', 'pointer-events-auto');
-                        slide.className = slide.className.replace('z-0', 'z-10');
-                    } else {
-                        slide.classList.replace('opacity-100', 'opacity-0');
-                        slide.classList.replace('scale-100', 'scale-95');
-                        slide.classList.replace('pointer-events-auto', 'pointer-events-none');
-                        slide.className = slide.className.replace('z-10', 'z-0');
-                    }
-                });
+                if (prevBtn) prevBtn.onclick = () => goToSlide((currentSlide - 1 + noticiasCarrusel.length) % noticiasCarrusel.length);
+                if (nextBtn) nextBtn.onclick = () => goToSlide((currentSlide + 1) % noticiasCarrusel.length);
 
-                // Actualizar barras de abajo
-                Array.from(dots).forEach((dot, idx) => {
-                    if (idx === currentSlide) {
-                        dot.classList.replace('bg-white/40', 'bg-asatemeRed');
-                        dot.classList.add('w-8');
-                    } else {
-                        dot.classList.replace('bg-asatemeRed', 'bg-white/40');
-                        dot.classList.remove('w-8');
-                    }
+                startAutoplay();
+            }
+
+            // 3. Renderizado del listado de Más Novedades (Miniaturas en Grid)
+            function renderNoticiasSecundarias() {
+                if (!gridContainer) return;
+                gridContainer.innerHTML = "";
+
+                if (noticiasRestantes.length === 0) {
+                    gridContainer.innerHTML = `
+                            <div class="col-span-full text-center py-8 bg-white rounded-xl border border-gray-100 shadow-sm">
+                                <p class="text-gray-400 text-sm">Próximamente verás más novedades publicadas en esta sección.</p>
+                            </div>
+                        `;
+                    return;
+                }
+
+                noticiasRestantes.forEach(noticia => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col justify-between";
+                    card.innerHTML = `
+                            <div>
+                                <div class="h-48 bg-gray-200 relative overflow-hidden">
+                                    <img src="${noticia.imagenPortada}" alt="${noticia.titulo}" class="w-full h-full object-cover transition duration-500 hover:scale-105">
+                                </div>
+                                <div class="p-5">
+                                    <span class="text-asatemeRed font-bold text-xs uppercase tracking-wider block mb-1">Novedades</span>
+                                    <h3 class="text-lg font-bold text-gray-800 line-clamp-2 mb-2 hover:text-asatemeBlue transition">
+                                        <a href="detalle-noticia.html?id=${noticia.id}">${noticia.titulo}</a>
+                                    </h3>
+                                    <p class="text-gray-500 text-sm line-clamp-3">${noticia.resumen || ''}</p>
+                                </div>
+                            </div>
+                            <div class="px-5 pb-5 pt-2 border-t border-gray-50 flex justify-between items-center bg-gray-50/50">
+                                <span class="text-xs text-gray-400"><i class="far fa-calendar-alt mr-1"></i> Info Oficial</span>
+                                <a href="detalle-noticia.html?id=${noticia.id}" class="text-asatemeBlue hover:text-asatemeRed font-bold text-xs inline-flex items-center gap-1 transition">
+                                    Ver noticia <i class="fas fa-arrow-right text-[10px]"></i>
+                                </a>
+                            </div>
+                        `;
+                    gridContainer.appendChild(card);
                 });
             }
 
-            function nextSlide() {
-                currentSlide = (currentSlide + 1) % noticiasDestacadas.length;
-                updateCarouselDisplay();
-            }
-
-            function prevSlide() {
-                currentSlide = (currentSlide - 1 + noticiasDestacadas.length) % noticiasDestacadas.length;
-                updateCarouselDisplay();
-            }
-
+            // 4. Lógica de control del Carrusel
             function goToSlide(index) {
                 currentSlide = index;
-                updateCarouselDisplay();
+                const slides = container.children;
+
+                Array.from(slides).forEach((s, i) => {
+                    s.classList.toggle('opacity-100', i === index);
+                    s.classList.toggle('opacity-0', i !== index);
+                    s.classList.toggle('z-10', i === index);
+                    s.classList.toggle('z-0', i !== index);
+                });
+
+                const dots = indicatorsContainer.children;
+                Array.from(dots).forEach((d, i) => {
+                    d.classList.toggle('bg-asatemeRed', i === index);
+                    d.classList.toggle('w-8', i === index);
+                    d.classList.toggle('bg-white/40', i !== index);
+                    d.classList.toggle('w-2.5', i !== index);
+                });
+
                 resetAutoplay();
             }
 
             function startAutoplay() {
-                carouselInterval = setInterval(nextSlide, 5000); // 5 segundos
+                carouselInterval = setInterval(() => {
+                    if (noticiasCarrusel.length > 0) {
+                        goToSlide((currentSlide + 1) % noticiasCarrusel.length);
+                    }
+                }, 5500);
             }
 
             function resetAutoplay() {
                 clearInterval(carouselInterval);
                 startAutoplay();
             }
-
-            // Listeners de los botones flecha
-            document.getElementById('next-slide').addEventListener('click', () => {
-                nextSlide();
-                resetAutoplay();
-            });
-            document.getElementById('prev-slide').addEventListener('click', () => {
-                prevSlide();
-                resetAutoplay();
-            });
         });
     </script>
 
