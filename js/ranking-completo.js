@@ -1,150 +1,214 @@
-// CONFIGURACIÓN DE LA CONEXIÓN DIRECTA CON TU EXCEL
-const SHEET_ID = '1D8FRoqxEYdG--DHnOERb5cKEze9suOVOyhyhGBIAc-A'; // <--- Poné tu ID real acá
-const RECOPILACION_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Ranking`;
+// =========================================================================
+// ARCHIVO: js/ranking-completo.js
+// DESCRIPCIÓN: Módulo de Escalafón Completo conectado a Supabase mediante cliente global
+// =========================================================================
 
-let datosRankingGlobal = [];
-let categoriaActual = "PRIMERA"; // Por defecto al arrancar
-let textoBusqueda = "";          // Almacena lo que el usuario escribe en el buscador
+// -------------------------------------------------------------------------
+// 1. CAPA DE SERVICIOS (Usa la instancia 'supabase' de config.js)
+// -------------------------------------------------------------------------
+const RankingCompletoService = {
+    /**
+     * Obtiene de forma idéntica cuál es el periodo más reciente subido
+     */
+    async obtenerPeriodoMasReciente() {
+        try {
+            const { data, error } = await supabase
+                .from('ranking')
+                .select('periodo')
+                .order('created_at', { ascending: false })
+                .limit(1);
 
-// --- FUNCIÓN PARA OBTENER EL MES Y AÑO DINÁMICO EN ESPAÑOL ---
-function obtenerMesAnioActual() {
-    const meses = [
-        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
-        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-    ];
-    const fecha = new Date();
-    const nombreMes = meses[fecha.getMonth()];
-    const anio = fecha.getFullYear();
-    
-    return `${nombreMes} ${anio}`;
-}
+            if (error) throw error;
+            return data && data.length > 0 ? data[0].periodo : "Junio 2026";
+        } catch (error) {
+            return "Junio 2026";
+        }
+    },
 
-// Inicialización de la pantalla
+    /**
+     * Consume el ranking completo del periodo activo sin filtros de categoría
+     * @returns {Promise<Array>} Lista total de jugadores normalizada
+     */
+    async obtenerDatosCompletos() {
+        const periodoActivo = await this.obtenerPeriodoMasReciente();
+        RankingCompletoState.periodoDetectado = periodoActivo;
+
+        const { data, error } = await supabase
+            .from('ranking')
+            .select('categoria, posicion, jugador, club, puntos')
+            .eq('periodo', periodoActivo);
+
+        if (error) throw error;
+
+        return data.map(r => ({
+            categoria: r.categoria ? r.categoria.trim().toUpperCase() : '',
+            posicion: parseInt(r.posicion) || 0,
+            jugador: r.jugador || '',
+            club: r.club || '',
+            puntos: parseInt(r.puntos) || 0
+        }));
+    }
+};
+
+// -------------------------------------------------------------------------
+// 2. CAPA DE ESTADO CENTRAL (Filtros y Memoria Volátil)
+// -------------------------------------------------------------------------
+const RankingCompletoState = {
+    jugadoresGlobales: [],
+    categoriaActual: "PRIMERA",
+    textoBusqueda: "",
+    periodoDetectado: "",
+
+    obtenerPeriodoFormateado() {
+        return this.periodoDetectado || "Junio 2026";
+    },
+
+    obtenerDatosFiltrados() {
+        const criterioBusqueda = this.textoBusqueda.toLowerCase().trim();
+
+        let resultado = this.jugadoresGlobales.filter(j => {
+            const coincideCategoria = j.categoria === this.categoriaActual;
+            const coincideFiltroTexto = j.jugador.toLowerCase().includes(criterioBusqueda) ||
+                j.club.toLowerCase().includes(criterioBusqueda);
+
+            return coincideCategoria && coincideFiltroTexto;
+        });
+
+        return resultado.sort((a, b) => a.posicion - b.posicion);
+    }
+};
+
+// -------------------------------------------------------------------------
+// 3. CAPA DE INTERFAZ DE USUARIO (Renderizado Semántico)
+// -------------------------------------------------------------------------
+const RankingCompletoUI = {
+    elementos: {
+        tablaBody: () => document.getElementById('vista-ranking-body'),
+        tituloSeccion: () => document.getElementById('vista-ranking-titulo'),
+        subtituloMes: () => document.getElementById('vista-ranking-mes'),
+        inputBuscador: () => document.getElementById('buscador-jugador')
+    },
+
+    renderizar() {
+        const tbody = this.elementos.tablaBody();
+        if (!tbody) return;
+
+        const jugadores = RankingCompletoState.obtenerDatosFiltrados();
+
+        this.actualizarCabeceras();
+        this.actualizarTabsNavegacion();
+
+        if (jugadores.length === 0) {
+            const mensajeVacio = RankingCompletoState.textoBusqueda
+                ? 'No se encontraron jugadores ni clubes que coincidan con la búsqueda.'
+                : 'No hay jugadores registrados en esta categoría.';
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="px-6 py-12 text-center text-gray-500 font-medium">
+                        ${mensajeVacio}
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = jugadores.map(j => {
+            let clasePosicion = "text-gray-700 font-bold";
+            if (j.posicion === 1) clasePosicion = "text-yellow-500 font-extrabold text-lg";
+            if (j.posicion === 2) clasePosicion = "text-gray-400 font-extrabold text-lg";
+            if (j.posicion === 3) clasePosicion = "text-amber-600 font-extrabold text-lg";
+
+            return `
+                <tr class="hover:bg-gray-50/80 transition duration-150 border-b border-gray-100">
+                    <td class="px-6 py-4 text-center ${clasePosicion}">${j.posicion}º</td>
+                    <td class="px-6 py-4 font-semibold text-blue-900">${j.jugador}</td>
+                    <td class="px-6 py-4 text-gray-600 text-sm">${j.club}</td>
+                    <td class="px-6 py-4 text-right font-bold text-gray-900">${j.puntos}</td>
+                </tr>
+            `;
+        }).join('');
+    },
+
+    actualizarCabeceras() {
+        const titulo = this.elementos.tituloSeccion();
+        const subtitulo = this.elementos.subtituloMes();
+
+        if (titulo) {
+            const catBonita = RankingCompletoState.categoriaActual.charAt(0) + RankingCompletoState.categoriaActual.slice(1).toLowerCase();
+            titulo.innerHTML = `<i class="fas fa-trophy text-asatemeRed mr-2"></i> Ranking Completo — Categoría ${catBonita}`;
+        }
+
+        if (subtitulo) {
+            subtitulo.innerText = `Período Activo: ${RankingCompletoState.obtenerPeriodoFormateado()}`;
+        }
+    },
+
+    actualizarTabsNavegacion() {
+        const botonesTabs = document.querySelectorAll('#vista-category-selector button');
+        botonesTabs.forEach(btn => {
+            if (btn.id === `tab-${RankingCompletoState.categoriaActual}`) {
+                btn.className = "px-4 py-2 rounded-lg font-bold text-sm transition bg-asatemeBlue text-white shadow-md";
+            } else {
+                btn.className = "px-4 py-2 rounded-lg font-bold text-sm transition bg-white text-gray-600 hover:bg-gray-100 border border-gray-200";
+            }
+        });
+    },
+
+    mostrarErrorServidor() {
+        const tbody = this.elementos.tablaBody();
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="px-6 py-12 text-center text-red-500 font-bold">
+                        <i class="fas fa-exclamation-triangle mr-2"></i> Error al conectar con el servidor de cómputos. Reintente en unos instantes.
+                    </td>
+                </tr>
+            `;
+        }
+    }
+};
+
+// -------------------------------------------------------------------------
+// 4. CONTROLADOR DE EVENTOS E INICIALIZACIÓN DE ENTRADA
+// -------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
     const parametrosURL = new URLSearchParams(window.location.search);
-    const catUrl = parametrosURL.get('categoria');
-    if (catUrl) {
-        categoriaActual = catUrl.trim().toUpperCase();
+    const categoriaQuery = parametrosURL.get('categoria');
+    if (categoriaQuery) {
+        RankingCompletoState.categoriaActual = categoriaQuery.trim().toUpperCase();
     }
 
-    await cargarDatosDesdeSheets();
-});
+    const contenedorTabs = document.getElementById('vista-category-selector');
+    if (contenedorTabs) {
+        contenedorTabs.addEventListener('click', (e) => {
+            const botonPresionado = e.target.closest('button');
+            if (!botonPresionado) return;
 
-async function cargarDatosDesdeSheets() {
+            const nuevaCat = botonPresionado.id.replace('tab-', '');
+            RankingCompletoState.categoriaActual = nuevaCat;
+            RankingCompletoState.textoBusqueda = "";
+
+            const input = RankingCompletoUI.elementos.inputBuscador();
+            if (input) input.value = "";
+
+            RankingCompletoUI.renderizar();
+        });
+    }
+
+    const inputBusqueda = RankingCompletoUI.elementos.inputBuscador();
+    if (inputBusqueda) {
+        inputBusqueda.addEventListener('input', (e) => {
+            RankingCompletoState.textoBusqueda = e.target.value;
+            RankingCompletoUI.renderizar();
+        });
+    }
+
     try {
-        const respuesta = await fetch(RECOPILACION_URL);
-        const textoCrudo = await respuesta.text();
-        const textoJsonValido = textoCrudo.substring(textoCrudo.indexOf('{'), textoCrudo.lastIndexOf('}') + 1);
-        const datosParseados = JSON.parse(textoJsonValido);
-        const filas = datosParseados.table.rows;
-
-        // Mapeo adaptado a tu estructura real
-        datosRankingGlobal = filas.map(f => ({
-            categoria: f.c[0] ? f.c[0].v.trim().toUpperCase() : '',
-            posicion:  f.c[1] ? parseInt(f.c[1].v) : 0,
-            jugador:   f.c[2] ? f.c[2].v : '',
-            club:      f.c[3] ? f.c[3].v : '',
-            puntos:    f.c[4] ? parseInt(f.c[4].v) : 0
-        }));
-
-        renderizarTablaCompleta();
-
+        RankingCompletoState.jugadoresGlobales = await RankingCompletoService.obtenerDatosCompletos();
+        RankingCompletoUI.renderizar();
     } catch (error) {
-        console.error("Error al procesar el ranking completo:", error);
-        document.getElementById('vista-ranking-body').innerHTML = `
-            <tr>
-                <td colspan="4" class="px-6 py-12 text-center text-red-500 font-bold">
-                    <i class="fas fa-exclamation-triangle mr-2"></i> Error de conexión.
-                </td>
-            </tr>
-        `;
+        console.error("🚨 [ASATEME-SUPABASE]: Falla en carga de módulo Completo:", error);
+        RankingCompletoUI.mostrarErrorServidor();
     }
-}
-
-function renderizarTablaCompleta() {
-    const tablaBody = document.getElementById('vista-ranking-body');
-    const tituloSeccion = document.getElementById('vista-ranking-titulo');
-    const subtituloMes = document.getElementById('vista-ranking-mes');
-    if (!tablaBody) return;
-
-    // 1. FILTRADO MULTIPLE: Por categoría Y por el texto del buscador (ignorando mayúsculas/minúsculas)
-    let jugadoresFiltrados = datosRankingGlobal.filter(j => {
-        const coincideCategoria = j.categoria === categoriaActual;
-        const coincideNombre = j.jugador.toLowerCase().includes(textoBusqueda.toLowerCase());
-        return coincideCategoria && coincideNombre;
-    });
-
-    // Ordenamos por escalafón numérico
-    jugadoresFiltrados.sort((a, b) => a.posicion - b.posicion);
-
-    // Formateo visual del título
-    const nombreBonito = categoriaActual.charAt(0) + categoriaActual.slice(1).toLowerCase();
-
-    if (tituloSeccion) {
-        tituloSeccion.innerHTML = `<i class="fas fa-trophy text-asatemeRed mr-2"></i> Ranking Completo — Categoría ${nombreBonito}`;
-    }
-    
-    if (subtituloMes) {
-        subtituloMes.innerText = ` ${obtenerMesAnioActual()}`;
-    }
-
-    // Sincronizar estilos de las pestañas superiores
-    const botonesTabs = document.querySelectorAll('#vista-category-selector button');
-    botonesTabs.forEach(btn => {
-        if (btn.id === `tab-${categoriaActual}`) {
-            btn.className = "px-4 py-2 rounded-lg font-bold text-sm transition bg-asatemeBlue text-white shadow-md";
-        } else {
-            btn.className = "px-4 py-2 rounded-lg font-bold text-sm transition bg-white text-gray-600 hover:bg-gray-100 border border-gray-200";
-        }
-    });
-
-    // Limpieza e inserción de filas filtradas
-    tablaBody.innerHTML = '';
-
-    if (jugadoresFiltrados.length === 0) {
-        tablaBody.innerHTML = `
-            <tr>
-                <td colspan="4" class="px-6 py-12 text-center text-gray-500 font-medium">
-                    ${textoBusqueda ? 'No se encontraron jugadores que coincidan con la búsqueda.' : 'No hay jugadores registrados en esta categoría.'}
-                </td>
-            </tr>
-        `;
-        return;
-    }
-
-    jugadoresFiltrados.forEach(j => {
-        let clasePosicion = "text-gray-700 font-bold";
-        if (j.posicion === 1) clasePosicion = "text-yellow-500 font-extrabold text-lg";
-        if (j.posicion === 2) clasePosicion = "text-gray-400 font-extrabold text-lg";
-        if (j.posicion === 3) clasePosicion = "text-amber-600 font-extrabold text-lg";
-
-        tablaBody.innerHTML += `
-            <tr class="hover:bg-gray-50/80 transition duration-150 border-b border-gray-100">
-                <td class="px-6 py-4 text-center ${clasePosicion}">${j.posicion}º</td>
-                <td class="px-6 py-4 font-semibold text-blue-900">${j.jugador}</td>
-                <td class="px-6 py-4 text-gray-600 text-sm">${j.club}</td>
-                <td class="px-6 py-4 text-right font-bold text-gray-900">${j.puntos}</td>
-            </tr>
-        `;
-    });
-}
-
-// Se ejecuta cada vez que el usuario escribe en el input
-function filtrarPorNombre() {
-    const inputBuscador = document.getElementById('buscador-jugador');
-    if (inputBuscador) {
-        textoBusqueda = inputBuscador.value.trim();
-        renderizarTablaCompleta(); // Volvemos a dibujar con el nuevo filtro activo
-    }
-}
-
-// Permite cambiar de categoría limpiando el buscador para una mejor experiencia
-function filtrarNuevaCategoria(nuevaCat) {
-    categoriaActual = nuevaCat.trim().toUpperCase();
-    textoBusqueda = ""; // Reseteamos el buscador al cambiar de división
-    
-    const inputBuscador = document.getElementById('buscador-jugador');
-    if (inputBuscador) inputBuscador.value = ""; // Limpiamos la caja visualmente
-    
-    renderizarTablaCompleta();
-}
+});
