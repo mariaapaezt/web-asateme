@@ -195,7 +195,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col lg:flex-row gap-8">
-
+        
                     <!-- COLUMNA IZQUIERDA: SELECTOR DE CATEGORÍAS -->
                     <div class="w-full lg:w-1/4">
                         <div class="bg-white p-6 rounded-xl shadow-md sticky top-24">
@@ -204,34 +204,34 @@
                             </h3>
                             <!-- Cambiamos los botones para que apunten a tus categorías reales -->
                             <div class="space-y-2" id="category-buttons">
-                                <button onclick="cambiarCategoriaYRenderizar('PRIMERA')" id="btn-PRIMERA"
+                                <button onclick="RankingController.cambiarCategoria('PRIMERA')" id="btn-PRIMERA"
                                     class="w-full text-left px-4 py-3 rounded-lg bg-asatemeBlue text-white font-semibold transition active-category-btn">
                                     Primera
                                 </button>
-                                <button onclick="cambiarCategoriaYRenderizar('SEGUNDA')" id="btn-SEGUNDA"
+                                <button onclick="RankingController.cambiarCategoria('SEGUNDA')" id="btn-SEGUNDA"
                                     class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
                                     Segunda
                                 </button>
-                                <button onclick="cambiarCategoriaYRenderizar('TERCERA')" id="btn-TERCERA"
+                                <button onclick="RankingController.cambiarCategoria('TERCERA')" id="btn-TERCERA"
                                     class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
                                     Tercera
                                 </button>
-                                <button onclick="cambiarCategoriaYRenderizar('CUARTA')" id="btn-CUARTA"
+                                <button onclick="RankingController.cambiarCategoria('CUARTA')" id="btn-CUARTA"
                                     class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
                                     Cuarta
                                 </button>
-                                <button onclick="cambiarCategoriaYRenderizar('QUINTA')" id="btn-QUINTA"
+                                <button onclick="RankingController.cambiarCategoria('QUINTA')" id="btn-QUINTA"
                                     class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
                                     Quinta
                                 </button>
                             </div>
                         </div>
                     </div>
-
+        
                     <!-- COLUMNA DERECHA: TABLA DE POSICIONES -->
                     <div class="w-full lg:w-3/4">
                         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-
+        
                             <!-- ENCABEZADO DE LA TABLA CON TÍTULO DINÁMICO Y BOTÓN FILTRO -->
                             <div
                                 class="p-6 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center bg-asatemeBlue text-white gap-4">
@@ -239,11 +239,12 @@
                                     <h3 class="text-2xl font-bold" id="ranking-title">
                                         <i class="fas fa-medal mr-2"></i>Top 10 - Primera
                                     </h3>
+        
                                     <!-- Aquí se inyectará el Mes Activo dinámicamente -->
                                     <p id="ranking-mes-titulo"
                                         class="text-xs text-blue-200 mt-1 uppercase tracking-wider font-semibold"></p>
                                 </div>
-
+        
                                 <!-- BOTÓN CLAVE: Cambia entre Top 10 y Completo -->
                                 <!-- BOTÓN REFORMADO: Redirecciona a la nueva página llevando la categoría activa -->
                                 <a id="btn-toggle-vista" href="ranking.html?categoria=PRIMERA"
@@ -252,7 +253,7 @@
                                         Completo</span>
                                 </a>
                             </div>
-
+        
                             <!-- CONTENEDOR DE LA TABLA -->
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left">
@@ -268,20 +269,20 @@
                                     <tbody class="divide-y divide-gray-100" id="ranking-body">
                                         <tr>
                                             <td colspan="4" class="px-6 py-8 text-center text-gray-500">
-                                                <i class="fas fa-spinner fa-spin mr-2"></i> Cargando posiciones desde
-                                                Google Sheets...
+                                                <i class="fas fa-spinner fa-spin mr-2"></i> Cargando ranking...
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-
+        
                         </div>
                     </div>
-
+        
                 </div>
             </div>
         </section>
+
         <!-- SECCIÓN: LISTADO DE MÁS NOTICIAS -->
         <section id="mas-noticias" class="py-16 bg-gray-50">
             <div class="container mx-auto px-4 md:px-6">
