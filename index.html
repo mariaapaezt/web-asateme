@@ -530,11 +530,21 @@
     <!-- ========================================== -->
     <!-- SCRIPTS                                    -->
     <!-- ========================================== -->
+
+    <!-- 2. Cargamos la base de datos Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    
     <!-- 1. Cargamos primero la lógica general, menú responsive y configuración base -->
     <script src="js/main.js" defer></script>
 
-    <!-- 2. Cargamos después la lógica específica del ranking que dependerá del DOM listo -->
-    <script src="js/ranking.js" defer></script>
+
+
+    <!-- 3. Cargamos después la lógica específica del ranking que dependerá del DOM listo -->
+    <script src="js/ranking.js"></script>
+
+
+
 
 
 </body>
