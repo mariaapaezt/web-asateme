@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="view
-    ort" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranking Completo - ASATEME</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -28,27 +27,29 @@
 
 <body class="bg-asatemeGray font-sans text-gray-800 flex flex-col min-h-screen">
 
-    <!-- NAV SIMPLIFICADO PARA VOLVER -->
     <nav class="bg-asatemeBlue text-white shadow-xl">
         <div class="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
+    
+            <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition duration-150 group">
                 <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-10 w-auto object-contain">
                 <div>
-                    <h1 class="text-lg md:text-xl font-extrabold tracking-wide leading-none">ASATEME</h1>
-                    <span class="text-[10px] text-gray-300 uppercase tracking-widest block mt-0.5">Ranking Provincial Completo</span>
+                    <h1
+                        class="text-lg md:text-xl font-extrabold tracking-wide leading-none group-hover:text-gray-200 transition">
+                        ASATEME</h1>
+                    <span class="text-[10px] text-gray-300 uppercase tracking-widest block mt-0.5">Ranking Provincial
+                        Completo</span>
                 </div>
-            </div>
+            </a>
+    
             <a href="index.html#ranking"
                 class="bg-white/10 hover:bg-white/20 text-white font-semibold px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
                 <i class="fas fa-arrow-left"></i> Volver al Inicio
             </a>
         </div>
     </nav>
-
-    <!-- CUERPO PRINCIPAL -->
+    
     <main class="flex-grow container mx-auto px-4 md:px-6 py-10 max-w-5xl">
 
-        <!-- ENCABEZADO DE SECCIÓN Y BOTONERA DE CATEGORÍAS -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
                 <h2 id="vista-ranking-titulo" class="text-3xl font-extrabold text-asatemeBlue">
@@ -57,29 +58,25 @@
                 <p id="vista-ranking-mes" class="text-sm text-gray-500 font-medium mt-1 uppercase tracking-wider"></p>
             </div>
 
-            <!-- SELECTOR RÁPIDO DE CATEGORÍAS -->
             <div class="flex flex-wrap gap-2" id="vista-category-selector">
-                <button onclick="filtrarNuevaCategoria('PRIMERA')" id="tab-PRIMERA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Primera</button>
-                <button onclick="filtrarNuevaCategoria('SEGUNDA')" id="tab-SEGUNDA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Segunda</button>
-                <button onclick="filtrarNuevaCategoria('TERCERA')" id="tab-TERCERA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Tercera</button>
-                <button onclick="filtrarNuevaCategoria('CUARTA')" id="tab-CUARTA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Cuarta</button>
-                <button onclick="filtrarNuevaCategoria('QUINTA')" id="tab-QUINTA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Quinta</button>
+                <button id="tab-PRIMERA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Primera</button>
+                <button id="tab-SEGUNDA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Segunda</button>
+                <button id="tab-TERCERA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Tercera</button>
+                <button id="tab-CUARTA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Cuarta</button>
+                <button id="tab-QUINTA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Quinta</button>
             </div>
         </div>
 
-        <!-- FILA EXCLUSIVA PARA EL BUSCADOR -->
         <div class="mb-6 max-w-md">
             <div class="relative shadow-sm rounded-xl">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <i class="fas fa-search"></i>
                 </div>
-                <input type="text" id="buscador-jugador" oninput="filtrarPorNombre()"
-                    placeholder="Buscar jugador por nombre o apellido..."
+                <input type="text" id="buscador-jugador" placeholder="Buscar por jugador o club..."
                     class="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-asatemeBlue focus:border-transparent transition">
             </div>
         </div>
 
-        <!-- CONTENEDOR DE LA TABLA COMPLETA -->
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -94,7 +91,8 @@
                     <tbody class="divide-y divide-gray-100 bg-white" id="vista-ranking-body">
                         <tr>
                             <td colspan="4" class="px-6 py-12 text-center text-gray-500">
-                                <i class="fas fa-spinner fa-spin mr-2 fa-2x text-asatemeBlue mb-2 block"></i> Cargando base de datos completa...
+                                <i class="fas fa-spinner fa-spin mr-2 fa-2x text-asatemeBlue mb-2 block"></i> Cargando
+                                base de datos completa...
                             </td>
                         </tr>
                     </tbody>
@@ -103,12 +101,12 @@
         </div>
     </main>
 
-    <!-- PIE DE PÁGINA ASATEME -->
     <footer class="bg-asatemeBlue text-white py-6 border-t-4 border-asatemeRed text-center text-xs">
         <p>&copy; 2026 ASATEME. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- CONTROLADOR ESPECÍFICO PARA ESTA PÁGINA -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
     <script src="js/ranking-completo.js"></script>
 </body>
 
