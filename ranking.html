@@ -29,7 +29,7 @@
 
     <nav class="bg-asatemeBlue text-white shadow-xl">
         <div class="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
-    
+
             <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition duration-150 group">
                 <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-10 w-auto object-contain">
                 <div>
@@ -40,44 +40,56 @@
                         Completo</span>
                 </div>
             </a>
-    
+
             <a href="index.html#ranking"
                 class="bg-white/10 hover:bg-white/20 text-white font-semibold px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
                 <i class="fas fa-arrow-left"></i> Volver al Inicio
             </a>
         </div>
     </nav>
-    
+
     <main class="flex-grow container mx-auto px-4 md:px-6 py-10 max-w-5xl">
 
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
             <div>
-                <h2 id="vista-ranking-titulo" class="text-3xl font-extrabold text-asatemeBlue">
-                    <i class="fas fa-trophy text-asatemeRed mr-2"></i> Escalafón Provincial
+                <h2 id="vista-ranking-titulo"
+                    class="text-3xl font-extrabold text-asatemeBlue flex items-center content-center">
+                    <i class="fas fa-trophy text-asatemeRed mr-3"></i> Escalafón Provincial
                 </h2>
-                <p id="vista-ranking-mes" class="text-sm text-gray-500 font-medium mt-1 uppercase tracking-wider"></p>
+                <p id="vista-ranking-mes" class="text-sm text-gray-500 font-semibold mt-1 uppercase tracking-wider"></p>
             </div>
 
-            <div class="flex flex-wrap gap-2" id="vista-category-selector">
-                <button id="tab-PRIMERA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Primera</button>
-                <button id="tab-SEGUNDA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Segunda</button>
-                <button id="tab-TERCERA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Tercera</button>
-                <button id="tab-CUARTA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Cuarta</button>
-                <button id="tab-QUINTA" class="px-4 py-2 rounded-lg font-bold text-sm transition">Quinta</button>
+            <div class="flex flex-wrap gap-2 w-full lg:w-auto" id="vista-category-selector">
+                <button id="tab-PRIMERA"
+                    class="flex-1 lg:flex-none px-4 py-2.5 rounded-xl font-bold text-sm transition shadow-sm">Primera</button>
+                <button id="tab-SEGUNDA"
+                    class="flex-1 lg:flex-none px-4 py-2.5 rounded-xl font-bold text-sm transition shadow-sm">Segunda</button>
+                <button id="tab-TERCERA"
+                    class="flex-1 lg:flex-none px-4 py-2.5 rounded-xl font-bold text-sm transition shadow-sm">Tercera</button>
+                <button id="tab-CUARTA"
+                    class="flex-1 lg:flex-none px-4 py-2.5 rounded-xl font-bold text-sm transition shadow-sm">Cuarta</button>
+                <button id="tab-QUINTA"
+                    class="flex-1 lg:flex-none px-4 py-2.5 rounded-xl font-bold text-sm transition shadow-sm">Quinta</button>
             </div>
         </div>
 
-        <div class="mb-6 max-w-md">
-            <div class="relative shadow-sm rounded-xl">
+        <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-6">
+            <div class="relative shadow-sm rounded-xl flex-grow max-w-xl">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <i class="fas fa-search"></i>
                 </div>
                 <input type="text" id="buscador-jugador" placeholder="Buscar por jugador o club..."
                     class="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-asatemeBlue focus:border-transparent transition">
             </div>
+
+            <a href="assets/documentos/ranking-junio-2026.pdf" download="Ranking_Oficial_ASATEME.pdf"
+                class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition shadow-md hover:shadow-lg active:scale-98 duration-150 whitespace-nowrap">
+                <i class="fas fa-file-pdf mr-2 text-base"></i>
+                <span>Descargar Ranking completo</span>
+            </a>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 mb-8">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-asatemeBlue text-white text-sm uppercase font-semibold">
@@ -101,7 +113,7 @@
         </div>
     </main>
 
-    <footer class="bg-asatemeBlue text-white py-6 border-t-4 border-asatemeRed text-center text-xs">
+    <footer class="bg-asatemeBlue text-white py-6 border-t-4 border-asatemeRed text-center text-xs mt-auto">
         <p>&copy; 2026 ASATEME. Todos los derechos reservados.</p>
     </footer>
 
