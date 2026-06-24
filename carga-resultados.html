@@ -98,7 +98,8 @@
                 </div>
             </div>
 
-            <div id="seccion-partidos-ittf" class="hidden bg-white rounded-2xl p-5 shadow-sm border border-gray-200/80 space-y-4">
+            <div id="seccion-partidos-ittf"
+                class="hidden bg-white rounded-2xl p-5 shadow-sm border border-gray-200/80 space-y-4">
                 <div class="flex justify-between items-center border-b pb-3 border-gray-100">
                     <div class="flex items-center gap-2">
                         <span
@@ -110,12 +111,12 @@
                         Parcial: <span id="marcador-parcial-txt">0 - 0</span>
                     </div>
                 </div>
-            
+
                 <p class="text-[11px] text-gray-400 leading-relaxed">
                     Los partidos se habilitan de forma secuencial según el reglamento oficial. El sistema bloqueará los
                     sets futuros automáticamente en cuanto un jugador consolide 3 sets ganados.
                 </p>
-            
+
                 <div id="contenedor-acordeones-partidos" class="space-y-3"></div>
             </div>
 
@@ -146,26 +147,6 @@
                             class="w-20 text-center bg-gray-100 border-2 border-gray-200 rounded-2xl py-3 text-2xl font-black text-gray-400 focus:outline-none transition-all">
                     </div>
 
-                    <div class="bg-red-50 border border-red-100 rounded-xl p-3.5 space-y-2">
-                    <span class="block text-[11px] font-bold text-red-700 uppercase tracking-wide">
-                        <i class="fas fa-exclamation-triangle mr-1"></i> ¿Hubo No Presentación (Walkover)?
-                    </span>
-                    <div class="grid grid-cols-2 gap-3">
-                        <label class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200 cursor-pointer text-xs font-semibold select-none">
-                            <input type="checkbox" id="wo-local-check" onchange="manejarCambioWO('LOCAL')" class="w-4 h-4 rounded-sm text-asatemeRed focus:ring-asatemeRed">
-                            <span>W.O. Local</span>
-                        </label>
-                        <label class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200 cursor-pointer text-xs font-semibold select-none">
-                            <input type="checkbox" id="wo-visitante-check" onchange="manejarCambioWO('VISITANTE')" class="w-4 h-4 rounded-sm text-asatemeRed focus:ring-asatemeRed">
-                            <span>W.O. Visitante</span>
-                        </label>
-                    </div>
-                </div>
-                </div>
->>>>>>> 649be82 (Se termina la parte de carga de resultados y la tabla de posisiones de la liga de equipos)
-=======
->>>>>>> 0dd3dbe (Se hace fase dos de la carga de resultados donde se incluyen los datos de cada partido)
-
                     <div class="col-span-2 bg-red-50 border border-red-100 rounded-xl p-3.5 space-y-2 mt-2">
                         <span class="block text-[11px] font-bold text-red-700 uppercase tracking-wide">
                             <i class="fas fa-exclamation-triangle mr-1"></i> ¿Hubo No Presentación (Walkover)?
@@ -190,39 +171,17 @@
                 <div class="space-y-2">
                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Foto de la Planilla Firmada
-<<<<<<< HEAD
                     </label>
-                
+
                     <label for="archivo-planilla-input"
                         class="w-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-50/80 transition-all text-gray-500 shadow-2xs">
                         <i class="fas fa-camera text-xl text-asatemeBlue"></i>
                         <span class="text-xs font-bold">Capturar o seleccionar imagen</span>
                         <span class="text-[10px] text-gray-400">Formatos permitidos: JPG, PNG</span>
                     </label>
-                
+
                     <input type="file" id="archivo-planilla-input" accept="image/*" class="hidden">
-                
-                    <div id="feedback-archivo-contenedor" class="hidden">
-                        <i id="feedback-archivo-icono" class="far fa-image"></i>
-                        <span id="feedback-archivo-texto">No se seleccionó archivo</span>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-1.5">
-                        Clave de Validación del Club
-=======
->>>>>>> 0dd3dbe (Se hace fase dos de la carga de resultados donde se incluyen los datos de cada partido)
-                    </label>
-                
-                    <label for="archivo-planilla-input"
-                        class="w-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-50/80 transition-all text-gray-500 shadow-2xs">
-                        <i class="fas fa-camera text-xl text-asatemeBlue"></i>
-                        <span class="text-xs font-bold">Capturar o seleccionar imagen</span>
-                        <span class="text-[10px] text-gray-400">Formatos permitidos: JPG, PNG</span>
-                    </label>
-                
-                    <input type="file" id="archivo-planilla-input" accept="image/*" class="hidden">
-                
+
                     <div id="feedback-archivo-contenedor" class="hidden">
                         <i id="feedback-archivo-icono" class="far fa-image"></i>
                         <span id="feedback-archivo-texto">No se seleccionó archivo</span>
@@ -252,7 +211,6 @@
         </form>
     </main>
 
-    <!-- 1. Librería externa oficial de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/carga-logic.js"></script>
