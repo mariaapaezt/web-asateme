@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASATEME - Asociación Santafesina de Tenis de Mesa</title>
 
+    <link rel="icon" type="image/png" href="assets/images/logo-asateme.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -39,7 +41,8 @@
                         <h1
                             class="text-lg md:text-xl font-extrabold tracking-wide leading-none group-hover:text-gray-200 transition">
                             ASATEME</h1>
-                        <span class="text-[10px] text-gray-300 uppercase tracking-widest block mt-0.5">Asociación Santafesina de Tenis de Mesa</span>
+                        <span class="text-[10px] text-gray-300 uppercase tracking-widest block mt-0.5">Asociación
+                            Santafesina de Tenis de Mesa</span>
                     </div>
                 </a>
             </div>
@@ -103,12 +106,12 @@
 
             <!-- Botones de Navegación Flechas (Ocultos en celular, visibles desde MD) -->
             <button id="prev-slide"
-                class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/20 hover:bg-asatemeRed/80 text-white w-12 h-12 rounded-full items-center justify-center transition duration-300 focus:outline-none">
-                <i class="fas fa-chevron-left text-lg"></i>
+                class="flex absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-asatemeRed/80 text-white w-9 h-9 md:w-12 md:h-12 rounded-full items-center justify-center transition duration-300 focus:outline-none">
+                <i class="fas fa-chevron-left text-sm md:text-lg"></i>
             </button>
             <button id="next-slide"
-                class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/20 hover:bg-asatemeRed/80 text-white w-12 h-12 rounded-full items-center justify-center transition duration-300 focus:outline-none">
-                <i class="fas fa-chevron-right text-lg"></i>
+                class="flex absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-asatemeRed/80 text-white w-9 h-9 md:w-12 md:h-12 rounded-full items-center justify-center transition duration-300 focus:outline-none">
+                <i class="fas fa-chevron-right text-sm md:text-lg"></i>
             </button>
 
             <!-- Indicadores de Puntitos (Botones de abajo) -->
@@ -199,7 +202,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col lg:flex-row gap-8">
-        
+
                     <!-- COLUMNA IZQUIERDA: SELECTOR DE CATEGORÍAS -->
                     <div class="w-full lg:w-1/4">
                         <div class="bg-white p-6 rounded-xl shadow-md sticky top-24">
@@ -231,11 +234,11 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <!-- COLUMNA DERECHA: TABLA DE POSICIONES -->
                     <div class="w-full lg:w-3/4">
                         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        
+
                             <!-- ENCABEZADO DE LA TABLA CON TÍTULO DINÁMICO Y BOTÓN FILTRO -->
                             <div
                                 class="p-6 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center bg-asatemeBlue text-white gap-4">
@@ -248,7 +251,7 @@
                                     <p id="ranking-mes-titulo"
                                         class="text-xs text-blue-200 mt-1 uppercase tracking-wider font-semibold"></p>
                                 </div>
-        
+
                                 <!-- BOTÓN CLAVE: Cambia entre Top 10 y Completo -->
                                 <!-- BOTÓN REFORMADO: Redirecciona a la nueva página llevando la categoría activa -->
                                 <a id="btn-toggle-vista" href="ranking.html?categoria=PRIMERA"
@@ -257,7 +260,7 @@
                                         Completo</span>
                                 </a>
                             </div>
-        
+
                             <!-- CONTENEDOR DE LA TABLA -->
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left">
@@ -279,10 +282,10 @@
                                     </tbody>
                                 </table>
                             </div>
-        
+
                         </div>
                     </div>
-        
+
                 </div>
             </div>
         </section>
@@ -367,14 +370,9 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
-    <script src="js/ranking.js"></script>
-  
 
-    <!-- MOTOR DEL CARRUSEL DINÁMICO DE NOTICIAS -->
     <!-- MOTOR DEL CARRUSEL DINÁMICO DE NOTICIAS + GRILLA DE NOVEDADES -->
     <script>
         document.addEventListener("DOMContentLoaded", async function () {
