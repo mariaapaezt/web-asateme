@@ -239,12 +239,12 @@ async function cargarDatosDesdeSupabase() {
 
                         if (scoreLoc > scoreVis) {
                             eqLocal.sg += 1;
-                            eqLocal.pts += 3;
+                            eqLocal.pts += 2;
                             eqVisitante.sp += 1;
                             eqVisitante.pts += 1;
                         } else if (scoreVis > scoreLoc) {
                             eqVisitante.sg += 1;
-                            eqVisitante.pts += 3;
+                            eqVisitante.pts += 2;
                             eqLocal.sp += 1;
                             eqLocal.pts += 1;
                         } else {
