@@ -1,40 +1,51 @@
 // =========================================================================
 // ARCHIVO: js/ranking-completo.js
-// DESCRIPCIÓN: Módulo de Escalafón Completo con Filtros Dinámicos Combinados
+// DESCRIPCIÓN: Módulo de Escalafón Completo conectado a Supabase mediante cliente global
 // =========================================================================
 
 // -------------------------------------------------------------------------
-// 1. CAPA DE SERVICIOS (Conectividad y Extracción de Datos)
+// 1. CAPA DE SERVICIOS (Usa la instancia 'supabase' de config.js)
 // -------------------------------------------------------------------------
 const RankingCompletoService = {
-    SHEET_ID: '1D8FRoqxEYdG--DHnOERb5cKEze9suOVOyhyhGBIAc-A',
+    /**
+     * Obtiene de forma idéntica cuál es el periodo más reciente subido
+     */
+    async obtenerPeriodoMasReciente() {
+        try {
+            const { data, error } = await supabase
+                .from('ranking')
+                .select('periodo')
+                .order('created_at', { ascending: false })
+                .limit(1);
 
-    get url() {
-        return `https://docs.google.com/spreadsheets/d/${this.SHEET_ID}/gviz/tq?tqx=out:json&sheet=Ranking`;
+            if (error) throw error;
+            return data && data.length > 0 ? data[0].periodo : "Junio 2026";
+        } catch (error) {
+            return "Junio 2026";
+        }
     },
 
     /**
-     * Consume los datos globales del ranking sin recortes
+     * Consume el ranking completo del periodo activo sin filtros de categoría
      * @returns {Promise<Array>} Lista total de jugadores normalizada
      */
     async obtenerDatosCompletos() {
-        const respuesta = await fetch(this.url);
-        const textoCrudo = await respuesta.text();
+        const periodoActivo = await this.obtenerPeriodoMasReciente();
+        RankingCompletoState.periodoDetectado = periodoActivo;
 
-        const inicioJson = textoCrudo.indexOf('{');
-        const finJson = textoCrudo.lastIndexOf('}') + 1;
-        const textoJsonValido = textoCrudo.substring(inicioJson, finJson);
-        const datosParseados = JSON.parse(textoJsonValido);
+        const { data, error } = await supabase
+            .from('ranking')
+            .select('categoria, posicion, jugador, club, puntos')
+            .eq('periodo', periodoActivo);
 
-        const filas = datosParseados.table.rows;
-        if (!filas) return [];
+        if (error) throw error;
 
-        return filas.map(f => ({
-            categoria: f.c[0] ? f.c[0].v.trim().toUpperCase() : '',
-            posicion: f.c[1] ? parseInt(f.c[1].v) : 0,
-            jugador: f.c[2] ? f.c[2].v : '',
-            club: f.c[3] ? f.c[3].v : '',
-            puntos: f.c[4] ? parseInt(f.c[4].v) : 0
+        return data.map(r => ({
+            categoria: r.categoria ? r.categoria.trim().toUpperCase() : '',
+            posicion: parseInt(r.posicion) || 0,
+            jugador: r.jugador || '',
+            club: r.club || '',
+            puntos: parseInt(r.puntos) || 0
         }));
     }
 };
@@ -46,38 +57,23 @@ const RankingCompletoState = {
     jugadoresGlobales: [],
     categoriaActual: "PRIMERA",
     textoBusqueda: "",
+    periodoDetectado: "",
 
-    /**
-     * Resuelve de forma dinámica el mes/año comercial en curso
-     * @returns {string} Cadena formateada para la interfaz corporativa
-     */
     obtenerPeriodoFormateado() {
-        const meses = [
-            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-        ];
-        const fecha = new Date();
-        return `${meses[fecha.getMonth()]} ${fecha.getFullYear()}`;
+        return this.periodoDetectado || "Junio 2026";
     },
 
-    /**
-     * Filtra la colección aplicando los criterios concurrentes de Categoría y Buscador
-     * @returns {Array} Listado depurado y ordenado de forma ascendente
-     */
     obtenerDatosFiltrados() {
         const criterioBusqueda = this.textoBusqueda.toLowerCase().trim();
 
         let resultado = this.jugadoresGlobales.filter(j => {
             const coincideCategoria = j.categoria === this.categoriaActual;
-
-            // Filtro avanzado: Busca coincidencia tanto en el nombre del Jugador como en su Club
             const coincideFiltroTexto = j.jugador.toLowerCase().includes(criterioBusqueda) ||
                 j.club.toLowerCase().includes(criterioBusqueda);
 
             return coincideCategoria && coincideFiltroTexto;
         });
 
-        // Garantizar el escalafón por posición estricta
         return resultado.sort((a, b) => a.posicion - b.posicion);
     }
 };
@@ -93,22 +89,15 @@ const RankingCompletoUI = {
         inputBuscador: () => document.getElementById('buscador-jugador')
     },
 
-    /**
-     * Dibuja los componentes del listado completo basándose en los filtros activos
-     */
     renderizar() {
         const tbody = this.elementos.tablaBody();
         if (!tbody) return;
 
         const jugadores = RankingCompletoState.obtenerDatosFiltrados();
 
-        // 1. Renderizado de textos informativos de cabecera
         this.actualizarCabeceras();
-
-        // 2. Sincronización visual de pestañas (Tabs de selección rápida)
         this.actualizarTabsNavegacion();
 
-        // 3. Control de Layout vacío (Sin Coincidencias)
         if (jugadores.length === 0) {
             const mensajeVacio = RankingCompletoState.textoBusqueda
                 ? 'No se encontraron jugadores ni clubes que coincidan con la búsqueda.'
@@ -124,7 +113,6 @@ const RankingCompletoUI = {
             return;
         }
 
-        // 4. Inyección estructurada de filas
         tbody.innerHTML = jugadores.map(j => {
             let clasePosicion = "text-gray-700 font-bold";
             if (j.posicion === 1) clasePosicion = "text-yellow-500 font-extrabold text-lg";
@@ -142,9 +130,6 @@ const RankingCompletoUI = {
         }).join('');
     },
 
-    /**
-     * Refresca las etiquetas de títulos de la pantalla
-     */
     actualizarCabeceras() {
         const titulo = this.elementos.tituloSeccion();
         const subtitulo = this.elementos.subtituloMes();
@@ -155,13 +140,10 @@ const RankingCompletoUI = {
         }
 
         if (subtitulo) {
-            subtitulo.innerText = `Período Activo: ${RankingCompletoState.obtenerMesAnioActual || RankingCompletoState.obtenerPeriodoFormateado()}`;
+            subtitulo.innerText = `Período Activo: ${RankingCompletoState.obtenerPeriodoFormateado()}`;
         }
     },
 
-    /**
-     * Modifica las clases de Tailwind de los botones superiores imitando comportamiento de SPA
-     */
     actualizarTabsNavegacion() {
         const botonesTabs = document.querySelectorAll('#vista-category-selector button');
         botonesTabs.forEach(btn => {
@@ -173,9 +155,6 @@ const RankingCompletoUI = {
         });
     },
 
-    /**
-     * Inyecta una alerta visual ante fallas críticas del Fetch
-     */
     mostrarErrorServidor() {
         const tbody = this.elementos.tablaBody();
         if (tbody) {
@@ -194,24 +173,19 @@ const RankingCompletoUI = {
 // 4. CONTROLADOR DE EVENTOS E INICIALIZACIÓN DE ENTRADA
 // -------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
-    // A. Interceptar parámetro "?categoria=..." heredado desde la Home
     const parametrosURL = new URLSearchParams(window.location.search);
     const categoriaQuery = parametrosURL.get('categoria');
     if (categoriaQuery) {
         RankingCompletoState.categoriaActual = categoriaQuery.trim().toUpperCase();
     }
 
-    // B. Delegación de eventos dinámicos para los Botones de Categorías (Tabs)
     const contenedorTabs = document.getElementById('vista-category-selector');
     if (contenedorTabs) {
         contenedorTabs.addEventListener('click', (e) => {
             const botonPresionado = e.target.closest('button');
             if (!botonPresionado) return;
 
-            // Extraemos la categoría desde el ID del botón (ej: "tab-SEGUNDA" -> "SEGUNDA")
             const nuevaCat = botonPresionado.id.replace('tab-', '');
-
-            // Modificamos estado interno y limpiamos los filtros de búsqueda por comodidad comercial
             RankingCompletoState.categoriaActual = nuevaCat;
             RankingCompletoState.textoBusqueda = "";
 
@@ -222,7 +196,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // C. Escucha reactiva en el Input de búsqueda (Manejo de entrada de datos)
     const inputBusqueda = RankingCompletoUI.elementos.inputBuscador();
     if (inputBusqueda) {
         inputBusqueda.addEventListener('input', (e) => {
@@ -231,12 +204,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // D. Descarga inicial e inicio del ciclo de renderizado
     try {
         RankingCompletoState.jugadoresGlobales = await RankingCompletoService.obtenerDatosCompletos();
         RankingCompletoUI.renderizar();
     } catch (error) {
-        console.error("🚨 [ASATEME-ARCH]: Falla en carga de módulo Completo:", error);
+        console.error("🚨 [ASATEME-SUPABASE]: Falla en carga de módulo Completo:", error);
         RankingCompletoUI.mostrarErrorServidor();
     }
 });

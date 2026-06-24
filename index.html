@@ -199,7 +199,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col lg:flex-row gap-8">
-
+        
                     <!-- COLUMNA IZQUIERDA: SELECTOR DE CATEGORÍAS -->
                     <div class="w-full lg:w-1/4">
                         <div class="bg-white p-6 rounded-xl shadow-md sticky top-24">
@@ -231,11 +231,11 @@
                             </div>
                         </div>
                     </div>
-
+        
                     <!-- COLUMNA DERECHA: TABLA DE POSICIONES -->
                     <div class="w-full lg:w-3/4">
                         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-
+        
                             <!-- ENCABEZADO DE LA TABLA CON TÍTULO DINÁMICO Y BOTÓN FILTRO -->
                             <div
                                 class="p-6 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center bg-asatemeBlue text-white gap-4">
@@ -248,7 +248,7 @@
                                     <p id="ranking-mes-titulo"
                                         class="text-xs text-blue-200 mt-1 uppercase tracking-wider font-semibold"></p>
                                 </div>
-
+        
                                 <!-- BOTÓN CLAVE: Cambia entre Top 10 y Completo -->
                                 <!-- BOTÓN REFORMADO: Redirecciona a la nueva página llevando la categoría activa -->
                                 <a id="btn-toggle-vista" href="ranking.html?categoria=PRIMERA"
@@ -257,7 +257,7 @@
                                         Completo</span>
                                 </a>
                             </div>
-
+        
                             <!-- CONTENEDOR DE LA TABLA -->
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left">
@@ -273,20 +273,20 @@
                                     <tbody class="divide-y divide-gray-100" id="ranking-body">
                                         <tr>
                                             <td colspan="4" class="px-6 py-8 text-center text-gray-500">
-                                                <i class="fas fa-spinner fa-spin mr-2"></i> Cargando posiciones desde
-                                                Google Sheets...
+                                                <i class="fas fa-spinner fa-spin mr-2"></i> Cargando ranking...
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-
+        
                         </div>
                     </div>
-
+        
                 </div>
             </div>
         </section>
+
         <!-- SECCIÓN: LISTADO DE MÁS NOTICIAS -->
         <section id="mas-noticias" class="py-16 bg-gray-50">
             <div class="container mx-auto px-4 md:px-6">
@@ -296,7 +296,7 @@
                 </div>
             </div>
         </section>
-        
+
         <section id="calendario" class="py-16 bg-white">
             <div class="container mx-auto px-4 md:px-6">
                 <div class="text-center mb-12">
@@ -305,7 +305,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                
+
                     <div
                         class="bg-white rounded-xl shadow-lg border-l-4 border-asatemeBlue overflow-hidden card-hover border border-gray-100">
                         <div class="p-6">
@@ -366,6 +366,13 @@
             </div>
         </div>
     </footer>
+
+    <script src="js/main.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/ranking.js"></script>
+  
 
     <!-- MOTOR DEL CARRUSEL DINÁMICO DE NOTICIAS -->
     <!-- MOTOR DEL CARRUSEL DINÁMICO DE NOTICIAS + GRILLA DE NOVEDADES -->
