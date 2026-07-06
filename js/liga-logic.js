@@ -118,32 +118,34 @@ function seleccionarLigaEquipos(ligaId) {
 }
 
 /**
- * Controla la selección de un equipo específico para desplegar su plantilla
+ * Acción global unificada al hacer click en la tarjeta de un equipo
  */
 function verDetalleEquipo(equipoId, btnElement) {
-    APP_STATE.equipoSeleccionadoId = String(equipoId);
+    if (typeof APP_STATE !== 'undefined') {
+        APP_STATE.equipoSeleccionadoId = String(equipoId);
+    }
 
-    // Resaltar visualmente la tarjeta del equipo seleccionado
-    document.querySelectorAll('.card-equipo-btn').forEach(card => {
-        card.classList.remove('border-asatemeBlue', 'ring-2', 'ring-blue-100');
+    // Limpiamos visualmente el borde activo de todas las demás tarjetas
+    document.querySelectorAll('.card-equipo-btn').forEach(btn => {
+        btn.classList.remove('border-asatemeBlue', 'ring-2', 'ring-blue-100', 'bg-blue-50/20');
+        btn.classList.add('border-gray-200', 'bg-white');
     });
+
+    // Le aplicamos el estilo activo al botón presionado
     if (btnElement) {
-        btnElement.classList.add('border-asatemeBlue', 'ring-2', 'ring-blue-100');
+        btnElement.classList.remove('border-gray-200', 'bg-white');
+        btnElement.classList.add('border-asatemeBlue', 'ring-2', 'ring-blue-100', 'bg-blue-50/20');
     }
 
-    // Buscar los datos en memoria para rellenar la cabecera
-    const ligaActual = APP_STATE.currentLigaEquipos;
-    const club = LIGAS_DATA[ligaActual].find(e => String(e.id) === String(equipoId));
-
+    // Buscamos el nombre directamente del mapa plano (EQUIPOS_MAP) para evitar fallos de scope
+    const datosClub = EQUIPOS_MAP[String(equipoId)];
     const nombreHeader = document.getElementById('nombre-equipo-seleccionado');
-    if (nombreHeader && club) {
-        nombreHeader.textContent = club.nombre;
+    if (nombreHeader && datosClub) {
+        nombreHeader.textContent = datosClub.nombre;
     }
 
-    // Renderizar la grilla interna de jugadores correspondientes
-    if (typeof renderJugadoresDelEquipo === 'function') {
-        renderJugadoresDelEquipo(equipoId);
-    }
+    // Ejecutamos el renderizado de la lista de buena fe de jugadores
+    renderJugadoresDelEquipo(equipoId);
 }
 
 /**
@@ -155,7 +157,8 @@ function cerrarDetalleJugadores() {
     if (seccionDetalle) seccionDetalle.classList.add('hidden');
 
     document.querySelectorAll('.card-equipo-btn').forEach(card => {
-        card.classList.remove('border-asatemeBlue', 'ring-2', 'ring-blue-100');
+        card.classList.remove('border-asatemeBlue', 'ring-2', 'ring-blue-100', 'bg-blue-50/20');
+        card.classList.add('border-gray-200', 'bg-white');
     });
 }
 
@@ -256,7 +259,7 @@ async function cargarDatosDesdeSupabase() {
             }
         });
 
-        // 🧠 FUNCIÓN DE ORDENAMIENTO DUAL: 1º Puntos, 2º Coeficiente de Partidos (pg / pp)
+        // FUNCIÓN DE ORDENAMIENTO DUAL: 1º Puntos, 2º Coeficiente de Partidos (pg / pp)
         const funcionOrdenamientoAvanzado = (a, b) => {
             const puntosA = a.pts ?? 0;
             const puntosB = b.pts ?? 0;
@@ -270,14 +273,12 @@ async function cargarDatosDesdeSupabase() {
             const pgB = b.pg ?? 0;
             const ppB = b.pp ?? 0;
 
-            // Evitamos división por cero de manera segura
             const coeficienteA = ppA === 0 ? pgA : pgA / ppA;
             const coeficienteB = ppB === 0 ? pgB : pgB / ppB;
 
             return coeficienteB - coeficienteA;
         };
 
-        // Agrupar y ordenar bajo el nuevo criterio estricto
         LIGAS_DATA = {
             LIGA_A: listaEquipos.filter(e => e.liga === 'LIGA_A').sort(funcionOrdenamientoAvanzado),
             LIGA_B: listaEquipos.filter(e => e.liga === 'LIGA_B').sort(funcionOrdenamientoAvanzado)
@@ -341,7 +342,6 @@ function renderPosiciones() {
     const ligaActual = (typeof APP_STATE !== 'undefined' && APP_STATE.currentLigaPosiciones) || 'LIGA_A';
     if (tituloLiga) tituloLiga.textContent = ligaActual === 'LIGA_A' ? 'Liga A' : 'Liga B';
 
-    // Clonamos el array para renderizar de manera segura sin romper la reactividad
     const equiposFiltrados = [...(LIGAS_DATA[ligaActual] || [])];
 
     if (equiposFiltrados.length === 0) {
@@ -561,8 +561,8 @@ function renderEquipos() {
             badgeValidacion = `<span class="text-[10px] text-green-600 font-semibold block mt-0.5"><i class="fas fa-check-circle"></i> ${cantJugadores} Jugadores</span>`;
         }
 
-        const esSeleccionado = APP_STATE.equipoSeleccionadoId === idClub;
-        const clasesBordeActivo = esSeleccionado ? 'border-asatemeBlue ring-2 ring-blue-100' : 'border-gray-200 hover:border-gray-300 hover:shadow-md';
+        const esSelected = (typeof APP_STATE !== 'undefined' && String(APP_STATE.equipoSeleccionadoId) === idClub);
+        const clasesBordeActivo = esSelected ? 'border-asatemeBlue ring-2 ring-blue-100 bg-blue-50/20' : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white';
 
         const nombreEquipo = equipo.nombre || "Club";
         const primeraLetraEquip = nombreEquipo.charAt(0).toUpperCase();
@@ -573,7 +573,7 @@ function renderEquipos() {
 
         html += `
             <button onclick="verDetalleEquipo('${idClub}', this)" 
-                class="card-equipo-btn text-left bg-white border rounded-xl p-4 flex items-center justify-between transition-all cursor-pointer w-full sm:w-[calc(50%-8px)] md:w-[calc(33.33%-11px)] ${clasesBordeActivo}">
+                class="card-equipo-btn text-left border rounded-xl p-4 flex items-center justify-between transition-all cursor-pointer w-full sm:w-[calc(50%-8px)] md:w-[calc(33.33%-11px)] ${clasesBordeActivo}">
                 <div class="flex items-center gap-3 truncate">
                     <div class="w-9 h-9 min-w-9 bg-white rounded-lg flex items-center justify-center p-1 border overflow-hidden shadow-2xs">
                         ${imgEquipoHTML}
@@ -589,6 +589,56 @@ function renderEquipos() {
     });
 
     container.innerHTML = html;
+}
+
+/**
+ * Muestra la lista interna de jugadores de un equipo específico en la grilla inferior
+ */
+function renderJugadoresDelEquipo(equipoId) {
+    const seccionDetalle = document.getElementById('seccion-detalle-jugadores');
+    const grillaJugadores = document.getElementById('jugadores-grid-container');
+
+    if (!seccionDetalle || !grillaJugadores) return;
+
+    // Hacemos visible el contenedor de la Lista de Buena Fe
+    seccionDetalle.classList.remove('hidden');
+
+    const jugadoresFiltrados = JUGADORES_DATA.filter(j => String(j.equipo_id) === String(equipoId));
+
+    if (jugadoresFiltrados.length === 0) {
+        grillaJugadores.innerHTML = `
+            <div class="col-span-full bg-gray-50 p-6 text-center text-gray-400 border border-dashed rounded-xl py-8">
+                <i class="fas fa-users-slash text-xl mb-1 block text-gray-300"></i> No hay jugadores registrados en la lista de buena fe de este club.
+            </div>
+        `;
+        return;
+    }
+
+    let html = '';
+    jugadoresFiltrados.forEach(jugador => {
+        const nombreJugador = jugador.nombre || "Jugador";
+        const primeraLetra = nombreJugador.charAt(0).toUpperCase();
+        const badgeCategoria = jugador.categoria ? `<span class="text-[10px] bg-asatemeBlue/10 text-asatemeBlue font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">${jugador.categoria}</span>` : '';
+
+        html += `
+            <div class="bg-white border border-gray-150 rounded-xl p-3 flex items-center justify-between shadow-3xs hover:shadow-xs transition">
+                <div class="flex items-center gap-3 truncate">
+                    <div class="w-8 h-8 min-w-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 flex items-center justify-center font-bold text-xs border border-gray-200 uppercase">
+                        ${primeraLetra}
+                    </div>
+                    <div class="truncate">
+                        <span class="block font-semibold text-gray-800 text-xs tracking-tight truncate">${nombreJugador}</span>
+                        <span class="block text-[10px] text-gray-400 mt-0.5">Jugador Competitivo</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 pl-2">
+                    ${badgeCategoria}
+                </div>
+            </div>
+        `;
+    });
+
+    grillaJugadores.innerHTML = html;
 }
 
 // =============================================================================
