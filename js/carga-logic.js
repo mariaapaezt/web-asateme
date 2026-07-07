@@ -34,7 +34,6 @@ async function inicializarPantallaCarga() {
     }
 
     try {
-        // Traemos las tres tablas en paralelo para que resJugadores exista
         const [resPartidos, resEquipos, resJugadores] = await Promise.all([
             window.supabase.from('fixture').select('*'),
             window.supabase.from('equipos').select('*'),
@@ -51,14 +50,6 @@ async function inicializarPantallaCarga() {
         }
         if (resJugadores.error) {
             console.error("❌ Error en tabla 'jugadores':", resJugadores.error.message);
-            return;
-        }
-        if (resJugadores.error) {
-            console.error("❌ Error en tabla 'jugadores':", resJugadores.error);
-            return;
-        }
-        if (resJugadores.error) {
-            console.error("❌ Error en tabla 'jugadores':", resJugadores.error);
             return;
         }
 
@@ -113,7 +104,7 @@ function actualizarDesplegablePartidos() {
         return matchesLiga && matchesFecha;
     });
 
-        selectPartido.innerHTML = '<option value="">-- Seleccioná la serie en juego --</option>';
+    selectPartido.innerHTML = '<option value="">-- Seleccioná la serie en juego --</option>';
 
     if (partidosFiltrados.length === 0) {
         selectPartido.innerHTML = '<option value="">No hay partidos agendados para este filtro.</option>';
@@ -132,27 +123,17 @@ function actualizarDesplegablePartidos() {
     });
 }
 
-// 🛡️ SISTEMA DE RESTAURACIÓN ULTRA DEFENSIVO CONTRA CUALQUIER ALTERACIÓN DE DOM
 function restaurarBotonEnvioOriginal() {
     try {
-        // Apuntamos directo al ID único e indiscutible del botón principal
         const botonEnviar = document.getElementById('btn-enviar-planilla');
 
         if (botonEnviar) {
-            // Habilitamos el botón por si estaba bloqueado
             botonEnviar.disabled = false;
             botonEnviar.removeAttribute('disabled');
             botonEnviar.type = "submit";
-
-            // Reemplazamos COMPLETAMENTE las clases asegurando el color azul de ASATEME
             botonEnviar.className = "w-full bg-asatemeBlue hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs";
-
-            // Restauramos el texto original original
             botonEnviar.innerHTML = `<i class="fas fa-paper-plane"></i> Enviar Informe Oficial`;
-
-            console.log("🔵 [UI Sync] ¡Botón PRINCIPAL (id: btn-enviar-planilla) restaurado a AZUL con éxito!");
-        } else {
-            console.warn("⚠️ [UI Sync] Alerta: No se encontró ningún elemento con el ID 'btn-enviar-planilla' en el HTML.");
+            console.log("🔵 [UI Sync] ¡Botón PRINCIPAL restaurado con éxito!");
         }
     } catch (err) {
         console.error("❌ Falló el intento de restaurar el botón:", err);
@@ -170,7 +151,6 @@ async function manejarCambioPartido(partidoId) {
     const containerAcordeones = document.getElementById('contenedor-acordeones-partidos');
     const botonEnviar = document.getElementById('btn-enviar-planilla') || document.querySelector('#form-envio-planilla button[type="submit"]');
 
-    // Reseteo inicial inmediato
     restaurarBotonEnvioOriginal();
 
     if (!partidoId || partidoId === "") {
@@ -207,7 +187,6 @@ async function manejarCambioPartido(partidoId) {
         JUGADORES_LOCALES = resLocal.data || [];
         JUGADORES_VISITANTES = resVis.data || [];
 
-        // Si el usuario cambió de opinión a mitad del viaje asincrónico, matamos el hilo
         if (FILTROS_CARGA.partidoSeleccionadoId !== partidoId) {
             console.log("🛑 El partido cambió en medio del fetch. Cancelando pintado.");
             restaurarBotonEnvioOriginal();
@@ -216,7 +195,6 @@ async function manejarCambioPartido(partidoId) {
 
         if (seccionIttf) seccionIttf.classList.remove('hidden');
 
-        // VALIDACIÓN DEL CARTEL ORDENADO Y TEXTO DE BOTÓN NARANJA
         if (JUGADORES_LOCALES.length === 0 || JUGADORES_VISITANTES.length === 0) {
             const nombreEquipoFaltante = JUGADORES_LOCALES.length === 0
                 ? (EQUIPOS_MAPA[partido.local_id] || "Equipo Local")
@@ -347,10 +325,12 @@ function renderizarAcordeonesPlanilla() {
                                         <span class="block text-[9px] font-bold text-gray-400 uppercase">S${sIdx + 1}</span>
                                         <input type="number" min="0" max="99" value="${p.setsL[sIdx]}" 
                                             tabindex="${tabLocal}"
+                                            onfocus="this.select()"
                                             onchange="actualizarPuntosSetTeclado(${i}, ${sIdx}, 'L', this.value)"
                                             class="w-full text-center font-bold text-sm text-gray-800 bg-gray-50 rounded-md py-1 focus:outline-none border border-transparent focus:border-asatemeBlue focus:bg-white transition-all">
                                         <input type="number" min="0" max="99" value="${p.setsV[sIdx]}" 
                                             tabindex="${tabVis}"
+                                            onfocus="this.select()"
                                             onchange="actualizarPuntosSetTeclado(${i}, ${sIdx}, 'V', this.value)"
                                             class="w-full text-center font-bold text-sm text-gray-800 bg-gray-50 rounded-md py-1 focus:outline-none border border-transparent focus:border-asatemeBlue focus:bg-white transition-all">
                                     </div>`;
@@ -700,26 +680,18 @@ function conectarEventosFormulario() {
         });
     }
 
-    // ==========================================
-    // 🔥 NUEVO: LÓGICA PARA MOSTRAR/OCULTAR PIN (EL OJITO)
-    // ==========================================
-    // Buscamos el contenedor o el ícono del ojo que está dentro de la clave de validación
     const inputPin = document.getElementById('token-club-input') || document.getElementById('token-club') || document.querySelector('input[type="password"]');
-    // Buscamos el ícono del ojito (por clase o contenedor)
     const btnOjo = document.querySelector('.clave-validacion-contenedor i') || document.querySelector('input[type="password"] + i') || document.querySelector('.fa-eye') || document.querySelector('.fa-eye-slash');
 
     if (btnOjo && inputPin) {
-        // Le damos interactividad real al hacer clic
-        btnOjo.style.cursor = 'pointer'; // Nos aseguramos de que muestre la manito al pasar el mouse
+        btnOjo.style.cursor = 'pointer';
         btnOjo.addEventListener('click', () => {
             if (inputPin.type === 'password') {
                 inputPin.type = 'text';
-                // Cambiamos el ícono a un ojo tachado
                 btnOjo.classList.remove('fa-eye');
                 btnOjo.classList.add('fa-eye-slash');
             } else {
                 inputPin.type = 'password';
-                // Volvemos al ícono del ojo normal
                 btnOjo.classList.remove('fa-eye-slash');
                 btnOjo.classList.add('fa-eye');
             }
@@ -728,7 +700,6 @@ function conectarEventosFormulario() {
     } else {
         console.warn("⚠️ [UI Sync] No se pudo conectar el ojito. Verificá los IDs/clases del input de PIN.");
     }
-    // ==========================================
 
     const formEnvio = document.getElementById('form-envio-planilla');
     if (formEnvio) {
