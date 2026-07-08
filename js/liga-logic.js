@@ -398,6 +398,9 @@ function renderPosiciones() {
 /**
  * Dibuja la Sección del Fixture con los desplegables de planillas
  */
+/**
+ * Dibuja la Sección del Fixture con los desplegables de planillas y el equipo libre
+ */
 function renderFixture() {
     const container = document.getElementById('fixture-partidos-container');
     const txtFecha = document.getElementById('txt-fecha-actual');
@@ -413,114 +416,164 @@ function renderFixture() {
     if (txtFecha) txtFecha.textContent = `Fecha ${fechaActual}`;
     if (tituloLiga) tituloLiga.textContent = ligaActual === 'LIGA_A' ? 'Liga A' : 'Liga B';
 
+    // 1. Filtrar los partidos de la fecha y liga actual
     const partidosFiltrados = FIXTURE_DATA.filter(p => p.liga === ligaActual && Number(p.fecha_numero) === Number(fechaActual));
     const totalFechas = FIXTURE_DATA.length > 0 ? Math.max(...FIXTURE_DATA.map(p => Number(p.fecha_numero || 1))) : 5;
 
     if (btnPrev) btnPrev.disabled = (fechaActual === 1);
     if (btnNext) btnNext.disabled = (fechaActual >= totalFechas);
 
+    let html = '';
+
     if (partidosFiltrados.length === 0) {
-        container.innerHTML = `
+        html += `
             <div class="col-span-full bg-white p-8 text-center text-gray-400 border rounded-xl shadow-xs">
                 <i class="far fa-calendar-times text-2xl mb-2 block text-gray-300"></i>
                 No hay encuentros programados para la Fecha ${fechaActual} de esta zona.
             </div>
         `;
-        return;
-    }
+    } else {
+        // 2. Construir el HTML de cada partido de la fecha
+        partidosFiltrados.forEach(partido => {
+            const datosLocal = EQUIPOS_MAP[String(partido.local_id)] || { nombre: `Equipo (${partido.local_id})`, logo: '' };
+            const datosVisitante = EQUIPOS_MAP[String(partido.visitante_id)] || { nombre: `Equipo (${partido.visitante_id})`, logo: '' };
+            const nombreL = datosLocal.nombre;
+            const nombreV = datosVisitante.nombre;
+            const letraL = nombreL.charAt(0).toUpperCase();
+            const letraV = nombreV.charAt(0).toUpperCase();
 
-    let html = '';
-    partidosFiltrados.forEach(partido => {
-        const datosLocal = EQUIPOS_MAP[String(partido.local_id)] || { nombre: `Equipo (${partido.local_id})`, logo: '' };
-        const datosVisitante = EQUIPOS_MAP[String(partido.visitante_id)] || { nombre: `Equipo (${partido.visitante_id})`, logo: '' };
-        const nombreL = datosLocal.nombre;
-        const nombreV = datosVisitante.nombre;
-        const letraL = nombreL.charAt(0).toUpperCase();
-        const letraV = nombreV.charAt(0).toUpperCase();
+            const imgLocalHTML = (datosLocal.logo && datosLocal.logo !== 'assets/logos/generic-pingpong.png' && datosLocal.logo.trim() !== "")
+                ? `<img src="${datosLocal.logo}" alt="${nombreL}" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase\'>${letraL}</div>';">`
+                : `<div class="w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase">${letraL}</div>`;
 
-        const imgLocalHTML = (datosLocal.logo && datosLocal.logo !== 'assets/logos/generic-pingpong.png' && datosLocal.logo.trim() !== "")
-            ? `<img src="${datosLocal.logo}" alt="${nombreL}" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase\'>${letraL}</div>';">`
-            : `<div class="w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase">${letraL}</div>`;
+            const imgVisHTML = (datosVisitante.logo && datosVisitante.logo !== 'assets/logos/generic-pingpong.png' && datosVisitante.logo.trim() !== "")
+                ? `<img src="${datosVisitante.logo}" alt="${nombreV}" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase\'>${letraV}</div>';">`
+                : `<div class="w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase">${letraV}</div>`;
 
-        const imgVisHTML = (datosVisitante.logo && datosVisitante.logo !== 'assets/logos/generic-pingpong.png' && datosVisitante.logo.trim() !== "")
-            ? `<img src="${datosVisitante.logo}" alt="${nombreV}" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase\'>${letraV}</div>';">`
-            : `<div class="w-6 h-6 rounded-full bg-asatemeBlue text-white flex items-center justify-center text-[10px] font-bold uppercase">${letraV}</div>`;
+            const esFinalizado = (partido.estado && partido.estado.toLowerCase() === 'finalizado');
+            let estadoBadge = `<span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">${partido.estado || 'Pendiente'}</span>`;
 
-        const esFinalizado = (partido.estado && partido.estado.toLowerCase() === 'finalizado');
-        let estadoBadge = `<span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">${partido.estado || 'Pendiente'}</span>`;
+            let trofeoLocal = '';
+            let trofeoVisitante = '';
+            let botonDesplegableHTML = '';
+            let contenedorDetalleHTML = '';
 
-        let trofeoLocal = '';
-        let trofeoVisitante = '';
-        let botonDesplegableHTML = '';
-        let contenedorDetalleHTML = '';
+            if (esFinalizado) {
+                estadoBadge = `<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">Finalizado</span>`;
 
-        if (esFinalizado) {
-            estadoBadge = `<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">Finalizado</span>`;
+                const scoreL = Number(partido.score_local || 0);
+                const scoreV = Number(partido.score_visitante || 0);
+                if (scoreL > scoreV) {
+                    trofeoLocal = `<i class="fas fa-trophy text-xs text-amber-500 mr-1 animate-pulse" title="Ganador de la serie"></i>`;
+                } else if (scoreV > scoreL) {
+                    trofeoVisitante = `<i class="fas fa-trophy text-xs text-amber-500 ml-1 animate-pulse" title="Ganador de la serie"></i>`;
+                }
 
-            const scoreL = Number(partido.score_local || 0);
-            const scoreV = Number(partido.score_visitante || 0);
-            if (scoreL > scoreV) {
-                trofeoLocal = `<i class="fas fa-trophy text-xs text-amber-500 mr-1 animate-pulse" title="Ganador de la serie"></i>`;
-            } else if (scoreV > scoreL) {
-                trofeoVisitante = `<i class="fas fa-trophy text-xs text-amber-500 ml-1 animate-pulse" title="Ganador de la serie"></i>`;
+                botonDesplegableHTML = `
+                    <div class="border-t border-gray-100 mt-4 pt-2 flex justify-center">
+                        <button onclick="toggleDetallePartido('${partido.id}')" 
+                                class="text-[11px] font-bold text-asatemeBlue hover:text-asatemeRed transition flex items-center gap-1 focus:outline-none py-1 px-3 rounded-md hover:bg-gray-50">
+                            <i id="icono-detalle-${partido.id}" class="fas fa-chevron-down transition-transform duration-200"></i> 
+                            <span>Ver resultados</span>
+                        </button>
+                    </div>
+                `;
+
+                contenedorDetalleHTML = `
+                    <div id="contenedor-detalle-${partido.id}" class="hidden border-t border-gray-150 bg-gray-50/60 rounded-b-xl p-3 mt-2 space-y-2">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
+                            <i class="fas fa-clipboard-list"></i> Detalle de la planilla
+                        </div>
+                        <div id="planilla-rows-${partido.id}" class="space-y-2">
+                            <p class="text-xs text-gray-400 italic">Cargando detalles...</p>
+                        </div>
+                    </div>
+                `;
             }
 
-            botonDesplegableHTML = `
-                <div class="border-t border-gray-100 mt-4 pt-2 flex justify-center">
-                    <button onclick="toggleDetallePartido('${partido.id}')" 
-                            class="text-[11px] font-bold text-asatemeBlue hover:text-asatemeRed transition flex items-center gap-1 focus:outline-none py-1 px-3 rounded-md hover:bg-gray-50">
-                        <i id="icono-detalle-${partido.id}" class="fas fa-chevron-down transition-transform duration-200"></i> 
-                        <span>Ver resultados</span>
-                    </button>
+            html += `
+                <div class="bg-white rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-all p-4 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center border-b border-gray-100 pb-2 mb-3">
+                            <span class="text-xs font-semibold text-gray-400 flex items-center gap-1.5">
+                                <i class="far fa-clock"></i> ${partido.fecha_txt || 'Serie Oficial'}
+                            </span>
+                            ${estadoBadge}
+                        </div>
+                        <div class="grid grid-cols-7 items-center text-sm gap-2">
+                            <div class="col-span-3 flex items-center justify-end gap-2 font-bold text-gray-800 tracking-tight truncate">
+                                <span class="truncate">${trofeoLocal}${nombreL}</span>
+                                <div class="w-6 h-6 min-w-6 rounded-full overflow-hidden border bg-white flex items-center justify-center p-0.5 shadow-3xs">
+                                    ${imgLocalHTML}
+                                </div>
+                            </div>
+                            <div class="col-span-1 flex justify-center items-center gap-1 font-black text-base text-gray-900 bg-gray-50 py-1 px-2 rounded-lg border">
+                                <span>${esFinalizado ? (partido.score_local ?? 0) : '-'}</span>
+                                <span class="text-xs text-gray-300 font-normal">:</span>
+                                <span>${esFinalizado ? (partido.score_visitante ?? 0) : '-'}</span>
+                            </div>
+                            <div class="col-span-3 flex items-center justify-start gap-2 font-bold text-gray-800 tracking-tight truncate">
+                                <div class="w-6 h-6 min-w-6 rounded-full overflow-hidden border bg-white flex items-center justify-center p-0.5 shadow-3xs">
+                                    ${imgVisHTML}
+                                </div>
+                                <span class="truncate">${nombreV}${trofeoVisitante}</span>
+                            </div>
+                        </div>
+                    </div>
+                    ${botonDesplegableHTML}
+                    ${contenedorDetalleHTML}
                 </div>
             `;
+        });
+    }
 
-            contenedorDetalleHTML = `
-                <div id="contenedor-detalle-${partido.id}" class="hidden border-t border-gray-150 bg-gray-50/60 rounded-b-xl p-3 mt-2 space-y-2">
-                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
-                        <i class="fas fa-clipboard-list"></i> Detalle de la planilla
-                    </div>
-                    <div id="planilla-rows-${partido.id}" class="space-y-2">
-                        <p class="text-xs text-gray-400 italic">Cargando detalles...</p>
-                    </div>
-                </div>
-            `;
-        }
+    // =========================================================================
+    // NUEVA INYECCIÓN: CALCULAR Y MOSTRAR EQUIPO LIBRE
+    // =========================================================================
+    // Obtenemos todos los clubes inscritos en la liga actual
+    const todosLosEquiposDeLaLiga = LIGAS_DATA[ligaActual] || [];
+
+    // Creamos un Set con los IDs de los equipos que tienen partidos programados en esta fecha
+    const idsEquiposActivos = new Set();
+    partidosFiltrados.forEach(p => {
+        idsEquiposActivos.add(String(p.local_id));
+        idsEquiposActivos.add(String(p.visitante_id));
+    });
+
+    // Buscamos el equipo que pertenece a esta liga pero NO está en el conjunto de activos
+    const equipoLibre = todosLosEquiposDeLaLiga.find(e => !idsEquiposActivos.has(String(e.id)));
+
+    // Si efectivamente encontramos un equipo libre (porque la liga es impar), agregamos el banner
+    if (equipoLibre) {
+        const datosLibre = EQUIPOS_MAP[String(equipoLibre.id)] || { nombre: equipoLibre.nombre, logo: '' };
+        const nombreLibre = datosLibre.nombre || "Club";
+        const primeraLetraLibre = nombreLibre.charAt(0).toUpperCase();
+
+        const imgLibreHTML = (datosLibre.logo && datosLibre.logo !== 'assets/logos/generic-pingpong.png' && datosLibre.logo.trim() !== "")
+            ? `<img src="${datosLibre.logo}" alt="${nombreLibre}" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center text-[10px] font-bold uppercase\'>${primeraLetraLibre}</div>';">`
+            : `<div class="w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center text-[10px] font-bold uppercase">${primeraLetraLibre}</div>`;
 
         html += `
-            <div class="bg-white rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-all p-4 flex flex-col justify-between">
-                <div>
-                    <div class="flex justify-between items-center border-b border-gray-100 pb-2 mb-3">
-                        <span class="text-xs font-semibold text-gray-400 flex items-center gap-1.5">
-                            <i class="far fa-clock"></i> ${partido.fecha_txt || 'Serie Oficial'}
-                        </span>
-                        ${estadoBadge}
+            <div class="col-span-full mt-4 bg-amber-50/60 border border-dashed border-amber-300 rounded-xl p-3.5 flex items-center justify-between shadow-3xs">
+                <div class="flex items-center gap-3">
+                    <div class="w-7 h-7 bg-white rounded-full overflow-hidden border border-amber-200 flex items-center justify-center p-0.5 shadow-2xs">
+                        ${imgLibreHTML}
                     </div>
-                    <div class="grid grid-cols-7 items-center text-sm gap-2">
-                        <div class="col-span-3 flex items-center justify-end gap-2 font-bold text-gray-800 tracking-tight truncate">
-                            <span class="truncate">${trofeoLocal}${nombreL}</span>
-                            <div class="w-6 h-6 min-w-6 rounded-full overflow-hidden border bg-white flex items-center justify-center p-0.5 shadow-3xs">
-                                ${imgLocalHTML}
-                            </div>
-                        </div>
-                        <div class="col-span-1 flex justify-center items-center gap-1 font-black text-base text-gray-900 bg-gray-50 py-1 px-2 rounded-lg border">
-                            <span>${esFinalizado ? (partido.score_local ?? 0) : '-'}</span>
-                            <span class="text-xs text-gray-300 font-normal">:</span>
-                            <span>${esFinalizado ? (partido.score_visitante ?? 0) : '-'}</span>
-                        </div>
-                        <div class="col-span-3 flex items-center justify-start gap-2 font-bold text-gray-800 tracking-tight truncate">
-                            <div class="w-6 h-6 min-w-6 rounded-full overflow-hidden border bg-white flex items-center justify-center p-0.5 shadow-3xs">
-                                ${imgVisHTML}
-                            </div>
-                            <span class="truncate">${nombreV}${trofeoVisitante}</span>
-                        </div>
+                    <div>
+                        <span class="block font-bold text-gray-800 text-xs sm:text-sm tracking-tight">
+                            ${nombreLibre}
+                        </span>
+                        <span class="block text-[10px] text-amber-700 font-semibold mt-0.5">
+                            <i class="fas fa-mug-hot mr-1"></i> Queda libre en esta jornada
+                        </span>
                     </div>
                 </div>
-                ${botonDesplegableHTML}
-                ${contenedorDetalleHTML}
+                <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-amber-100 text-amber-800 rounded-md shadow-3xs">
+                    Libre
+                </span>
             </div>
         `;
-    });
+    }
 
     container.innerHTML = html;
 }
