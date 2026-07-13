@@ -161,11 +161,24 @@ async function manejarCambioPartido(partidoId) {
     const partido = PARTIDOS_BACKUP.find(p => String(p.id) === String(partidoId));
     if (!partido) return;
 
+    // Obtener y mapear nombres de los equipos desde el mapa central
+    const nombreLocalReal = EQUIPOS_MAPA[partido.local_id] || "Local";
+    const nombreVisitanteReal = EQUIPOS_MAPA[partido.visitante_id] || "Visitante";
+
+    // Actualización de textos en el marcador de la UI
     if (document.getElementById('txt-nombre-local')) {
-        document.getElementById('txt-nombre-local').textContent = EQUIPOS_MAPA[partido.local_id] || "Local";
+        document.getElementById('txt-nombre-local').textContent = nombreLocalReal;
     }
     if (document.getElementById('txt-nombre-visitante')) {
-        document.getElementById('txt-nombre-visitante').textContent = EQUIPOS_MAPA[partido.visitante_id] || "Visitante";
+        document.getElementById('txt-nombre-visitante').textContent = nombreVisitanteReal;
+    }
+
+    // --- ACTUALIZACIÓN DINÁMICA DE ETIQUETAS DE COMPROBANTES DE PAGO ---
+    if (document.getElementById('nombre-club-local')) {
+        document.getElementById('nombre-club-local').textContent = nombreLocalReal;
+    }
+    if (document.getElementById('nombre-club-visitante')) {
+        document.getElementById('nombre-club-visitante').textContent = nombreVisitanteReal;
     }
 
     if (partido.estado === "Finalizado") {
@@ -197,8 +210,8 @@ async function manejarCambioPartido(partidoId) {
 
         if (JUGADORES_LOCALES.length === 0 || JUGADORES_VISITANTES.length === 0) {
             const nombreEquipoFaltante = JUGADORES_LOCALES.length === 0
-                ? (EQUIPOS_MAPA[partido.local_id] || "Equipo Local")
-                : (EQUIPOS_MAPA[partido.visitante_id] || "Equipo Visitante");
+                ? nombreLocalReal
+                : nombreVisitanteReal;
 
             console.warn(`⚠️ Bloqueo activado: ${nombreEquipoFaltante} no tiene jugadores.`);
 
@@ -466,7 +479,10 @@ function resetearNombresMarcador() {
     if (document.getElementById('score-local-input')) document.getElementById('score-local-input').value = "0";
     if (document.getElementById('score-visitante-input')) document.getElementById('score-visitante-input').value = "0";
     if (document.getElementById('seccion-partidos-ittf')) document.getElementById('seccion-partidos-ittf').classList.add('hidden');
-
+    if (document.getElementById('feedback-planilla')) document.getElementById('feedback-planilla').className = "hidden";
+    if (document.getElementById('feedback-pago-local')) document.getElementById('feedback-pago-local').className = "hidden";
+    if (document.getElementById('feedback-pago-visitante')) document.getElementById('feedback-pago-visitante').className = "hidden";
+    
     restaurarBotonEnvioOriginal();
 }
 
@@ -504,6 +520,12 @@ function manejarCambioWO(tipo) {
 // =========================================================================
 // 5. ENVÍO, TRANSACCIÓN Y GUARDADO
 // =========================================================================
+// =========================================================================
+// 5. ENVÍO, TRANSACCIÓN Y GUARDADO (CON COMPROBANTES Y NOMBRES INTELIGENTES)
+// =========================================================================
+// =========================================================================
+// 5. ENVÍO, TRANSACCIÓN Y GUARDADO (CON COMPROBANTES Y NOMBRES INTELIGENTES)
+// =========================================================================
 async function procesarEnvioResultado(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -519,7 +541,11 @@ async function procesarEnvioResultado(event) {
     const scoreLocal = parseInt(document.getElementById('score-local-input').value) || 0;
     const scoreVisitante = parseInt(document.getElementById('score-visitante-input').value) || 0;
     const tokenIngresado = document.getElementById('token-club-input').value.trim();
-    const inputArchivo = document.getElementById('archivo-planilla-input');
+
+    // NUEVOS INPUTS DE ARCHIVOS INDEPENDIENTES
+    const inputPlanilla = document.getElementById('input-planilla');
+    const inputPagoLocal = document.getElementById('input-pago-local');
+    const inputPagoVisitante = document.getElementById('input-pago-visitante');
 
     const chkLocalWO = document.getElementById('wo-local-check').checked;
     const chkVisitanteWO = document.getElementById('wo-visitante-check').checked;
@@ -537,8 +563,11 @@ async function procesarEnvioResultado(event) {
         }
     }
 
-    if (!inputArchivo.files || inputArchivo.files.length === 0) {
-        return alert("Es obligatorio adjuntar la foto de la planilla firmada.");
+    // Comprobar la obligatoriedad de los tres inputs en el HTML
+    if (!inputPlanilla || !inputPlanilla.files[0] ||
+        !inputPagoLocal || !inputPagoLocal.files[0] ||
+        !inputPagoVisitante || !inputPagoVisitante.files[0]) {
+        return alert("⚠️ Es obligatorio adjuntar los 3 documentos: Planilla, Comprobante Local y Comprobante Visitante.");
     }
 
     const btnEnviar = document.querySelector('#form-envio-planilla button[type="submit"]') || document.getElementById('btn-enviar-planilla');
@@ -549,6 +578,7 @@ async function procesarEnvioResultado(event) {
     btnEnviar.innerHTML = `<i class="fas fa-spinner fa-spin mr-1.5"></i> Guardando...`;
 
     try {
+        // 1. Validar el Token del Club
         const { data: equiposValidados, error: errToken } = await window.supabase
             .from('equipos')
             .select('*')
@@ -556,25 +586,51 @@ async function procesarEnvioResultado(event) {
             .eq('token', tokenIngresado);
 
         if (errToken || !equiposValidados || equiposValidados.length === 0) {
-            alert("El Código de Validation del Club es incorrecto.");
+            alert("El Código de Validación del Club es incorrecto.");
             btnEnviar.disabled = false;
             btnEnviar.innerHTML = textoOriginalBtn;
             return;
         }
 
-        const archivoActa = inputArchivo.files[0];
-        const extension = archivoActa.name.split('.').pop();
-        const nombreLimpioArchivo = `acta_${partidoId}_${Date.now()}.${extension}`;
+        // Helper para normalizar nombres (quita tildes y caracteres raros)
+        const formatearNombreEntidad = (nombre) => {
+            return nombre
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-zA-Z0-9]/g, "_")
+                .replace(/_+/g, "_");
+        };
 
-        const { error: errStorage } = await window.supabase.storage
-            .from('planillas')
-            .upload(nombreLimpioArchivo, archivoActa, { cacheControl: '3600', upsert: false });
+        const localLimpio = formatearNombreEntidad(EQUIPOS_MAPA[partidoSeleccionado.local_id] || "Local");
+        const visitanteLimpio = formatearNombreEntidad(EQUIPOS_MAPA[partidoSeleccionado.visitante_id] || "Visitante");
 
-        if (errStorage) throw new Error("No se pudo subir la foto.");
+        // Helper seguro para subir cada archivo al Storage
+        const subirArchivoAlStorage = async (fileInput, prefijo, detalleNombre) => {
+            const archivo = fileInput.files[0];
+            const extension = archivo.name.split('.').pop();
+            const timestamp = Date.now();
+            const nombreArchivo = `${prefijo}_${detalleNombre}_${partidoId}_${timestamp}.${extension}`;
 
-        const { data: resUrl } = window.supabase.storage.from('planillas').getPublicUrl(nombreLimpioArchivo);
-        const urlPublicaActa = resUrl.publicUrl;
+            const { error: errUpload } = await window.supabase.storage
+                .from('planillas')
+                .upload(nombreArchivo, archivo, { cacheControl: '3600', upsert: false });
 
+            if (errUpload) throw new Error(`Error al subir ${prefijo} (${detalleNombre}): ${errUpload.message}`);
+
+            const { data: resUrl } = window.supabase.storage.from('planillas').getPublicUrl(nombreArchivo);
+            return resUrl.publicUrl;
+        };
+
+        // 2. Subida en paralelo de los 3 comprobantes
+        btnEnviar.innerHTML = `<i class="fas fa-spinner fa-spin mr-1.5"></i> Subiendo archivos...`;
+
+        const [urlPlanilla, urlPagoLoc, urlPagoVis] = await Promise.all([
+            subirArchivoAlStorage(inputPlanilla, 'acta_planilla', `${localLimpio}_vs_${visitanteLimpio}`),
+            subirArchivoAlStorage(inputPagoLocal, 'comprobante_pago', localLimpio),
+            subirArchivoAlStorage(inputPagoVisitante, 'comprobante_pago', visitanteLimpio)
+        ]);
+
+        // 3. Insertar fixture_detalles si no es Walkover
         if (!esWalkover) {
             const filasDetalle = [];
             for (let i = 1; i <= 5; i++) {
@@ -597,6 +653,7 @@ async function procesarEnvioResultado(event) {
             if (errDetalle) throw errDetalle;
         }
 
+        // 4. Actualizar el partido en 'fixture' mandando las 3 URLs
         let valorWalkover = null;
         if (chkLocalWO) valorWalkover = "LOCAL";
         if (chkVisitanteWO) valorWalkover = "VISITANTE";
@@ -607,19 +664,21 @@ async function procesarEnvioResultado(event) {
                 score_local: scoreLocal,
                 score_visitante: scoreVisitante,
                 estado: "Finalizado",
-                url_acta: urlPublicaActa,
+                url_acta: urlPlanilla,
+                url_pago_local: urlPagoLoc,
+                url_pago_visitante: urlPagoVis,
                 walkover: valorWalkover
             })
             .eq('id', partidoId);
 
         if (errUpdate) throw errUpdate;
 
-        alert(`¡Planilla cargada con éxito absoluto!`);
+        alert(`¡Resultados y comprobantes cargados con éxito absoluto!`);
         window.location.href = "liga-equipos.html";
 
     } catch (error) {
         console.error("💥 Error crítico al guardar:", error);
-        alert("Ocurrió un error crítico al guardar.");
+        alert(`Ocurrió un error crítico al guardar.\n\nDetalle técnico: ${error.message || error}`);
         btnEnviar.disabled = false;
         btnEnviar.innerHTML = textoOriginalBtn;
     }
@@ -654,32 +713,12 @@ function conectarEventosFormulario() {
         });
     }
 
-    const inputArchivo = document.getElementById('archivo-planilla-input');
-    if (inputArchivo) {
-        inputArchivo.addEventListener('change', (e) => {
-            const contenedorFeedback = document.getElementById('feedback-archivo-contenedor');
-            const textoFeedback = document.getElementById('feedback-archivo-texto');
-            const iconoFeedback = document.getElementById('feedback-archivo-icono');
+    // --- NUEVO: Conexión independiente para los 3 inputs con feedback visual ---
+    configurarInputConFeedback('input-planilla', 'feedback-planilla', 'la Planilla');
+    configurarInputConFeedback('input-pago-local', 'feedback-pago-local', 'el Pago Local');
+    configurarInputConFeedback('input-pago-visitante', 'feedback-pago-visitante', 'el Pago Visitante');
 
-            if (e.target.files && e.target.files.length > 0) {
-                const archivo = e.target.files[0];
-                const pesoEnMB = (archivo.size / (1024 * 1024)).toFixed(2);
-
-                if (contenedorFeedback) {
-                    contenedorFeedback.className = "mt-2 p-3 bg-green-50 border border-green-200 text-green-700 rounded-xl flex items-center gap-2.5 transition-all text-xs font-medium";
-                }
-                if (textoFeedback) {
-                    textoFeedback.innerHTML = `<strong>Foto cargada:</strong> ${archivo.name} (${pesoEnMB} MB)`;
-                }
-                if (iconoFeedback) {
-                    iconoFeedback.className = "fas fa-check-circle text-green-600 text-base";
-                }
-            } else {
-                if (contenedorFeedback) contenedorFeedback.className = "hidden";
-            }
-        });
-    }
-
+    // --- Manejo de visibilidad del PIN (Contraseña) ---
     const inputPin = document.getElementById('token-club-input') || document.getElementById('token-club') || document.querySelector('input[type="password"]');
     const btnOjo = document.querySelector('.clave-validacion-contenedor i') || document.querySelector('input[type="password"] + i') || document.querySelector('.fa-eye') || document.querySelector('.fa-eye-slash');
 
@@ -707,6 +746,35 @@ function conectarEventosFormulario() {
     }
 }
 
+function configurarInputConFeedback(inputId, feedbackId, tipoDoc) {
+    const input = document.getElementById(inputId);
+    const feedback = document.getElementById(feedbackId);
+
+    if (input && feedback) {
+        input.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                const archivo = e.target.files[0];
+                const peso = (archivo.size / (1024 * 1024)).toFixed(2);
+
+                if (parseFloat(peso) > 15.0) {
+                    alert(`⚠️ El archivo de ${tipoDoc} supera el límite de 15MB.`);
+                    input.value = "";
+                    feedback.classList.add('hidden');
+                    return;
+                }
+
+                const esPDF = archivo.type === 'application/pdf';
+                const icono = esPDF ? 'fa-file-pdf text-red-500' : 'fa-image text-green-600';
+
+                feedback.className = "p-2.5 bg-green-50 border border-green-200 text-green-800 rounded-xl flex items-center gap-2 text-xs font-semibold mt-1.5";
+                feedback.innerHTML = `<i class="fas ${icono}"></i> <span class="truncate">${archivo.name} (${peso} MB)</span>`;
+            } else {
+                feedback.classList.add('hidden');
+            }
+        });
+    }
+}
+
 // Inicialización defensiva única con el DOM listo
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
@@ -718,3 +786,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 100);
 });
+
