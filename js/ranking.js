@@ -4,7 +4,7 @@
 // =========================================================================
 
 // -------------------------------------------------------------------------
-// 1. CAPA DE SERVICIOS (Usa la instancia 'supabase' de config.js)
+// 1. CAPA DE SERVICIOS (Usa la instancia 'window.supabase' de config.js)
 // -------------------------------------------------------------------------
 const RankingService = {
     /**
@@ -12,8 +12,10 @@ const RankingService = {
      */
     async obtenerPeriodoMasReciente() {
         try {
+            if (!window.supabase) throw new Error("window.supabase no está listo");
+
             // Consultamos el último registro para saber cuál es el mes más nuevo
-            const { data, error } = await supabase
+            const { data, error } = await window.supabase
                 .from('ranking')
                 .select('periodo')
                 .order('created_at', { ascending: false })
@@ -22,7 +24,7 @@ const RankingService = {
             if (error) throw error;
             return data && data.length > 0 ? data[0].periodo : "Junio 2026";
         } catch (error) {
-            console.error("Error al determinar el periodo más reciente:", error);
+            console.error("⚠️ Error al determinar el periodo más reciente:", error);
             return "Junio 2026"; // Fallback seguro
         }
     },
@@ -36,8 +38,10 @@ const RankingService = {
         const ultimoPeriodo = await this.obtenerPeriodoMasReciente();
         RankingState.mesActivo = `Actualizado ${ultimoPeriodo}`;
 
-        // Consulta usando la librería oficial de Supabase
-        const { data, error } = await supabase
+        if (!window.supabase) return [];
+
+        // Consulta usando la librería oficial apuntando al cliente global seguro
+        const { data, error } = await window.supabase
             .from('ranking')
             .select('categoria, posicion, jugador, club, puntos')
             .eq('periodo', ultimoPeriodo);
@@ -56,16 +60,25 @@ const RankingService = {
 };
 
 // -------------------------------------------------------------------------
-// 2. CAPA DE ESTADO CENTRAL (Única Fuente de la Verdad)
+// 2. CAPA DE ESTADO CENTRAL (Única Fuente de la Verdad con Filtro Tolerante)
 // -------------------------------------------------------------------------
 const RankingState = {
     jugadoresGlobales: [],
     categoriaActual: "PRIMERA",
-    mostrarSoloTop10: true, 
+    mostrarSoloTop10: true,
     mesActivo: "Cargando...",
 
     obtenerDatosProcesados() {
-        let filtrados = this.jugadoresGlobales.filter(j => j.categoria === this.categoriaActual);
+        const filtroNormalizado = this.categoriaActual.trim().toUpperCase();
+
+        // Filtro flexible tolerante a mayúsculas/minúsculas de la base de datos
+        let filtrados = this.jugadoresGlobales.filter(j => {
+            if (!j.categoria) return false;
+            const catJugador = j.categoria.trim().toUpperCase();
+            return catJugador === filtroNormalizado || catJugador.includes(filtroNormalizado);
+        });
+
+        // Ordenamos por posición numérica
         filtrados.sort((a, b) => a.posicion - b.posicion);
         const totalEnCategoria = filtrados.length;
 
@@ -185,13 +198,20 @@ window.RankingController = {
     }
 };
 
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        // Carga inicial asíncrona de datos desde Supabase
-        RankingState.jugadoresGlobales = await RankingService.obtenerRankingDesdeSupabase();
-        RankingUI.renderizar();
-    } catch (error) {
-        console.error("🚨 [ASATEME-SUPABASE]: Falla crítica en módulo Ranking:", error);
-        RankingUI.mostrarPantallaError();
-    }
+// Inicialización asíncrona controlada con margen de seguridad (Asilamiento de Tiempos)
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(async () => {
+        try {
+            console.log("🚀 [Ranking Module] Iniciando descarga segura desde Supabase...");
+            RankingState.jugadoresGlobales = await RankingService.obtenerRankingDesdeSupabase();
+
+            // Log de diagnóstico para desarrollo (puedes quitarlo luego de verificar)
+            console.log("📊 Filas recuperadas:", RankingState.jugadoresGlobales);
+
+            RankingUI.renderizar();
+        } catch (error) {
+            console.error("🚨 [ASATEME-SUPABASE]: Falla crítica en módulo Ranking:", error);
+            RankingUI.mostrarPantallaError();
+        }
+    }, 150); // 150ms para garantizar que 'window.supabase' exista en memoria
 });

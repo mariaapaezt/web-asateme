@@ -1,38 +1,36 @@
 [
     {
-        "id": "capacitacion-entrenadores-fatm-nivel1-2026",
-        "titulo": "Capacitación de Alto Nivel: Curso Entrenadores FATM Nivel 1",
-        "resumen": "Se llevará a cabo en Rosario el Curso de Entrenadores Nivel 1, dictado por Damián Rajmil. Una formación intensiva de 14 horas para profesionalizar la enseñanza del tenis de mesa.",
-        "fecha": "Junio, 2026",
-        "imagenPortada": "assets/images/curso.jpeg",
+        "id": "torneo-invierno-asateme-2026",
+        "titulo": "¡Vuelve nuestro Tradicional Torneo de Invierno ASATEME!",
+        "resumen": "Reencuentro en las mesas para vivir nuestro clásico torneo invernal. Una jornada que combina competencia, sorteos exclusivos y un propósito solidario para apoyar a nuestra Selección de Santa Fe.",
+        "fecha": "Julio, 2026",
+        "imagenPortada": "assets/images/5to asateme.jpeg",
         "galeria": [
-            "assets/images/curso.jpeg"
+            "assets/images/5to asateme.jpeg"
         ],
         "mostrarLogoLiga": false,
         "contenido": [
             {
                 "tipo": "parrafo",
-                "texto": "¡Atención, comunidad tenismesista de Santa Fe! Tenemos el agrado de invitar a todos los interesados a formar parte del Curso de Entrenadores FATM Nivel 1, una oportunidad imperdible para profesionalizar sus conocimientos bajo la guía del destacado Entrenador Nacional ITTF 2, Damián Rajmil."
+                "texto": "¡Vuelve nuestro Tradicional Torneo de Invierno ASATEME! 🏓❄️ Este mes nos reencontramos en las mesas para vivir una nueva edición de nuestro clásico torneo invernal. Es el momento ideal para entrar en calor, medir el nivel y disfrutar junto a la gran familia del tenis de mesa santafesino."
             },
             {
                 "tipo": "parrafo",
-                "texto": "Esta es la instancia ideal para quienes buscan elevar su nivel técnico, adquirir nuevas herramientas pedagógicas y fortalecer el desarrollo de nuestro deporte en toda la provincia."
+                "texto": "En esta oportunidad, preparamos una jornada muy especial que combina la pasión por la competencia con el espíritu de equipo:"
             },
             {
                 "tipo": "tarjetaInformativa",
-                "icono": "fas fa-chalkboard-teacher",
-                "titulo": "Detalles del Encuentro",
-                "text": "• Dictado por: Damián Rajmil (Entrenador Nacional ITTF 2).\n• Lugar: Club Atlético Provincial (Blvd. 27 de Febrero 2672, Rosario).\n• Fechas: 27 y 28 de junio.\n• Formato: 14 horas de formación intensiva (Teoría y práctica)."
+                "icono": "fas fa-gift",
+                "titulo": "Destacados del evento",
+                "text": "• Premios en todas las categorías: Reconocimiento al esfuerzo y rendimiento en cada nivel.\n• Sorteos exclusivos: Sorpresas especiales dedicados a todos nuestros socios.\n• Propósito solidario: Todo lo recaudado será destinado a apoyar a nuestra Selección de Santa Fe."
             },
             {
-                "tipo": "tarjetaInformativa",
-                "icono": "fas fa-info-circle",
-                "titulo": "Información e Inscripciones",
-                "text": "• Requisito: Ser mayor de 18 años.\n• Cupos: Limitados.\n• Inversión: $80.000.\n• Consultas: desarrollonacional@fatm.org.ar"
+                "tipo": "parrafo",
+                "texto": "Desde ASATEME, queremos invitarles a participar de esta gran jornada de tenis de mesa de la provincia. Ya sea compitiendo, alentando o colaborando, su presencia es fundamental para seguir haciendo crecer nuestro deporte y a nuestros atletas."
             },
             {
                 "tipo": "cita",
-                "texto": "¡No dejes pasar esta oportunidad de aprender de los mejores y sumar valor a tu trayectoria como formador!"
+                "texto": "¡Preparen sus paletas, inviten a sus familias y súmense a esta verdadera fiesta deportiva! - Comisión Directiva ASATEME"
             }
         ]
     },
@@ -59,41 +57,6 @@
             {
                 "tipo": "parrafo",
                 "texto": "Se vivió un gran nivel en todas las categorías y contamos con una excelente respuesta del público. Queremos agradecer especialmente a la Municipalidad de Rosario por el espacio brindado en el Gimnasio Emilio Lotuf  y a todos los padres por acompañarnos en esta verdadera fiesta del tenis de mesa santafesino."
-            }
-        ]
-    },
-    {
-        "id": "ixchel-guia-monzon-odesur",
-        "titulo": "¡Orgullo Santafesino! Ixchel Guía Monzón clasifica a los Juegos ODESUR",
-        "resumen": "Con solo 14 años, la jugadora de ASATEME hace historia al clasificar a los Juegos ODESUR en la categoría máxima, consolidándose en la elite absoluta del tenis de mesa.",
-        "fecha": "16 de Junio, 2026",
-        "imagenPortada": "assets/images/monzon.jpeg",
-        "galeria": [
-            "assets/images/monzon.jpeg"
-        ],
-        "mostrarLogoLiga": false,
-        "contenido": [
-            {
-                "tipo": "parrafo",
-                "texto": "La joven santafesina Ixchel Guía Monzón, jugadora de ASATEME, ha hecho historia al lograr la clasificación para los Juegos ODESUR en la categoría máxima."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Con tan solo 14 años, Ixchel demuestra que no hay límites para el talento y la dedicación. Si bien es una atleta en pleno desarrollo, su juego, su madurez en la mesa y su mentalidad competitiva la han llevado a posicionarse firmemente entre las mejores del país en la máxima categoría de adultos. Dejar de ser una promesa para competir de igual a igual en la elite absoluta es un hito reservado para unas pocas elegidas."
-            },
-            {
-                "tipo": "tarjetaInformativa",
-                "icono": "fas fa-medal",
-                "titulo": "Un hito histórico",
-                "text": "La clasificación a los Juegos ODESUR representa la consolidación de Ixchel en la categoría mayor, un logro que marca el inicio de una carrera proyectada hacia la elite olímpica."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "<strong>Un triunfo colectivo: Club y Familia.</strong> Este logro es el reflejo de un esfuerzo compartido. Felicitamos enormemente a su club, Alvear, por el impecable y gran trabajo que vienen realizando día a día en sus entrenamientos, potenciando el talento de sus atletas. Asimismo, el reconocimiento es para sus padres, cuyo sacrificio incondicional en cada torneo, viaje y evento es el motor que hace posible este presente."
-            },
-            {
-                "tipo": "cita",
-                "texto": "Desde aquí, felicitamos a Ixchel por este boleto internacional y estaremos muy al pendiente de los avances de esta verdadera promesa olímpica. ¡El futuro ya llegó y es santafesino! 🏓🇦🇷"
             }
         ]
     },

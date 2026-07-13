@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carga de Resultados - ASATEME</title>
+
+    <link rel="icon" type="image/png" href="assets/logos/LIGA.jpg">
+    
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        asatemeBlue: '#003366',
+                        asatemeRed: '#D32F2F',
+                        asatemeGray: '#F1F5F9',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="bg-asatemeGray font-sans text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-md">
+        <div class="container mx-auto px-4 py-3.5 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-clipboard-check text-asatemeRed text-xl"></i>
+                <h1 class="text-lg font-bold tracking-tight">Carga de Planillas</h1>
+            </div>
+            <a href="liga-equipos.html"
+                class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg font-semibold transition flex items-center gap-1.5">
+                <i class="fas fa-arrow-left"></i> Volver a la Liga
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-1 container mx-auto px-4 py-6 max-w-xl">
+
+        <div
+            class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex gap-3 text-xs text-amber-900 shadow-xs">
+            <i class="fas fa-info-circle text-base text-amber-600 shrink-0 mt-0.5"></i>
+            <p>Este formulario debe ser enviado por el capitán del equipo ganador o el delegado local al finalizar la
+                serie. Los datos se validan de forma cruzada mediante PIN.</p>
+        </div>
+
+        <form id="form-envio-planilla" class="space-y-6">
+
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200/80 space-y-4">
+                <div class="flex items-center gap-2 border-b pb-3 border-gray-100">
+                    <span
+                        class="w-6 h-6 rounded-full bg-asatemeBlue/10 text-asatemeBlue text-xs font-bold flex items-center justify-center">1</span>
+                    <h2 class="font-bold text-asatemeBlue text-sm uppercase tracking-wider">Identificación del Partido
+                    </h2>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-1.5">Categoría /
+                        Liga</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" id="btn-liga-a" onclick="seleccionarFiltroLiga('LIGA_A')"
+                            class="py-2.5 px-4 rounded-xl font-bold text-xs border text-center transition-all bg-asatemeBlue text-white border-asatemeBlue cursor-pointer">
+                            Liga A
+                        </button>
+                        <button type="button" id="btn-liga-b" onclick="seleccionarFiltroLiga('LIGA_B')"
+                            class="py-2.5 px-4 rounded-xl font-bold text-xs border text-center transition-all bg-white text-gray-700 border-gray-200 cursor-pointer">
+                            Liga B
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-1.5">Número de
+                        Fecha</label>
+                    <select id="select-fecha-num" required
+                        class="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 focus:outline-none focus:border-asatemeBlue focus:bg-white transition-all">
+                        <option value="1">Fecha 1</option>
+                        <option value="2">Fecha 2</option>
+                        <option value="3">Fecha 3</option>
+                        <option value="4">Fecha 4</option>
+                        <option value="5">Fecha 5</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-1.5">Seleccionar
+                        Serie en Juego</label>
+                    <select id="select-partido-id" required
+                        class="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 focus:outline-none focus:border-asatemeBlue focus:bg-white transition-all">
+                        <option value="">-- Cargando partidos disponibles --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="seccion-partidos-ittf"
+                class="hidden bg-white rounded-2xl p-5 shadow-sm border border-gray-200/80 space-y-4">
+                <div class="flex justify-between items-center border-b pb-3 border-gray-100">
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="w-6 h-6 rounded-full bg-asatemeBlue/10 text-asatemeBlue text-xs font-bold flex items-center justify-center">2</span>
+                        <h2 class="font-bold text-asatemeBlue text-sm uppercase tracking-wider">Desglose de Partidos (5
+                            Series)</h2>
+                    </div>
+                    <div class="text-xs font-black bg-asatemeBlue text-white px-2.5 py-1 rounded-md shadow-xs">
+                        Parcial: <span id="marcador-parcial-txt">0 - 0</span>
+                    </div>
+                </div>
+
+                <p class="text-[11px] text-gray-400 leading-relaxed">
+                    Los partidos se habilitan de forma secuencial según el reglamento oficial. El sistema bloqueará los
+                    sets futuros automáticamente en cuanto un jugador consolide 3 sets ganados.
+                </p>
+
+                <div id="contenedor-acordeones-partidos" class="space-y-3"></div>
+            </div>
+
+
+            <div id="seccion-marcador-fase1"
+                class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200/80 space-y-4">
+                <div class="flex items-center gap-2 border-b pb-3 border-gray-100">
+                    <span
+                        class="w-6 h-6 rounded-full bg-asatemeBlue/10 text-asatemeBlue text-xs font-bold flex items-center justify-center">3</span>
+                    <h2 class="font-bold text-asatemeBlue text-sm uppercase tracking-wider">Resultado Global de la Serie
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div class="flex flex-col items-center">
+                        <span id="txt-nombre-local"
+                            class="text-xs font-bold text-gray-500 mb-2 truncate max-w-full text-center">Equipo
+                            Local</span>
+                        <input type="number" id="score-local-input" required min="0" max="5" placeholder="0" readonly
+                            class="w-20 text-center bg-gray-100 border-2 border-gray-200 rounded-2xl py-3 text-2xl font-black text-gray-400 focus:outline-none transition-all">
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span id="txt-nombre-visitante"
+                            class="text-xs font-bold text-gray-500 mb-2 truncate max-w-full text-center">Equipo
+                            Visitante</span>
+                        <input type="number" id="score-visitante-input" required min="0" max="5" placeholder="0"
+                            readonly
+                            class="w-20 text-center bg-gray-100 border-2 border-gray-200 rounded-2xl py-3 text-2xl font-black text-gray-400 focus:outline-none transition-all">
+                    </div>
+
+                    <div class="col-span-2 bg-red-50 border border-red-100 rounded-xl p-3.5 space-y-2 mt-2">
+                        <span class="block text-[11px] font-bold text-red-700 uppercase tracking-wide">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> ¿Hubo No Presentación (Walkover)?
+                        </span>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label
+                                class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200 cursor-pointer text-xs font-semibold select-none">
+                                <input type="checkbox" id="wo-local-check" onchange="manejarCambioWO('LOCAL')"
+                                    class="w-4 h-4 rounded-sm text-asatemeRed focus:ring-asatemeRed">
+                                <span>W.O. Local (0 - 5)</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200 cursor-pointer text-xs font-semibold select-none">
+                                <input type="checkbox" id="wo-visitante-check" onchange="manejarCambioWO('VISITANTE')"
+                                    class="w-4 h-4 rounded-sm text-asatemeRed focus:ring-asatemeRed">
+                                <span>W.O. Visitante (5 - 0)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        Foto de la Planilla Firmada
+                    </label>
+
+                    <label for="archivo-planilla-input"
+                        class="w-full bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-50/80 transition-all text-gray-500 shadow-2xs">
+                        <i class="fas fa-camera text-xl text-asatemeBlue"></i>
+                        <span class="text-xs font-bold">Capturar o seleccionar imagen</span>
+                        <span class="text-[10px] text-gray-400">Formatos permitidos: JPG, PNG</span>
+                    </label>
+
+                    <input type="file" id="archivo-planilla-input" accept="image/*" class="hidden">
+
+                    <div id="feedback-archivo-contenedor" class="hidden">
+                        <i id="feedback-archivo-icono" class="far fa-image"></i>
+                        <span id="feedback-archivo-texto">No se seleccionó archivo</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-1.5">Clave de
+                        Validación del Club</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fas fa-lock text-xs"></i>
+                        </span>
+                        <input type="password" id="token-club-input" required placeholder="Ingresá el PIN secreto"
+                            class="w-full bg-gray-50 border border-gray-300 rounded-xl pl-9 pr-10 py-2.5 text-sm focus:outline-none focus:border-asatemeBlue focus:bg-white transition-all font-semibold text-gray-800">
+                        <button type="button" onclick="toggleVisibilidadToken()"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none"
+                            title="Mostrar/Ocultar código">
+                            <i id="icono-ojo-token" class="fas fa-eye text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" id="btn-enviar-planilla"
+                class="w-full bg-asatemeRed hover:bg-red-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all text-sm flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
+                <i class="fas fa-cloud-upload-alt text-base"></i> Enviar Informe Oficial
+            </button>
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/carga-logic.js"></script>
+
+</body>
+
+</html>
