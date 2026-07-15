@@ -289,7 +289,7 @@ async function cargarDatosDesdeSupabase() {
         const totalEquiposInscritos = LIGAS_DATA.LIGA_A.length + LIGAS_DATA.LIGA_B.length;
         const elContador = document.getElementById('contador-equipos-total');
         if (elContador) {
-            elContador.textContent = `${totalEquiposInscritos} Clubes`;
+            elContador.textContent = `${totalEquiposInscritos} Equipos`;
         }
 
         renderPosiciones();
