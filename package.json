@@ -1,0 +1,10 @@
+{
+    "name": "web-asateme",
+    "version": "1.0.0",
+    "description": "Asociación Santafesina de tenis de mesa",
+    "main": "build-config.js",
+    "scripts": {
+        "build": "node build-config.js"
+    },
+    "dependencies": {}
+}
