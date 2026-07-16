@@ -11,8 +11,11 @@ const content = `// Archivo autogenerado dinámicamente por Netlify en la compil
 window.supabaseUrl = "${supabaseUrl}";
 window.supabaseAnonKey = "${supabaseAnonKey}";
 
-if (window.supabase) {
+// Inicializamos el cliente solo si la librería de Supabase ya se cargó en el navegador
+if (typeof supabase !== 'undefined') {
     window.supabase = supabase.createClient(window.supabaseUrl, window.supabaseAnonKey);
+} else {
+    console.error("❌ La librería de Supabase no está cargada en el navegador. Asegúrate de poner el CDN antes de este script.");
 }
 `;
 
