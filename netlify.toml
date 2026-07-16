@@ -1,5 +1,10 @@
 [build]
-  # Ejecuta nuestro inyector de Node justo antes de desplegar
-  command = "node build-config.js"
-  # Le indica a Netlify que sirva los archivos de la raíz del repositorio
+  # Creamos el archivo js/supabase-config.js directamente usando comandos del sistema (bash)
+  # Este comando escribe las variables que tenés configuradas en Netlify de forma instantánea.
+  command = """
+  mkdir -p js && \
+  echo 'window.supabaseUrl = "'$SUPABASE_URL'";' > js/supabase-config.js && \
+  echo 'window.supabaseAnonKey = "'$SUPABASE_KEY'";' >> js/supabase-config.js && \
+  echo 'if (typeof supabase !== "undefined") { window.supabase = supabase.createClient(window.supabaseUrl, window.supabaseAnonKey); }' >> js/supabase-config.js
+  """
   publish = "."
