@@ -174,7 +174,7 @@ async function cargarDatosDesdeSupabase() {
             throw new Error("La instancia 'supabase' no está definida. Revisá js/supabase-config.js");
         }
 
-        // NUEVO: Agregamos el fetch de 'fixture_detalles' a la descarga inicial en paralelo
+        // Descargamos las 4 tablas en paralelo al iniciar
         const [resEquipos, resFixture, resJugadores, resDetalles] = await Promise.all([
             supabase.from('equipos').select('*'),
             supabase.from('fixture').select('*'),
@@ -189,7 +189,17 @@ async function cargarDatosDesdeSupabase() {
 
         FIXTURE_DATA = resFixture.data || [];
         JUGADORES_DATA = resJugadores.data || [];
-        TODOS_DETALLES_JUEGOS = resDetalles.data || []; // Guardamos los partidos jugados en memoria
+
+        // Guardamos todos los detalles en caché global para cálculos e historial
+        TODOS_DETALLES_JUEGOS = resDetalles.data || [];
+        // También alimentamos la caché de planillas para que los desplegables del fixture abran instantáneamente
+        FIXTURE_DETALLES_CACHE = {};
+        TODOS_DETALLES_JUEGOS.forEach(d => {
+            if (!FIXTURE_DETALLES_CACHE[d.partido_id]) {
+                FIXTURE_DETALLES_CACHE[d.partido_id] = [];
+            }
+            FIXTURE_DETALLES_CACHE[d.partido_id].push(d);
+        });
 
         let listaEquipos = resEquipos.data || [];
 
@@ -655,6 +665,9 @@ function renderEquipos() {
 /**
  * Muestra la lista interna de jugadores de un equipo específico con su % de asistencia de juego
  */
+/**
+ * Muestra la lista interna de jugadores de un equipo específico con su % de asistencia real (series únicas)
+ */
 function renderJugadoresDelEquipo(equipoId) {
     const seccionDetalle = document.getElementById('seccion-detalle-jugadores');
     const grillaJugadores = document.getElementById('jugadores-grid-container');
@@ -675,10 +688,10 @@ function renderJugadoresDelEquipo(equipoId) {
         return;
     }
 
-    // 1. Calcular el total de fechas disponibles en el torneo dinámicamente
+    // 1. Obtener el total de fechas disponibles dinámicamente
     const totalFechasDisponibles = FIXTURE_DATA.length > 0
         ? Math.max(...FIXTURE_DATA.map(p => Number(p.fecha_numero || 1)))
-        : 10; // Si no hay datos, por defecto calculamos sobre 10 fechas
+        : 10;
 
     let html = '';
 
@@ -690,30 +703,33 @@ function renderJugadoresDelEquipo(equipoId) {
             ? `<span class="text-[10px] bg-asatemeBlue/10 text-asatemeBlue font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">${jugador.categoria}</span>`
             : '';
 
-        // 2. Contar en cuántos partidos únicos de planilla ha participado el jugador
-        // Un partido de planilla puede tener al jugador como local (singles/dobles) o visitante (singles/dobles)
-        const partidosJugados = TODOS_DETALLES_JUEGOS.filter(partido => {
+        // 2. FILTRADO INTELIGENTE: Buscamos todas las planillas donde participó
+        const planillasDondeParticipo = TODOS_DETALLES_JUEGOS.filter(partido => {
             return Number(partido.local_jugador1_id) === idJugador ||
                 Number(partido.local_jugador2_id) === idJugador ||
                 Number(partido.visitante_jugador1_id) === idJugador ||
                 Number(partido.visitante_jugador2_id) === idJugador;
-        }).length;
+        });
 
-        // 3. Calcular el porcentaje de participación según las fechas del torneo
+        // 3. Extraemos únicamente los 'partido_id' (series) únicos para evitar duplicar si jugó singles y dobles en la misma fecha
+        const seriesUnicasJugadas = [...new Set(planillasDondeParticipo.map(p => p.partido_id))].length;
+
+        // 4. Calculamos porcentaje real en base a las fechas totales del torneo
         const porcentajeParticipacion = totalFechasDisponibles > 0
-            ? Math.round((partidosJugados / totalFechasDisponibles) * 100)
+            ? Math.round((seriesUnicasJugadas / totalFechasDisponibles) * 100)
             : 0;
 
-        // 4. Elegir un color sutil para el badge del porcentaje según su constancia
         let colorPorcentaje = 'text-gray-500 bg-gray-100';
-        if (porcentajeParticipacion >= 80) {
-            colorPorcentaje = 'text-green-700 bg-green-100'; // Súper activo
-        } else if (porcentajeParticipacion >= 40) {
-            colorPorcentaje = 'text-amber-700 bg-amber-100'; // Actividad media
+        if (porcentajeParticipacion >= 75) {
+            colorPorcentaje = 'text-green-700 bg-green-100';
+        } else if (porcentajeParticipacion >= 35) {
+            colorPorcentaje = 'text-amber-700 bg-amber-100';
         }
 
+        // Agregamos cursor-pointer y onclick para abrir su historial detallado al hacer click
         html += `
-            <div class="bg-white border border-gray-150 rounded-xl p-3 flex items-center justify-between shadow-3xs hover:shadow-xs transition">
+            <div onclick="verHistorialJugador(${idJugador})" 
+                class="bg-white border border-gray-150 rounded-xl p-3 flex items-center justify-between shadow-3xs hover:shadow-md hover:border-asatemeBlue transition cursor-pointer">
                 <div class="flex items-center gap-3 truncate">
                     <div class="w-8 h-8 min-w-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 flex items-center justify-center font-bold text-xs border border-gray-200 uppercase">
                         ${primeraLetra}
@@ -722,11 +738,11 @@ function renderJugadoresDelEquipo(equipoId) {
                         <div class="flex items-center gap-1.5">
                             <span class="font-semibold text-gray-800 text-xs tracking-tight truncate">${nombreJugador}</span>
                         </div>
-                        <span class="block text-[10px] text-gray-400 mt-0.5">Partidos: ${partidosJugados} / ${totalFechasDisponibles}</span>
+                        <span class="block text-[10px] text-gray-400 mt-0.5">Fechas: ${seriesUnicasJugadas} / ${totalFechasDisponibles}</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 pl-2 shrink-0">
-                    <span class="text-[10px] font-extrabold px-2 py-1 rounded-md ${colorPorcentaje}" title="Porcentaje de participación sobre el total de fechas">
+                    <span class="text-[10px] font-extrabold px-2 py-1 rounded-md ${colorPorcentaje}" title="Porcentaje de presentismo sobre fechas totales">
                         ${porcentajeParticipacion}% Pres.
                     </span>
                     ${badgeCategoria}
@@ -875,6 +891,179 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    /**
+     * Abre un modal interactivo con todo el historial de partidos jugados por un jugador específico
+     */
+    function verHistorialJugador(jugadorId) {
+        const jugador = JUGADORES_DATA.find(j => Number(j.id) === Number(jugadorId));
+        if (!jugador) return;
+
+        // 1. Buscamos el club original en nuestras listas de ligas para saber a cuál pertenece ("LIGA_A" o "LIGA_B")
+        const clubOriginal = LIGAS_DATA.LIGA_A.find(e => String(e.id) === String(jugador.equipo_id)) ||
+            LIGAS_DATA.LIGA_B.find(e => String(e.id) === String(jugador.equipo_id));
+
+        const club = EQUIPOS_MAP[String(jugador.equipo_id)] || { nombre: 'Club Desconocido' };
+
+        // Formateamos el texto de la liga para que se vea prolijo (ej: "Liga A" o "Liga B")
+        const nombreLiga = clubOriginal
+            ? (clubOriginal.liga === 'LIGA_A' ? 'Liga A' : 'Liga B')
+            : 'Liga Sin Especificar';
+
+        // Buscamos todos sus partidos individuales en la tabla de detalles
+        const partidosIndividuales = TODOS_DETALLES_JUEGOS.filter(partido => {
+            return Number(partido.local_jugador1_id) === jugadorId ||
+                Number(partido.local_jugador2_id) === jugadorId ||
+                Number(partido.visitante_jugador1_id) === jugadorId ||
+                Number(partido.visitante_jugador2_id) === jugadorId;
+        });
+
+        let htmlPartidos = '';
+
+        if (partidosIndividuales.length === 0) {
+            htmlPartidos = `
+            <div class="text-center py-8 text-gray-400 text-xs border border-dashed rounded-xl">
+                <i class="fas fa-history text-lg mb-2 block text-gray-300"></i> Este jugador aún no ha disputado partidos oficiales registrados en el sistema.
+            </div>
+        `;
+        } else {
+            partidosIndividuales.forEach(p => {
+                // Buscamos el partido padre para saber la Fecha Nro
+                const seriePadre = FIXTURE_DATA.find(f => Number(f.id) === Number(p.partido_id));
+                const nroFecha = seriePadre ? `Fecha ${seriePadre.fecha_numero}` : 'Serie Especial';
+
+                // Identificar si jugó como Local o Visitante en este partido individual
+                const esLocal = (Number(p.local_jugador1_id) === jugadorId || Number(p.local_jugador2_id) === jugadorId);
+
+                // Determinar compañeros y rivales
+                let parejaAliada = '';
+                let parejaRival = '';
+                let clubRivalNombre = 'Club Rival';
+
+                if (esLocal) {
+                    const compañero = p.local_jugador2_id ? ` / ${obtenerNombreJugador(p.local_jugador2_id)}` : '';
+                    parejaAliada = `${jugador.nombre}${compañero}`;
+
+                    const rival1 = obtenerNombreJugador(p.visitante_jugador1_id);
+                    const rival2 = p.visitante_jugador2_id ? ` / ${obtenerNombreJugador(p.visitante_jugador2_id)}` : '';
+                    parejaRival = `${rival1}${rival2}`;
+
+                    // El rival es el visitante de la serie
+                    if (seriePadre) {
+                        const datosRivalClub = EQUIPOS_MAP[String(seriePadre.visitante_id)];
+                        if (datosRivalClub) clubRivalNombre = datosRivalClub.nombre;
+                    }
+                } else {
+                    const compañero = p.visitante_jugador2_id ? ` / ${obtenerNombreJugador(p.visitante_jugador2_id)}` : '';
+                    parejaAliada = `${jugador.nombre}${compañero}`;
+
+                    const rival1 = obtenerNombreJugador(p.local_jugador1_id);
+                    const rival2 = p.local_jugador2_id ? ` / ${obtenerNombreJugador(p.local_jugador2_id)}` : '';
+                    parejaRival = `${rival1}${rival2}`;
+
+                    // El rival es el local de la serie
+                    if (seriePadre) {
+                        const datosRivalClub = EQUIPOS_MAP[String(seriePadre.local_id)];
+                        if (datosRivalClub) clubRivalNombre = datosRivalClub.nombre;
+                    }
+                }
+
+                // Marcadores de sets
+                const setsFavor = esLocal ? Number(p.score_sets_local || 0) : Number(p.score_sets_visitante || 0);
+                const setsContra = esLocal ? Number(p.score_sets_visitante || 0) : Number(p.score_sets_local || 0);
+                const ganoPartido = setsFavor > setsContra;
+
+                // Badge de resultado
+                const badgeResultado = ganoPartido
+                    ? `<span class="bg-green-100 text-green-700 font-extrabold text-[10px] px-2 py-1 rounded">GANÓ</span>`
+                    : `<span class="bg-red-50 text-red-600 font-extrabold text-[10px] px-2 py-1 rounded">PERDIÓ</span>`;
+
+                // Detalle de sets individuales
+                const setsLocal = p.sets_local || [];
+                const setsVisitante = p.sets_visitante || [];
+                let detalleSetsList = [];
+                setsLocal.forEach((ptL, idx) => {
+                    const ptV = setsVisitante[idx] ?? 0;
+                    const setFavor = esLocal ? ptL : ptV;
+                    const setContra = esLocal ? ptV : ptL;
+                    detalleSetsList.push(`${setFavor}-${setContra}`);
+                });
+
+                htmlPartidos += `
+                <div class="border border-gray-100 rounded-xl p-3 bg-gray-50/50 hover:bg-gray-50 transition">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">${nroFecha} — ${p.modalidad || 'Partido'}</span>
+                        ${badgeResultado}
+                    </div>
+                    <div class="text-xs text-gray-800 space-y-1">
+                        <div>
+                            <span class="text-gray-400 font-medium">Pareja:</span> 
+                            <span class="font-semibold">${parejaAliada}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 font-medium">Vs:</span> 
+                            <span class="font-semibold text-asatemeBlue">${parejaRival}</span> 
+                            <span class="text-[10px] text-gray-400">(${clubRivalNombre})</span>
+                        </div>
+                    </div>
+                    <div class="mt-2.5 pt-2 border-t border-gray-100/60 flex justify-between items-center">
+                        <span class="text-[10px] text-gray-400 font-medium">Parciales: <span class="font-mono text-gray-600 font-bold">${detalleSetsList.join(', ')}</span></span>
+                        <span class="text-xs font-black text-gray-800 bg-white border px-2 py-0.5 rounded shadow-3xs">${setsFavor} - ${setsContra}</span>
+                    </div>
+                </div>
+            `;
+            });
+        }
+
+        // Estructura HTML del Modal Flotante de Tailwind
+        const modalHTML = `
+        <div id="modal-historial-jugador" class="fixed inset-0 bg-gray-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
+            <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl flex flex-col max-h-[85vh] transform transition-all scale-100">
+                <!-- Cabecera -->
+                <div class="p-4 border-b border-gray-100 flex justify-between items-start">
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-900 tracking-tight">${jugador.nombre}</h3>
+                        <span class="text-[11px] text-gray-500 flex items-center gap-1 mt-0.5">
+                            <i class="fas fa-shield-alt text-gray-300"></i> ${club.nombre} — ${nombreLiga}
+                        </span>
+                    </div>
+                    <button onclick="cerrarModalHistorial()" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 transition focus:outline-none">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
+                <div class="p-4 overflow-y-auto space-y-3 flex-1 scrollbar-thin">
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider"><i class="fas fa-history mr-1"></i> Historial de enfrentamientos</div>
+                    ${htmlPartidos}
+                </div>
+                <div class="p-3 bg-gray-50 border-t border-gray-100 rounded-b-2xl text-center">
+                    <button onclick="cerrarModalHistorial()" class="bg-asatemeBlue hover:bg-blue-800 text-white font-bold text-xs px-5 py-2 rounded-lg shadow-sm transition">
+                        Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+        // Lo inyectamos al final del body
+        const div = document.createElement('div');
+        div.id = 'container-modal-historial';
+        div.innerHTML = modalHTML;
+        document.body.appendChild(div);
+    }
+
+    /**
+     * Cierra y remueve el modal del historial del DOM
+     */
+    function cerrarModalHistorial() {
+        const modal = document.getElementById('container-modal-historial');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    // Hacemos accesibles las funciones desde el objeto Window para que respondan al onclick del HTML inyectado
+    window.verHistorialJugador = verHistorialJugador;
+    window.cerrarModalHistorial = cerrarModalHistorial;
 
     // DISPARO INICIAL: Conectar y descargar información limpia de la BD
     cargarDatosDesdeSupabase();
