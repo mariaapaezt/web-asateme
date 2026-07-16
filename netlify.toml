@@ -1,0 +1,5 @@
+[build]
+  # Ejecuta nuestro inyector de Node justo antes de desplegar
+  command = "node build-config.js"
+  # Le indica a Netlify que sirva los archivos de la raíz del repositorio
+  publish = "."
