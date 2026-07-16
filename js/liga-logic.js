@@ -4,6 +4,7 @@
 let LIGAS_DATA = { LIGA_A: [], LIGA_B: [] }; // Equipos agrupados por clave de liga
 let FIXTURE_DATA = [];                      // Lista pura de partidos (esquema real)
 let JUGADORES_DATA = [];                    // Lista pura de jugadores (esquema real)
+let TODOS_DETALLES_JUEGOS = [];             // Almacena todos los partidos individuales disputados en las planillas
 
 // Diccionario auxiliar plano para cruzar IDs de equipos con sus nombres rápidamente
 let EQUIPOS_MAP = {};
@@ -173,18 +174,22 @@ async function cargarDatosDesdeSupabase() {
             throw new Error("La instancia 'supabase' no está definida. Revisá js/supabase-config.js");
         }
 
-        const [resEquipos, resFixture, resJugadores] = await Promise.all([
+        // NUEVO: Agregamos el fetch de 'fixture_detalles' a la descarga inicial en paralelo
+        const [resEquipos, resFixture, resJugadores, resDetalles] = await Promise.all([
             supabase.from('equipos').select('*'),
             supabase.from('fixture').select('*'),
-            supabase.from('jugadores').select('*')
+            supabase.from('jugadores').select('*'),
+            supabase.from('fixture_detalles').select('*')
         ]);
 
         if (resEquipos.error) throw resEquipos.error;
         if (resFixture.error) throw resFixture.error;
         if (resJugadores.error) throw resJugadores.error;
+        if (resDetalles.error) throw resDetalles.error;
 
         FIXTURE_DATA = resFixture.data || [];
         JUGADORES_DATA = resJugadores.data || [];
+        TODOS_DETALLES_JUEGOS = resDetalles.data || []; // Guardamos los partidos jugados en memoria
 
         let listaEquipos = resEquipos.data || [];
 
@@ -647,6 +652,9 @@ function renderEquipos() {
 /**
  * Muestra la lista interna de jugadores de un equipo específico en la grilla inferior
  */
+/**
+ * Muestra la lista interna de jugadores de un equipo específico con su % de asistencia de juego
+ */
 function renderJugadoresDelEquipo(equipoId) {
     const seccionDetalle = document.getElementById('seccion-detalle-jugadores');
     const grillaJugadores = document.getElementById('jugadores-grid-container');
@@ -667,11 +675,42 @@ function renderJugadoresDelEquipo(equipoId) {
         return;
     }
 
+    // 1. Calcular el total de fechas disponibles en el torneo dinámicamente
+    const totalFechasDisponibles = FIXTURE_DATA.length > 0
+        ? Math.max(...FIXTURE_DATA.map(p => Number(p.fecha_numero || 1)))
+        : 10; // Si no hay datos, por defecto calculamos sobre 10 fechas
+
     let html = '';
+
     jugadoresFiltrados.forEach(jugador => {
+        const idJugador = Number(jugador.id);
         const nombreJugador = jugador.nombre || "Jugador";
         const primeraLetra = nombreJugador.charAt(0).toUpperCase();
-        const badgeCategoria = jugador.categoria ? `<span class="text-[10px] bg-asatemeBlue/10 text-asatemeBlue font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">${jugador.categoria}</span>` : '';
+        const badgeCategoria = jugador.categoria
+            ? `<span class="text-[10px] bg-asatemeBlue/10 text-asatemeBlue font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">${jugador.categoria}</span>`
+            : '';
+
+        // 2. Contar en cuántos partidos únicos de planilla ha participado el jugador
+        // Un partido de planilla puede tener al jugador como local (singles/dobles) o visitante (singles/dobles)
+        const partidosJugados = TODOS_DETALLES_JUEGOS.filter(partido => {
+            return Number(partido.local_jugador1_id) === idJugador ||
+                Number(partido.local_jugador2_id) === idJugador ||
+                Number(partido.visitante_jugador1_id) === idJugador ||
+                Number(partido.visitante_jugador2_id) === idJugador;
+        }).length;
+
+        // 3. Calcular el porcentaje de participación según las fechas del torneo
+        const porcentajeParticipacion = totalFechasDisponibles > 0
+            ? Math.round((partidosJugados / totalFechasDisponibles) * 100)
+            : 0;
+
+        // 4. Elegir un color sutil para el badge del porcentaje según su constancia
+        let colorPorcentaje = 'text-gray-500 bg-gray-100';
+        if (porcentajeParticipacion >= 80) {
+            colorPorcentaje = 'text-green-700 bg-green-100'; // Súper activo
+        } else if (porcentajeParticipacion >= 40) {
+            colorPorcentaje = 'text-amber-700 bg-amber-100'; // Actividad media
+        }
 
         html += `
             <div class="bg-white border border-gray-150 rounded-xl p-3 flex items-center justify-between shadow-3xs hover:shadow-xs transition">
@@ -680,11 +719,16 @@ function renderJugadoresDelEquipo(equipoId) {
                         ${primeraLetra}
                     </div>
                     <div class="truncate">
-                        <span class="block font-semibold text-gray-800 text-xs tracking-tight truncate">${nombreJugador}</span>
-                        <span class="block text-[10px] text-gray-400 mt-0.5">Jugador Competitivo</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-semibold text-gray-800 text-xs tracking-tight truncate">${nombreJugador}</span>
+                        </div>
+                        <span class="block text-[10px] text-gray-400 mt-0.5">Partidos: ${partidosJugados} / ${totalFechasDisponibles}</span>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 pl-2">
+                <div class="flex items-center gap-2 pl-2 shrink-0">
+                    <span class="text-[10px] font-extrabold px-2 py-1 rounded-md ${colorPorcentaje}" title="Porcentaje de participación sobre el total de fechas">
+                        ${porcentajeParticipacion}% Pres.
+                    </span>
                     ${badgeCategoria}
                 </div>
             </div>
