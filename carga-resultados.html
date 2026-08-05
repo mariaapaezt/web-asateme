@@ -8,7 +8,6 @@
 
     <link rel="icon" type="image/png" href="assets/logos/LIGA.jpg">
 
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -55,6 +54,7 @@
 
         <form id="form-envio-planilla" class="space-y-6">
 
+            <!-- SECCIÓN 1: Identificación -->
             <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200/80 space-y-4">
                 <div class="flex items-center gap-2 border-b pb-3 border-gray-100">
                     <span
@@ -67,11 +67,11 @@
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-1.5">Categoría /
                         Liga</label>
                     <div class="grid grid-cols-2 gap-2">
-                        <button type="button" id="btn-liga-a" onclick="seleccionarFiltroLiga('LIGA_A')"
+                        <button type="button" id="btn-liga-a" data-liga="LIGA_A"
                             class="py-2.5 px-4 rounded-xl font-bold text-xs border text-center transition-all bg-asatemeBlue text-white border-asatemeBlue cursor-pointer">
                             Liga A
                         </button>
-                        <button type="button" id="btn-liga-b" onclick="seleccionarFiltroLiga('LIGA_B')"
+                        <button type="button" id="btn-liga-b" data-liga="LIGA_B"
                             class="py-2.5 px-4 rounded-xl font-bold text-xs border text-center transition-all bg-white text-gray-700 border-gray-200 cursor-pointer">
                             Liga B
                         </button>
@@ -83,11 +83,7 @@
                         Fecha</label>
                     <select id="select-fecha-num" required
                         class="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 focus:outline-none focus:border-asatemeBlue focus:bg-white transition-all">
-                        <option value="1">Fecha 1</option>
-                        <option value="2">Fecha 2</option>
-                        <option value="3">Fecha 3</option>
-                        <option value="4">Fecha 4</option>
-                        <option value="5">Fecha 5</option>
+                        <option value="">-- Cargando fechas --</option>
                     </select>
                 </div>
 
@@ -101,6 +97,7 @@
                 </div>
             </div>
 
+            <!-- SECCIÓN 2: ITTF -->
             <div id="seccion-partidos-ittf"
                 class="hidden bg-white rounded-2xl p-5 shadow-sm border border-gray-200/80 space-y-4">
                 <div class="flex justify-between items-center border-b pb-3 border-gray-100">
@@ -123,7 +120,7 @@
                 <div id="contenedor-acordeones-partidos" class="space-y-3"></div>
             </div>
 
-
+            <!-- SECCIÓN 3: Marcador Global y Comprobantes -->
             <div id="seccion-marcador-fase1"
                 class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200/80 space-y-4">
                 <div class="flex items-center gap-2 border-b pb-3 border-gray-100">
@@ -157,13 +154,13 @@
                         <div class="grid grid-cols-2 gap-3">
                             <label
                                 class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200 cursor-pointer text-xs font-semibold select-none">
-                                <input type="checkbox" id="wo-local-check" onchange="manejarCambioWO('LOCAL')"
+                                <input type="checkbox" id="wo-local-check" data-wo="LOCAL"
                                     class="w-4 h-4 rounded-sm text-asatemeRed focus:ring-asatemeRed">
                                 <span>W.O. Local (0 - 5)</span>
                             </label>
                             <label
                                 class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200 cursor-pointer text-xs font-semibold select-none">
-                                <input type="checkbox" id="wo-visitante-check" onchange="manejarCambioWO('VISITANTE')"
+                                <input type="checkbox" id="wo-visitante-check" data-wo="VISITANTE"
                                     class="w-4 h-4 rounded-sm text-asatemeRed focus:ring-asatemeRed">
                                 <span>W.O. Visitante (5 - 0)</span>
                             </label>
@@ -171,12 +168,10 @@
                     </div>
                 </div>
 
-                <<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="space-y-2 border border-gray-100 p-3 rounded-xl bg-white shadow-2xs">
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
-                            Planilla de Resultados
-                        </label>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Planilla de
+                            Resultados</label>
                         <label for="input-planilla"
                             class="w-full bg-gray-50 border border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:bg-gray-100 transition-all text-gray-500 min-h-[110px]">
                             <i class="fas fa-file-invoice text-xl text-asatemeBlue"></i>
@@ -216,25 +211,26 @@
                         <input type="file" id="input-pago-visitante" accept="image/*, application/pdf" class="hidden">
                         <div id="feedback-pago-visitante" class="hidden"></div>
                     </div>
+                </div>
 
-            </div>
-            <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-1.5">Clave de
-                    Validación del Club</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                        <i class="fas fa-lock text-xs"></i>
-                    </span>
-                    <input type="password" id="token-club-input" required placeholder="Ingresá el PIN secreto"
-                        class="w-full bg-gray-50 border border-gray-300 rounded-xl pl-9 pr-10 py-2.5 text-sm focus:outline-none focus:border-asatemeBlue focus:bg-white transition-all font-semibold text-gray-800">
-                    <button type="button" onclick="toggleVisibilidadToken()"
-                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none"
-                        title="Mostrar/Ocultar código">
-                        <i id="icono-ojo-token" class="fas fa-eye text-xs"></i>
-                    </button>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-1.5">Clave de
+                        Validación del Club</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fas fa-lock text-xs"></i>
+                        </span>
+                        <input type="password" id="token-club-input" required placeholder="Ingresá el PIN secreto"
+                            class="w-full bg-gray-50 border border-gray-300 rounded-xl pl-9 pr-10 py-2.5 text-sm focus:outline-none focus:border-asatemeBlue focus:bg-white transition-all font-semibold text-gray-800">
+                        <button type="button" id="btn-toggle-pin"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none"
+                            title="Mostrar/Ocultar código">
+                            <i id="icono-ojo-token" class="fas fa-eye text-xs"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            </div>
+
             <button type="submit" id="btn-enviar-planilla"
                 class="w-full bg-asatemeRed hover:bg-red-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all text-sm flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
                 <i class="fas fa-cloud-upload-alt text-base"></i> Enviar Informe Oficial
@@ -244,7 +240,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
-    <script src="js/carga-logic.js"></script>
+    <script type="module" src="js/vistas/carga.js"></script>
 
 </body>
 

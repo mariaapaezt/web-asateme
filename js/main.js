@@ -20,3 +20,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// js/main.js
+
+// 1. Configuración global del Theme de Tailwind para ASATEME
+if (window.tailwind) {
+    window.tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    asatemeBlue: '#003366', // Azul institucional
+                    asatemeRed: '#E31B23',  // Rojo competitivo
+                    asatemeGray: '#F4F6F9'  // Gris claro de fondo
+                }
+            }
+        }
+    };
+}
+
+console.log("🚀 ASATEME Web: Inicializado con éxito.");

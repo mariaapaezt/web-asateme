@@ -12,31 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        asatemeBlue: '#003366',
-                        asatemeRed: '#D32F2F',
-                        asatemeGray: '#F1F5F9',
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
-                }
-            }
-        };
-
-        // ESTADO CENTRALIZADO DE LA APLICACIÓN
-        var APP_STATE = {
-            currentTab: 'posiciones',         // Pestaña activa por defecto
-            currentLigaPosiciones: 'LIGA_A',  // Filtro de liga en la tabla de posiciones
-            currentLigaFixture: 'LIGA_A',     // Filtro de liga en la vista de fixture
-            currentLigaEquipos: 'LIGA_A',     // Filtro de liga en la sección de planteles
-            currentFechaFiltro: 1,            // Jornada inicial a mostrar en el fixture
-            filtroTextoEquipos: '',           // Query del buscador de equipos en tiempo real
-            equipoSeleccionadoId: null        // Control de selección para ver los jugadores
-        };
-    </script>
     <style>
         .tab-content {
             display: none;
@@ -335,14 +310,17 @@
         </div>
     </footer>
 
-    <!-- 1. Librería externa oficial de Supabase -->
+    <!-- 1. Carga de la librería oficial de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- 2. Tu archivo de conexión centralizado (Crea la conexión) -->
+    <!-- 2. Tu configuración donde se crea el cliente -->
     <script src="js/supabase-config.js"></script>
 
-    <!-- 3. El script de lógica específico de esta página (Usa la conexión) -->
-    <script src="js/liga-logic.js"></script>
+    <!-- 3. Scripts de estilos o interacciones generales (ej. Tailwind si usás CDN, o main.js) -->
+    <script src="js/main.js"></script>
+
+    <!-- 4. Tu inicializador modular de la App -->
+    <script type="module" src="js/app.js"></script>
 </body>
 
 </html>
