@@ -68,21 +68,22 @@
                     class="bg-asatemeRed hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition shadow-md text-sm flex items-center gap-1">
                     <i class="fas fa-user-plus"></i> Afiliate
                 </a>
-                <button id="menu-toggle" class="lg:hidden text-2xl focus:outline-none">
-                    <i class="fas fa-bars"></i>
+                <button id="menu-toggle" class="lg:hidden text-2xl focus:outline-none cursor-pointer p-2 relative z-50"
+                    aria-label="Abrir Menú">
+                    <i class="fas fa-bars pointer-events-none"></i>
                 </button>
             </div>
         </div>
 
         <!-- MENÚ CELULARES: También integrado aquí abajo de forma ordenada -->
         <div id="mobile-menu"
-            class="hidden lg:hidden bg-asatemeBlue border-t border-blue-900 px-4 py-4 space-y-3 font-semibold text-sm">
-            <a href="#mas-noticias" class="block hover:text-asatemeRed">Noticias</a>
-            <a href="#destacados" class="block hover:text-asatemeRed">Destacados</a>
-            <a href="#ranking" class="block hover:text-asatemeRed">Ranking</a>
-            <a href="#calendario" class="block hover:text-asatemeRed">Calendario</a>
+            class="hidden bg-asatemeBlue border-t border-blue-900 px-4 py-4 space-y-3 font-semibold text-sm absolute top-full left-0 w-full shadow-2xl z-50">
+            <a href="#mas-noticias" class="block text-white hover:text-asatemeRed py-1">Noticias</a>
+            <a href="#destacados" class="block text-white hover:text-asatemeRed py-1">Destacados</a>
+            <a href="#ranking" class="block text-white hover:text-asatemeRed py-1">Ranking</a>
+            <a href="#calendario" class="block text-white hover:text-asatemeRed py-1">Calendario</a>
             <a href="liga-equipos.html"
-                class="bg-white/10 hover:bg-asatemeRed hover:text-white px-3 py-1.5 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide">
+                class="bg-white/10 hover:bg-asatemeRed hover:text-white px-3 py-2 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide text-white">
                 <i class="fas fa-trophy text-amber-400"></i> Liga de Equipos
             </a>
         </div>
@@ -528,17 +529,18 @@
     <!-- SCRIPTS                                    -->
     <!-- ========================================== -->
 
-    <!-- 1. Cargamos la base de datos Supabase -->
+    <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
 
-    <!-- 2. Tu Script Original del Ranking (Tradicional, sin type="module") -->
+    <!-- Script del Ranking -->
     <script src="js/ranking.js"></script>
 
-    <!-- 3. Cargamos primero la lógica general, menú responsive y configuración base -->
-    <script src="js/app.js" defer></script>
+    <!-- Carga de menú responsive y configuraciones globales -->
+    <script src="js/main.js"></script>
 
-
+    <!-- App Principal (Módulo) -->
+    <script type="module" src="js/app.js"></script>
 </body>
 
 </html>

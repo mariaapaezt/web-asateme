@@ -8,7 +8,25 @@
 
     <link rel="icon" type="image/png" href="assets/logos/LIGA.jpg">
 
+    <!-- 1. CDN de Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 2. CONFIGURACIÓN DE COLORES DE ASATEME (Esto arregla el texto blanco y colores) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        asatemeBlue: '#003366',
+                        asatemeRed: '#D32F2F',
+                        asatemeGray: '#F1F5F9',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
@@ -21,12 +39,11 @@
             display: block;
         }
     </style>
-
 </head>
 
 <body class="bg-asatemeGray font-sans text-gray-800">
 
-    <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-xl">
+    <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-xl relative">
         <div class="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <a href="index.html" class="flex items-center gap-3">
@@ -38,7 +55,8 @@
                     </div>
                 </a>
             </div>
-
+    
+            <!-- Menú Computadoras -->
             <div class="hidden lg:flex space-x-6 font-semibold text-sm">
                 <a href="index.html#noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
                 <a href="index.html#jugadores" class="hover:text-asatemeRed transition duration-300">Jugadores</a>
@@ -46,17 +64,34 @@
                 <a href="index.html#calendario" class="hover:text-asatemeRed transition duration-300">Calendario</a>
                 <a href="liga-equipos.html" class="text-asatemeRed font-bold">Liga de Equipos</a>
             </div>
-
+    
+            <!-- Botones y Menú Hamburguesa Mobile -->
             <div class="flex items-center gap-3">
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdBdc_petoieFpV5CcZYIEc4iv2BKG_uIGpsRVDu0iIV0ELyg/viewform?usp=header#afiliaciones"
                     target="_blank" rel="noopener noreferrer"
                     class="bg-asatemeRed hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition shadow-md text-sm flex items-center gap-1">
                     <i class="fas fa-user-plus"></i> Afiliate
                 </a>
+    
+                <!-- Botón Hamburguesa -->
+                <button id="menu-toggle" type="button"
+                    class="lg:hidden text-2xl focus:outline-none p-2 cursor-pointer relative z-50">
+                    <i class="fas fa-bars pointer-events-none"></i>
+                </button>
             </div>
         </div>
+    
+        <!-- MENÚ DESPLEGABLE CELULAR -->
+        <div id="mobile-menu"
+            class="hidden lg:hidden bg-[#003366] border-t border-blue-900 px-4 py-4 space-y-3 font-semibold text-sm absolute top-full left-0 w-full shadow-2xl z-50">
+            <a href="index.html#noticias" class="block text-white hover:text-asatemeRed py-1">Noticias</a>
+            <a href="index.html#jugadores" class="block text-white hover:text-asatemeRed py-1">Jugadores</a>
+            <a href="index.html#ranking" class="block text-white hover:text-asatemeRed py-1">Ranking</a>
+            <a href="index.html#calendario" class="block text-white hover:text-asatemeRed py-1">Calendario</a>
+            <a href="liga-equipos.html" class="block text-asatemeRed font-bold py-1">Liga de Equipos</a>
+        </div>
     </nav>
-
+    
     <!-- ========================================== -->
     <!-- BANNER PRINCIPAL DE LA LIGA                -->
     <!-- ========================================== -->
