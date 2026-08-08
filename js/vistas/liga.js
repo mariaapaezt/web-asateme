@@ -36,8 +36,6 @@ export const ligaController = {
         this.renderizarVistaActual();
     },
 
-    // js/vistas/liga.js
-
     _registrarPuentesGlobales() {
         window.switchTab = (tabId) => {
             ligaState.currentTab = tabId;
@@ -173,7 +171,7 @@ export const ligaController = {
         }
         contenedor.innerHTML = modalHTML;
     },
-    
+
     cerrarModalJugador() {
         const contenedor = document.getElementById('modal-container');
         if (contenedor) {
@@ -192,8 +190,6 @@ export const ligaController = {
         if (ligaState.currentTab === 'fixture') this.renderizarTabFixture();
         if (ligaState.currentTab === 'equipos') this.renderizarTabEquipos();
     },
-
-    // js/vistas/liga.js
 
     renderizarTabPosiciones() {
         // Sincronizar título HTML según el estado
@@ -236,7 +232,10 @@ export const ligaController = {
         if (contenedorCards) {
             const partidos = ligaState.obtenerPartidosFixture();
             const equiposLiga = ligaState.ligasData[ligaState.currentLigaFixture] || [];
-            contenedorCards.innerHTML = TarjetaFixture.render(partidos, ligaState.equiposMap, equiposLiga);
+
+            // --- CÁLCULO DE EQUIPO LIBRE Y RENDERIZADO COMPLETO ---
+            const equipoLibre = ligaState.obtenerEquipoLibreJornada ? ligaState.obtenerEquipoLibreJornada() : null;
+            contenedorCards.innerHTML = TarjetaFixture.render(partidos, ligaState.equiposMap, equiposLiga, equipoLibre);
         }
     },
 

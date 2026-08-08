@@ -16,19 +16,37 @@ export const TarjetaFixture = {
     },
 
     /**
-     * Renderiza las tarjetas de los partidos acopladas al diseño visual de ASATEME
+     * Renderiza la tarjeta del equipo libre
      */
-    render(partidos, equiposMap, todosLosEquipos) {
-        if (!partidos || partidos.length === 0) {
-            return `
-                <div class="col-span-full text-center py-12 text-gray-400 text-sm bg-white rounded-xl border border-gray-100 shadow-sm">
-                    <i class="fas fa-calendar-times text-2xl mb-2 block text-gray-300"></i>
-                    No hay partidos programados para esta jornada.
-                </div>
-            `;
-        }
+    renderEquipoLibre(equipoLibre) {
+        if (!equipoLibre) return '';
 
-        return partidos.map(partido => {
+        return `
+            <div class="col-span-full bg-white rounded-xl border-2 border-dashed border-amber-200 p-4 shadow-xs flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3 min-w-0">
+                    <img src="${equipoLibre.logo}" 
+                         onerror="this.onerror=null; this.src='assets/logos/generic-pingpong.png';" 
+                         class="w-9 h-9 object-contain shrink-0" alt="${equipoLibre.nombre}">
+                    <div class="min-w-0">
+                        <h4 class="text-sm font-bold text-gray-900 truncate">${equipoLibre.nombre}</h4>
+                        <span class="text-xs text-amber-800/80 font-medium flex items-center gap-1.5 mt-0.5">
+                            ☕ Queda libre en esta jornada
+                        </span>
+                    </div>
+                </div>
+
+                <span class="px-2.5 py-1 text-[10px] font-black rounded-md bg-amber-100 text-amber-800 tracking-wider uppercase shrink-0">
+                    LIBRE
+                </span>
+            </div>
+        `;
+    },
+
+    /**
+     * Renderiza las tarjetas de los partidos y el equipo libre
+     */
+    render(partidos, equiposMap, todosLosEquipos, equipoLibre = null) {
+        const htmlPartidos = partidos && partidos.length > 0 ? partidos.map(partido => {
             const elocal = equiposMap[String(partido.local_id)] || { nombre: 'Local', logo: '' };
             const evisitante = equiposMap[String(partido.visitante_id)] || { nombre: 'Visitante', logo: '' };
 
@@ -100,6 +118,14 @@ export const TarjetaFixture = {
                     </div>
                 </div>
             `;
-        }).join('');
+        }).join('') : `
+            <div class="col-span-full text-center py-8 text-gray-400 text-sm bg-white rounded-xl border border-gray-100 shadow-sm">
+                <i class="fas fa-calendar-times text-2xl mb-2 block text-gray-300"></i>
+                No hay partidos programados para esta jornada.
+            </div>
+        `;
+
+        // Retorna los partidos + la tarjeta del equipo libre (si aplica)
+        return htmlPartidos + this.renderEquipoLibre(equipoLibre);
     }
 };

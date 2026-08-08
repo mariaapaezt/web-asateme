@@ -270,9 +270,40 @@ export const ligaState = {
         });
     },
 
+    // Método para detectar qué equipo queda libre en la fecha y liga actual
+    obtenerEquipoLibreJornada() {
+        const equiposDeLiga = this.ligasData[this._currentLigaFixture] || [];
+        if (equiposDeLiga.length === 0) return null;
+
+        // Obtener los IDs de los equipos que tienen partido en esta fecha
+        const partidosFecha = this.obtenerPartidosFixture();
+        const idsOcupados = new Set();
+
+        partidosFecha.forEach(p => {
+            if (p.local_id !== null && p.local_id !== undefined) {
+                idsOcupados.add(String(p.local_id));
+            }
+            if (p.visitante_id !== null && p.visitante_id !== undefined) {
+                idsOcupados.add(String(p.visitante_id));
+            }
+        });
+
+        // Buscar el equipo de la liga que no figura en los partidos de la fecha
+        const equipoLibreObj = equiposDeLiga.find(eq => !idsOcupados.has(String(eq.id)));
+
+        if (!equipoLibreObj) return null;
+
+        return {
+            id: equipoLibreObj.id,
+            nombre: equipoLibreObj.nombre,
+            logo: equipoLibreObj.logo || 'assets/logos/generic-pingpong.png'
+        };
+    },
+
     obtenerNombreJugadorLocal(jugadorId) {
         if (!jugadorId) return 'W.O. / Sin asignar';
         const j = this._jugadores.find(jug => Number(jug.id) === Number(jugadorId));
         return j ? j.nombre : `Jugador (${jugadorId})`;
     }
+    
 };
