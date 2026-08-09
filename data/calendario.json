@@ -1,0 +1,20 @@
+[
+    {
+        "id": "1",
+        "titulo": "Torneo ASATEME - Premios en Materiales",
+        "fecha": "15 de Agosto",
+        "lugar": "Gimnasio Lotuf",
+        "estado": "Próximo",
+        "tipo": "Provincial",
+        "badgeColor": "bg-red-100 text-red-700"
+    },
+    {
+        "id": "2",
+        "titulo": "Juegos Suramericanos Santa Fe 2026",
+        "fecha": "2026",
+        "lugar": "Santa Fe / Rosario / Rafaela",
+        "estado": "Confirmado",
+        "tipo": "Internacional",
+        "badgeColor": "bg-blue-100 text-blue-700"
+    }
+]

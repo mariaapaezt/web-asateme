@@ -1,5 +1,125 @@
 [
     {
+        "id": "torneo-asateme-15-de-agosto-gimnasio-lotuf",
+        "titulo": "¡Se viene el Torneo ASATEME en el Gimnasio Lotuf!",
+        "resumen": "Prepárate para una nueva jornada a pura competencia y pasión por el tenis de mesa. Te esperamos el próximo 15 de agosto con grandes premios en materiales.",
+        "fecha": "Agosto, 2026",
+        "imagenPortada": "assets/images/1000794754.png",
+        "galeria": [
+            "assets/images/1000794754.png"
+        ],
+        "mostrarLogoLiga": false,
+        "contenido": [
+            {
+                "tipo": "parrafo",
+                "texto": "La emoción del tenis de mesa local vuelve a encenderse. El próximo **15 de agosto**, las instalaciones del **Gimnasio Lotuf** serán el escenario de una nueva edición del tradicional Torneo ASATEME, reuniendo a jugadores de todas las categorías y niveles de nuestra región."
+            },
+            {
+                "tipo": "tarjetaInformativa",
+                "icono": "fas fa-calendar-alt",
+                "titulo": "Detalles del Evento",
+                "text": "• Fecha: 15 de Agosto\n• Sede: Gimnasio Lotuf\n• Incentivo especial: Premios en materiales para potenciar el desarrollo de los deportistas."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "Este certamen está pensado para disfrutar de una jornada inolvidable de deporte, compartir en familia y seguir fomentando el crecimiento de nuestros atletas desde las categorías formativas hasta los más experimentados."
+            },
+            {
+                "tipo": "tarjetaInformativa",
+                "icono": "fas fa-file-alt",
+                "titulo": "Inscripciones Abiertas",
+                "text": "Ya se encuentra disponible el formulario online para asegurar tu lugar en el torneo. ¡No te quedes sin participar!\n\n<a href='https://docs.google.com/forms/d/e/1FAIpQLScg91nE0aCyaQcS66EHwrCLeDlPexaieEFQXdKkczkLfXfd9Q/viewform?usp=header' target='_blank' class='inline-block mt-3 bg-asatemeRed hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md'><i class='fas fa-pen-to-square mr-2'></i> Inscribirme al Torneo</a>"
+            },
+            {
+                "tipo": "cita",
+                "texto": "¡Prepará tu paleta y sumate a esta gran fiesta del tenis de mesa santafesino! 🏓"
+            }
+        ]
+    },
+    {
+        "id": "juegos-suramericanos-santa-fe-2026-tenis-de-mesa",
+        "titulo": "Cuenta regresiva para los Juegos Suramericanos Santa Fe 2026: El tenis de mesa calienta motores",
+        "resumen": "Del 12 al 26 de septiembre de 2026, la provincia albergará la competencia deportiva más importante de su historia. Conoce los detalles, sedes y la conformación completa de las selecciones argentinas de tenis de mesa.",
+        "fecha": "Agosto, 2026",
+        "imagenPortada": "assets/images/odesur.jpeg",
+        "galeria": [
+            "assets/images/odesur.jpeg"
+        ],
+        "mostrarLogoLiga": false,
+        "contenido": [
+            {
+                "tipo": "parrafo",
+                "texto": "Los XIII Juegos Suramericanos Santa Fe 2026 se disputarán del 12 al 26 de septiembre de 2026 en la provincia de Santa Fe, Argentina. El evento tendrá como sedes principales a las ciudades de Santa Fe, Rosario y Rafaela, además de contar con subsedes específicas en Paraná, Mar del Plata y Vicente López. Reunirá a más de 4.000 atletas de 15 países del continente, representando la competencia deportiva más importante de la historia de la provincia."
+            },
+            {
+                "tipo": "tarjetaInformativa",
+                "icono": "fas fa-map-marker-alt",
+                "titulo": "Datos clave del evento",
+                "text": "• Fechas: Del 12 al 26 de septiembre de 2026.\n• Sedes principales: Santa Fe, Rosario y Rafaela.\n• Magnitud: Más de 4.000 atletas de 15 países y 43 deportes oficiales con 60 disciplinas (muchas clasificatorias para los Panamericanos Lima 2027)."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "El programa oficial abarca una enorme variedad de disciplinas agrupadas en deportes acuáticos, de combate, de equipo, de raqueta, sobre ruedas, de tiempo y marca, entre otros. En este gran escenario, el tenis de mesa se posiciona como una de las disciplinas clave del evento."
+            },
+            {
+                "tipo": "tarjetaInformativa",
+                "icono": "fas fa-table-tennis",
+                "titulo": "Selección Argentina y Expectativas",
+                "text": "• Plantel masculino mayor: Integrado por Martín Betancor, Horacio Cifuentes, Leandro Fuentes, Santiago Lorenzo, Francisco Sanchi y Lautaro Sato, bajo la dirección técnica de Franco Piruzi.\n• Plantel femenino mayor: Conformado por Ana Codina, Camila Argüelles y Candela Molero.\n• Beneficio de localía: Argentina sumó tres plazas individuales extra en varones, alcanzando 6 atletas.\n• Meta: Repetir o superar las 9 medallas obtenidas en Asunción 2022."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "Como parte de la previa de los juegos, el gobierno santafesino ha utilizado el tenis de mesa en las exhibiciones del 'Fan Fest itinerante', acercando este deporte a las escuelas y comunidades de los 19 departamentos de la provincia."
+            },
+            {
+                "tipo": "cita",
+                "texto": "¡Vivimos la previa del evento deportivo más importante de la historia de nuestra provincia! 🏓🇦🇷"
+            }
+        ]
+    },
+    {
+        "id": "delegacion-santa-fe-71-campeonato-argentino-2026",
+        "titulo": "¡Excelente desempeño de la Delegación de Santa Fe en el 71° Campeonato Argentino!",
+        "resumen": "Nuestros atletas de ASATEME brillaron en Buenos Aires en el 71° Campeonato Argentino de Tenis de Mesa, dejando a la provincia en lo más alto con podios, esfuerzo y una gran fiesta deportiva.",
+        "fecha": "26 de Julio, 2026",
+        "imagenPortada": "assets/images/1000777055.jpeg",
+        "galeria": [
+            "assets/images/1000777055.jpeg",
+            "assets/images/1000777369.jpeg",
+            "assets/images/1000777060.jpeg",
+            "assets/images/1000777384.jpeg",
+            "assets/images/1000778153.png",
+            "assets/images/1000778723.jpeg",
+            "assets/images/1000778725.jpeg",
+            "assets/images/1000779367.jpeg"
+        ],
+        "mostrarLogoLiga": false,
+        "contenido": [
+            {
+                "tipo": "parrafo",
+                "texto": "Una vez más, el tenis de mesa santafesino demostró su enorme crecimiento, nivel y pasión en el plano nacional. La delegación de Santa Fe tuvo una destacada participación en el 71° Campeonato Argentino disputado del 22 al 26 de julio de 2026 en Buenos Aires, consolidando el trabajo que se viene realizando desde las bases hasta la alta competencia."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "A lo largo de las distintas jornadas, nuestras jugadoras y jugadores de ASATEME dejaron todo sobre las mesas del Parque Olímpico, enfrentando a los mejores exponentes del país y tiñendo el torneo con los colores de nuestra provincia en numerosos podios."
+            },
+            {
+                "tipo": "tarjetaInformativa",
+                "icono": "fas fa-trophy",
+                "titulo": "Orgullo Santafesino",
+                "text": "• Gran cosecha de medallas y copas en categorías formativas y superiores.\n• Demostración de compañerismo, esfuerzo y fair play en cada partido.\n• El respaldo incondicional de entrenadores, familias y dirigentes acompañando en cada paso."
+            },
+            {
+                "tipo": "parrafo",
+                "texto": "Este tipo de torneos reflejan que el esfuerzo diario en los entrenamientos da sus frutos. Desde los más pequeños que dan sus primeros pasos competitivos hasta los referentes de las categorías mayores, cada integrante de la delegación aportó su granito de arena para hacer historia en esta edición."
+            },
+            {
+                "tipo": "cita",
+                "texto": "¡Felicitaciones a todos los atletas, entrenadores y familias que forman parte de este gran equipo! Seguimos construyendo el futuro del tenis de mesa en Santa Fe. 🏓🇦🇷"
+            }
+        ]
+    },
+    {
         "id": "torneo-invierno-asateme-2026",
         "titulo": "¡Vuelve nuestro Tradicional Torneo de Invierno ASATEME!",
         "resumen": "Reencuentro en las mesas para vivir nuestro clásico torneo invernal. Una jornada que combina competencia, sorteos exclusivos y un propósito solidario para apoyar a nuestra Selección de Santa Fe.",

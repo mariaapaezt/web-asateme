@@ -11,7 +11,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="css/styles.css">
 
     <script>
@@ -32,6 +31,7 @@
 
 <body class="bg-asatemeGray font-sans text-gray-800">
 
+    <!-- NAVBAR -->
     <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-xl">
         <div class="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -46,7 +46,7 @@
                     </div>
                 </a>
             </div>
-            <!-- MENÚ COMPUTADORAS: Agregado al lado de Calendario -->
+
             <div class="hidden lg:flex space-x-6 font-semibold text-sm items-center">
                 <a href="#mas-noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
                 <a href="#destacados" class="hover:text-asatemeRed transition duration-300">Destacados</a>
@@ -57,9 +57,6 @@
                     class="bg-white/10 hover:bg-asatemeRed hover:text-white px-3 py-1.5 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide">
                     <i class="fas fa-trophy text-amber-400"></i> Liga de Equipos
                 </a>
-
-
-
             </div>
 
             <div class="flex items-center gap-3">
@@ -75,7 +72,6 @@
             </div>
         </div>
 
-        <!-- MENÚ CELULARES: También integrado aquí abajo de forma ordenada -->
         <div id="mobile-menu"
             class="hidden bg-asatemeBlue border-t border-blue-900 px-4 py-4 space-y-3 font-semibold text-sm absolute top-full left-0 w-full shadow-2xl z-50">
             <a href="#mas-noticias" class="block text-white hover:text-asatemeRed py-1">Noticias</a>
@@ -92,10 +88,7 @@
     <main>
         <!-- SECCIÓN: NOTICIAS (CARRUSEL DINÁMICO AUTOMÁTICO) -->
         <section id="noticias" class="relative h-[500px] md:h-[600px] bg-asatemeBlue text-white overflow-hidden">
-
-            <!-- Contenedor donde JavaScript va a inyectar los Slides -->
             <div id="carousel-container" class="w-full h-full relative">
-                <!-- Un spinner de carga temporal mientras lee el JSON -->
                 <div class="absolute inset-0 flex items-center justify-center bg-asatemeBlue z-30"
                     id="carousel-spinner">
                     <div class="text-center">
@@ -105,7 +98,6 @@
                 </div>
             </div>
 
-            <!-- Botones de Navegación Flechas (Ocultos en celular, visibles desde MD) -->
             <button id="prev-slide"
                 class="flex absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 bg-black/30 hover:bg-asatemeRed/80 text-white w-9 h-9 md:w-12 md:h-12 rounded-full items-center justify-center transition duration-300 focus:outline-none">
                 <i class="fas fa-chevron-left text-sm md:text-lg"></i>
@@ -115,13 +107,10 @@
                 <i class="fas fa-chevron-right text-sm md:text-lg"></i>
             </button>
 
-            <!-- Indicadores de Puntitos (Botones de abajo) -->
-            <div id="carousel-indicators" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-                <!-- Se generan dinámicamente con JS -->
-            </div>
+            <div id="carousel-indicators" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2"></div>
         </section>
 
-        <!-- SECCIÓN: destacados (VISTA FIJA EN CUADRÍCULA) -->
+        <!-- SECCIÓN: DESTACADOS (CUADRÍCULA DINÁMICA) -->
         <section id="destacados" class="py-16 bg-white">
             <div class="container mx-auto px-4 md:px-6">
                 <div class="flex justify-between items-end mb-10">
@@ -131,130 +120,51 @@
                         <div class="w-24 h-1 bg-asatemeRed mt-3"></div>
                     </div>
                 </div>
-
-                <!-- CONTENEDOR EN CUADRÍCULA RESPONSIVA -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                    <!-- Tarjeta Atleta 1: Isabella Olivarez -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                        <div class="h-56 bg-gray-100 relative overflow-hidden">
-                            <img src="assets/images/Isabella.jpeg" alt="Isabella Olivarez"
-                                class="w-full h-full object-cover object-top">
-                        </div>
-                        <div class="p-5">
-                            <h3 class="text-lg font-bold text-gray-800">Isabella Olivarez</h3>
-                            <p class="text-asatemeRed font-semibold text-sm mb-1">Selección Sub 13</p>
-                            <p class="text-gray-500 text-sm"><i class="fas fa-flag mr-1"></i> Rosario</p>
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta Atleta 2: Ixchel Guia Monzón -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                        <div class="h-56 bg-gray-100 relative overflow-hidden">
-                            <img src="assets/images/Ixchel.png" alt="Ixchel Guia Monzón"
-                                class="w-full h-full object-cover object-top">
-                        </div>
-                        <div class="p-5">
-                            <h3 class="text-lg font-bold text-gray-800">Ixchel Guia Monzón</h3>
-                            <p class="text-asatemeRed font-semibold text-sm mb-1">Selección Sub 15</p>
-                            <p class="text-gray-500 text-sm"><i class="fas fa-flag mr-1"></i> Rosario</p>
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta Atleta 3: Aitana Bibbo -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                        <div class="h-56 bg-gray-100 relative overflow-hidden">
-                            <img src="assets/images/Aitana.jpeg" alt="Aitana Bibbo"
-                                class="w-full h-full object-cover object-top">
-                        </div>
-                        <div class="p-5">
-                            <h3 class="text-lg font-bold text-gray-800">Aitana Bibbo</h3>
-                            <p class="text-asatemeRed font-semibold text-sm mb-1">Selección Sub 11</p>
-                            <p class="text-gray-500 text-sm"><i class="fas fa-flag mr-1"></i> Rosario</p>
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta Atleta 4: Valentino Marcial -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                        <div class="h-56 bg-gray-100 relative overflow-hidden">
-                            <img src="assets/images/Valentino.jpeg" alt="Valentino Marcial"
-                                class="w-full h-full object-cover object-top">
-                        </div>
-                        <div class="p-5">
-                            <h3 class="text-lg font-bold text-gray-800">Valentino Marcial</h3>
-                            <p class="text-asatemeRed font-semibold text-sm mb-1">Selección Sub 13/15 </p>
-                            <p class="text-gray-500 text-sm"><i class="fas fa-flag mr-1"></i> Rosario</p>
-                        </div>
-                    </div>
-
-                </div>
+                <div id="destacados-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
             </div>
         </section>
-
 
         <!-- SECCIÓN: RANKING DINÁMICO -->
         <section id="ranking" class="py-16 bg-gray-50 border-y border-gray-200">
             <div class="container mx-auto px-4 md:px-6">
                 <div class="flex justify-between items-end mb-10">
                     <div>
-                        <h2 class="text-3xl md:text-4xl font-bold text-asatemeBlue">Ranking Provincial de Jugadores
-                        </h2>
+                        <h2 class="text-3xl md:text-4xl font-bold text-asatemeBlue">Ranking Provincial de Jugadores</h2>
                         <div class="w-24 h-1 bg-asatemeRed mt-3"></div>
                     </div>
                 </div>
                 <div class="flex flex-col lg:flex-row gap-8">
-
-                    <!-- COLUMNA IZQUIERDA: SELECTOR DE CATEGORÍAS -->
                     <div class="w-full lg:w-1/4">
                         <div class="bg-white p-6 rounded-xl shadow-md sticky top-24">
                             <h3 class="text-xl font-bold text-asatemeBlue mb-4 border-b pb-2">
                                 <i class="fas fa-trophy mr-2"></i>Categorías
                             </h3>
-                            <!-- Cambiamos los botones para que apunten a tus categorías reales -->
                             <div class="space-y-2" id="category-buttons">
                                 <button onclick="RankingController.cambiarCategoria('PRIMERA')" id="btn-PRIMERA"
-                                    class="w-full text-left px-4 py-3 rounded-lg bg-asatemeBlue text-white font-semibold transition active-category-btn">
-                                    Primera
-                                </button>
+                                    class="w-full text-left px-4 py-3 rounded-lg bg-asatemeBlue text-white font-semibold transition active-category-btn">Primera</button>
                                 <button onclick="RankingController.cambiarCategoria('SEGUNDA')" id="btn-SEGUNDA"
-                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
-                                    Segunda
-                                </button>
+                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">Segunda</button>
                                 <button onclick="RankingController.cambiarCategoria('TERCERA')" id="btn-TERCERA"
-                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
-                                    Tercera
-                                </button>
+                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">Tercera</button>
                                 <button onclick="RankingController.cambiarCategoria('CUARTA')" id="btn-CUARTA"
-                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
-                                    Cuarta
-                                </button>
+                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">Cuarta</button>
                                 <button onclick="RankingController.cambiarCategoria('QUINTA')" id="btn-QUINTA"
-                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">
-                                    Quinta
-                                </button>
+                                    class="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition">Quinta</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- COLUMNA DERECHA: TABLA DE POSICIONES -->
                     <div class="w-full lg:w-3/4">
                         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-
-                            <!-- ENCABEZADO DE LA TABLA CON TÍTULO DINÁMICO Y BOTÓN FILTRO -->
                             <div
                                 class="p-6 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center bg-asatemeBlue text-white gap-4">
                                 <div>
                                     <h3 class="text-2xl font-bold" id="ranking-title">
                                         <i class="fas fa-medal mr-2"></i>Top 10 - Primera
                                     </h3>
-
-                                    <!-- Aquí se inyectará el Mes Activo dinámicamente -->
                                     <p id="ranking-mes-titulo"
                                         class="text-xs text-blue-200 mt-1 uppercase tracking-wider font-semibold"></p>
                                 </div>
-
-                                <!-- BOTÓN CLAVE: Cambia entre Top 10 y Completo -->
-                                <!-- BOTÓN REFORMADO: Redirecciona a la nueva página llevando la categoría activa -->
                                 <a id="btn-toggle-vista" href="ranking.html?categoria=PRIMERA"
                                     class="bg-asatemeRed hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition shadow-md flex items-center gap-2">
                                     <i class="fas fa-list-ol"></i> <span id="txt-toggle-vista">Ver Ranking
@@ -262,7 +172,6 @@
                                 </a>
                             </div>
 
-                            <!-- CONTENEDOR DE LA TABLA -->
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left">
                                     <thead class="bg-gray-100 text-gray-600 uppercase text-sm border-b">
@@ -273,7 +182,6 @@
                                             <th class="px-6 py-4 text-right w-32">Puntos</th>
                                         </tr>
                                     </thead>
-                                    <!-- JAVASCRIPT RELLENA ESTO AUTOMÁTICAMENTE -->
                                     <tbody class="divide-y divide-gray-100" id="ranking-body">
                                         <tr>
                                             <td colspan="4" class="px-6 py-8 text-center text-gray-500">
@@ -283,10 +191,8 @@
                                     </tbody>
                                 </table>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
@@ -295,62 +201,42 @@
         <section id="mas-noticias" class="py-16 bg-gray-50">
             <div class="container mx-auto px-4 md:px-6">
                 <h2 class="text-3xl font-bold text-asatemeBlue mb-8">Más Novedades</h2>
-                <div id="lista-noticias-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Aquí el JS inyectará las noticias que NO están en el carrusel -->
-                </div>
+                <div id="lista-noticias-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </div>
         </section>
 
+        <!-- SECCIÓN: CALENDARIO DE COMPETENCIAS -->
         <section id="calendario" class="py-16 bg-white">
             <div class="container mx-auto px-4 md:px-6">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl md:text-4xl font-bold text-asatemeBlue">Calendario de Competencias</h2>
                     <div class="w-20 h-1 bg-asatemeRed mx-auto mt-3"></div>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-
-                    <div
-                        class="bg-white rounded-xl shadow-lg border-l-4 border-asatemeBlue overflow-hidden card-hover border border-gray-100">
-                        <div class="p-6">
-                            <div class="flex justify-between items-center mb-4">
-                                <span
-                                    class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase">Planificado</span>
-                                <span class="text-gray-500 font-bold text-sm">Calendario Anual</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">Campeonato Nacional Argentino</h3>
-                            <h4 class="text-gray-600">22 al 26 de Julio</h4>
-                            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>Buenos
-                                Aires</p>
-                        </div>
+                <div id="calendario-grid"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-circle-notch fa-spin text-3xl text-asatemeRed mb-3"></i>
+                        <p class="text-xs text-gray-500 uppercase tracking-widest">Cargando fechas de competencias...
+                        </p>
                     </div>
                 </div>
             </div>
         </section>
-
     </main>
 
-    <!-- SECCIÓN: REDES SOCIALES (INSTAGRAM) -->
+    <!-- SECCIÓN: INSTAGRAM -->
     <section class="bg-gray-50 border-t border-b border-gray-100 py-12">
         <div class="container mx-auto px-4 md:px-6 text-center">
             <div class="max-w-2xl mx-auto">
-                <!-- Ícono de Instagram con degradado sutil -->
                 <div
                     class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white text-3xl mb-4 shadow-md transition duration-300 hover:scale-110">
                     <i class="fab fa-instagram"></i>
                 </div>
-
-                <h3 class="text-2xl font-bold text-asatemeBlue mb-2">
-                    ¡Seguinos en Instagram!
-                </h3>
-
+                <h3 class="text-2xl font-bold text-asatemeBlue mb-2">¡Seguinos en Instagram!</h3>
                 <p class="text-gray-600 mb-6 text-sm md:text-base">
                     Sumate a nuestra comunidad para no perderte las fotos de las fechas, resultados en vivo, sorteos y
-                    todas
-                    las novedades del tenis de mesa rosarino.
+                    todas las novedades del tenis de mesa rosarino.
                 </p>
-
-                <!-- Botón de Redirección -->
                 <a href="https://www.instagram.com/asateme_tenisdemesa/" target="_blank" rel="noopener noreferrer"
                     class="inline-flex items-center gap-2 bg-asatemeBlue hover:bg-asatemeRed text-white font-bold px-6 py-3 rounded-lg shadow-md transition duration-300 text-sm md:text-base group">
                     <span>@asateme</span>
@@ -360,187 +246,24 @@
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer class="bg-asatemeBlue text-white py-12 border-t-4 border-asatemeRed">
         <div class="container mx-auto px-4 md:px-6 text-center">
             <p class="font-bold text-lg mb-2">ASATEME</p>
             <p class="text-gray-400 text-sm mb-6">Asociación Santafesina de Tenis de Mesa · Regulando el deporte a nivel
                 provincial</p>
-            <div class="text-xs text-gray-500">
-                &copy; 2026 ASATEME. Todos los derechos reservados.
-            </div>
+            <div class="text-xs text-gray-500">&copy; 2026 ASATEME. Todos los derechos reservados.</div>
         </div>
     </footer>
 
-    <!-- MOTOR DEL CARRUSEL DINÁMICO DE NOTICIAS + GRILLA DE NOVEDADES -->
-    <script>
-        document.addEventListener("DOMContentLoaded", async function () {
-            const container = document.getElementById('carousel-container');
-            const indicatorsContainer = document.getElementById('carousel-indicators');
-            const spinner = document.getElementById('carousel-spinner');
-            const gridContainer = document.getElementById('lista-noticias-grid');
-
-            let noticiasCarrusel = [];
-            let noticiasRestantes = [];
-            let currentSlide = 0;
-            let carouselInterval;
-
-            // 1. Cargar datos del JSON
-            fetch('data/noticias.json')
-                .then(response => response.json())
-                .then(data => {
-                    if (!data || data.length === 0) throw new Error("No hay noticias cargadas.");
-
-                    // 🌟 Segmentamos: Las primeras 4 van al Carrusel, las demás a la sección inferior
-                    const limiteCarrusel = 4;
-                    noticiasCarrusel = data.slice(0, limiteCarrusel);
-                    noticiasRestantes = data.slice(limiteCarrusel);
-
-                    // Inicializar ambos componentes de forma independiente
-                    initCarousel();
-                    renderNoticiasSecundarias();
-                })
-                .catch(err => {
-                    console.error("Error al cargar las novedades de la liga:", err);
-                    if (spinner) spinner.innerHTML = "<p class='text-red-400 font-semibold p-4'>Error al sincronizar las novedades</p>";
-                    if (gridContainer) gridContainer.innerHTML = "<p class='text-gray-500 text-sm col-span-full text-center py-6'>No se pudieron cargar las noticias secundarias.</p>";
-                });
-
-            // 2. Inicialización y Render del Carrusel Principal
-            function initCarousel() {
-                container.innerHTML = "";
-                indicatorsContainer.innerHTML = "";
-
-                noticiasCarrusel.forEach((noticia, i) => {
-                    // Crear Slide con diseño adaptivo y optimizado
-                    const slide = document.createElement('div');
-                    slide.className = `absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${i === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`;
-                    slide.innerHTML = `
-                            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('${noticia.imagenPortada}')"></div>
-                            <div class="absolute inset-0 bg-gradient-to-r from-asatemeBlue/95 via-asatemeBlue/70 to-transparent"></div>
-                            <div class="container mx-auto px-6 h-full flex items-center relative z-10">
-                                <div class="max-w-2xl text-white">
-                                    <span class="bg-asatemeRed text-white text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded mb-4 inline-block">Destacado</span>
-                                    <h2 class="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight drop-shadow-md">${noticia.titulo}</h2>
-                                    <p class="mb-6 text-gray-200 text-sm md:text-base max-w-xl line-clamp-3">${noticia.resumen || ''}</p>
-                                    <a href="detalle-noticia.html?id=${noticia.id}" class="inline-block bg-asatemeRed hover:bg-red-700 px-8 py-3 rounded-lg font-bold tracking-wide transition transform hover:-translate-y-0.5 shadow-lg">Leer más</a>
-                                </div>
-                            </div>
-                        `;
-                    container.appendChild(slide);
-
-                    // Crear Indicador Dinámico inferior
-                    const dot = document.createElement('button');
-                    dot.className = `h-2.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-asatemeRed w-8' : 'bg-white/40 w-2.5'}`;
-                    dot.setAttribute('aria-label', `Ir a noticia ${i + 1}`);
-                    dot.onclick = () => goToSlide(i);
-                    indicatorsContainer.appendChild(dot);
-                });
-
-                // Flechas de control nativas del HTML viejo
-                const prevBtn = document.getElementById('prev-slide');
-                const nextBtn = document.getElementById('next-slide');
-
-                if (prevBtn) prevBtn.onclick = () => goToSlide((currentSlide - 1 + noticiasCarrusel.length) % noticiasCarrusel.length);
-                if (nextBtn) nextBtn.onclick = () => goToSlide((currentSlide + 1) % noticiasCarrusel.length);
-
-                startAutoplay();
-            }
-
-            // 3. Renderizado del listado de Más Novedades (Miniaturas en Grid)
-            function renderNoticiasSecundarias() {
-                if (!gridContainer) return;
-                gridContainer.innerHTML = "";
-
-                if (noticiasRestantes.length === 0) {
-                    gridContainer.innerHTML = `
-                            <div class="col-span-full text-center py-8 bg-white rounded-xl border border-gray-100 shadow-sm">
-                                <p class="text-gray-400 text-sm">Próximamente verás más novedades publicadas en esta sección.</p>
-                            </div>
-                        `;
-                    return;
-                }
-
-                noticiasRestantes.forEach(noticia => {
-                    const card = document.createElement('div');
-                    card.className = "bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col justify-between";
-                    card.innerHTML = `
-                            <div>
-                                <div class="h-48 bg-gray-200 relative overflow-hidden">
-                                    <img src="${noticia.imagenPortada}" alt="${noticia.titulo}" class="w-full h-full object-cover transition duration-500 hover:scale-105">
-                                </div>
-                                <div class="p-5">
-                                    <span class="text-asatemeRed font-bold text-xs uppercase tracking-wider block mb-1">Novedades</span>
-                                    <h3 class="text-lg font-bold text-gray-800 line-clamp-2 mb-2 hover:text-asatemeBlue transition">
-                                        <a href="detalle-noticia.html?id=${noticia.id}">${noticia.titulo}</a>
-                                    </h3>
-                                    <p class="text-gray-500 text-sm line-clamp-3">${noticia.resumen || ''}</p>
-                                </div>
-                            </div>
-                            <div class="px-5 pb-5 pt-2 border-t border-gray-50 flex justify-between items-center bg-gray-50/50">
-                                <span class="text-xs text-gray-400"><i class="far fa-calendar-alt mr-1"></i> Info Oficial</span>
-                                <a href="detalle-noticia.html?id=${noticia.id}" class="text-asatemeBlue hover:text-asatemeRed font-bold text-xs inline-flex items-center gap-1 transition">
-                                    Ver noticia <i class="fas fa-arrow-right text-[10px]"></i>
-                                </a>
-                            </div>
-                        `;
-                    gridContainer.appendChild(card);
-                });
-            }
-
-            // 4. Lógica de control del Carrusel
-            function goToSlide(index) {
-                currentSlide = index;
-                const slides = container.children;
-
-                Array.from(slides).forEach((s, i) => {
-                    s.classList.toggle('opacity-100', i === index);
-                    s.classList.toggle('opacity-0', i !== index);
-                    s.classList.toggle('z-10', i === index);
-                    s.classList.toggle('z-0', i !== index);
-                });
-
-                const dots = indicatorsContainer.children;
-                Array.from(dots).forEach((d, i) => {
-                    d.classList.toggle('bg-asatemeRed', i === index);
-                    d.classList.toggle('w-8', i === index);
-                    d.classList.toggle('bg-white/40', i !== index);
-                    d.classList.toggle('w-2.5', i !== index);
-                });
-
-                resetAutoplay();
-            }
-
-            function startAutoplay() {
-                carouselInterval = setInterval(() => {
-                    if (noticiasCarrusel.length > 0) {
-                        goToSlide((currentSlide + 1) % noticiasCarrusel.length);
-                    }
-                }, 5500);
-            }
-
-            function resetAutoplay() {
-                clearInterval(carouselInterval);
-                startAutoplay();
-            }
-        });
-    </script>
-
-    <!-- ========================================== -->
-    <!-- SCRIPTS                                    -->
-    <!-- ========================================== -->
-
-    <!-- SCRIPTS -->
+    <!-- SCRIPTS EN ORDEN CORRECTO -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
-
-    <!-- Script del Ranking -->
     <script src="js/ranking.js"></script>
-
-    <!-- Carga de menú responsive y configuraciones globales -->
     <script src="js/main.js"></script>
-
-    <!-- App Principal (Módulo) -->
     <script type="module" src="js/app.js"></script>
+    <script src="js/vistas/home.js"></script>
+    <script src="js/vistas/calendario.js"></script>
 </body>
 
 </html>

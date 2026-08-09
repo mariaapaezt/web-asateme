@@ -1,0 +1,30 @@
+[
+    {
+        "id": "1",
+        "nombre": "Isabella Olivarez",
+        "categoria": "Selección Sub 13",
+        "ciudad": "Rosario",
+        "imagen": "assets/images/Isabella.jpeg"
+    },
+    {
+        "id": "2",
+        "nombre": "Ixchel Guia Monzón",
+        "categoria": "Selección Sub 15",
+        "ciudad": "Rosario",
+        "imagen": "assets/images/Ixchel.png"
+    },
+    {
+        "id": "3",
+        "nombre": "Aitana Bibbo",
+        "categoria": "Selección Sub 11",
+        "ciudad": "Rosario",
+        "imagen": "assets/images/Aitana.jpeg"
+    },
+    {
+        "id": "4",
+        "nombre": "Valentino Marcial",
+        "categoria": "Selección Sub 13/15",
+        "ciudad": "Rosario",
+        "imagen": "assets/images/Valentino.jpeg"
+    }
+]
