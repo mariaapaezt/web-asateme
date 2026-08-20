@@ -1,300 +1,393 @@
 [
-    {
-        "id": "torneo-asateme-15-de-agosto-gimnasio-lotuf",
-        "titulo": "¡Se viene el Torneo ASATEME en el Gimnasio Lotuf!",
-        "resumen": "Prepárate para una nueva jornada a pura competencia y pasión por el tenis de mesa. Te esperamos el próximo 15 de agosto con grandes premios en materiales.",
-        "fecha": "Agosto, 2026",
-        "imagenPortada": "assets/images/1000794754.png",
-        "galeria": [
-            "assets/images/1000794754.png"
-        ],
-        "mostrarLogoLiga": false,
-        "contenido": [
-            {
-                "tipo": "parrafo",
-                "texto": "La emoción del tenis de mesa local vuelve a encenderse. El próximo **15 de agosto**, las instalaciones del **Gimnasio Lotuf** serán el escenario de una nueva edición del tradicional Torneo ASATEME, reuniendo a jugadores de todas las categorías y niveles de nuestra región."
-            },
-            {
-                "tipo": "tarjetaInformativa",
-                "icono": "fas fa-calendar-alt",
-                "titulo": "Detalles del Evento",
-                "text": "• Fecha: 15 de Agosto\n• Sede: Gimnasio Lotuf\n• Incentivo especial: Premios en materiales para potenciar el desarrollo de los deportistas."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Este certamen está pensado para disfrutar de una jornada inolvidable de deporte, compartir en familia y seguir fomentando el crecimiento de nuestros atletas desde las categorías formativas hasta los más experimentados."
-            },
-            {
-                "tipo": "tarjetaInformativa",
-                "icono": "fas fa-file-alt",
-                "titulo": "Inscripciones Abiertas",
-                "text": "Ya se encuentra disponible el formulario online para asegurar tu lugar en el torneo. ¡No te quedes sin participar!\n\n<a href='https://docs.google.com/forms/d/e/1FAIpQLScg91nE0aCyaQcS66EHwrCLeDlPexaieEFQXdKkczkLfXfd9Q/viewform?usp=header' target='_blank' class='inline-block mt-3 bg-asatemeRed hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md'><i class='fas fa-pen-to-square mr-2'></i> Inscribirme al Torneo</a>"
-            },
-            {
-                "tipo": "cita",
-                "texto": "¡Prepará tu paleta y sumate a esta gran fiesta del tenis de mesa santafesino! 🏓"
-            }
-        ]
-    },
-    {
-        "id": "juegos-suramericanos-santa-fe-2026-tenis-de-mesa",
-        "titulo": "Cuenta regresiva para los Juegos Suramericanos Santa Fe 2026: El tenis de mesa calienta motores",
-        "resumen": "Del 12 al 26 de septiembre de 2026, la provincia albergará la competencia deportiva más importante de su historia. Conoce los detalles, sedes y la conformación completa de las selecciones argentinas de tenis de mesa.",
-        "fecha": "Agosto, 2026",
-        "imagenPortada": "assets/images/odesur.jpeg",
-        "galeria": [
-            "assets/images/odesur.jpeg"
-        ],
-        "mostrarLogoLiga": false,
-        "contenido": [
-            {
-                "tipo": "parrafo",
-                "texto": "Los XIII Juegos Suramericanos Santa Fe 2026 se disputarán del 12 al 26 de septiembre de 2026 en la provincia de Santa Fe, Argentina. El evento tendrá como sedes principales a las ciudades de Santa Fe, Rosario y Rafaela, además de contar con subsedes específicas en Paraná, Mar del Plata y Vicente López. Reunirá a más de 4.000 atletas de 15 países del continente, representando la competencia deportiva más importante de la historia de la provincia."
-            },
-            {
-                "tipo": "tarjetaInformativa",
-                "icono": "fas fa-map-marker-alt",
-                "titulo": "Datos clave del evento",
-                "text": "• Fechas: Del 12 al 26 de septiembre de 2026.\n• Sedes principales: Santa Fe, Rosario y Rafaela.\n• Magnitud: Más de 4.000 atletas de 15 países y 43 deportes oficiales con 60 disciplinas (muchas clasificatorias para los Panamericanos Lima 2027)."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "El programa oficial abarca una enorme variedad de disciplinas agrupadas en deportes acuáticos, de combate, de equipo, de raqueta, sobre ruedas, de tiempo y marca, entre otros. En este gran escenario, el tenis de mesa se posiciona como una de las disciplinas clave del evento."
-            },
-            {
-                "tipo": "tarjetaInformativa",
-                "icono": "fas fa-table-tennis",
-                "titulo": "Selección Argentina y Expectativas",
-                "text": "• Plantel masculino mayor: Integrado por Martín Betancor, Horacio Cifuentes, Leandro Fuentes, Santiago Lorenzo, Francisco Sanchi y Lautaro Sato, bajo la dirección técnica de Franco Piruzi.\n• Plantel femenino mayor: Conformado por Ana Codina, Camila Argüelles y Candela Molero.\n• Beneficio de localía: Argentina sumó tres plazas individuales extra en varones, alcanzando 6 atletas.\n• Meta: Repetir o superar las 9 medallas obtenidas en Asunción 2022."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Como parte de la previa de los juegos, el gobierno santafesino ha utilizado el tenis de mesa en las exhibiciones del 'Fan Fest itinerante', acercando este deporte a las escuelas y comunidades de los 19 departamentos de la provincia."
-            },
-            {
-                "tipo": "cita",
-                "texto": "¡Vivimos la previa del evento deportivo más importante de la historia de nuestra provincia! 🏓🇦🇷"
-            }
-        ]
-    },
-    {
-        "id": "delegacion-santa-fe-71-campeonato-argentino-2026",
-        "titulo": "¡Excelente desempeño de la Delegación de Santa Fe en el 71° Campeonato Argentino!",
-        "resumen": "Nuestros atletas de ASATEME brillaron en Buenos Aires en el 71° Campeonato Argentino de Tenis de Mesa, dejando a la provincia en lo más alto con podios, esfuerzo y una gran fiesta deportiva.",
-        "fecha": "26 de Julio, 2026",
-        "imagenPortada": "assets/images/1000777055.jpeg",
-        "galeria": [
-            "assets/images/1000777055.jpeg",
-            "assets/images/1000777369.jpeg",
-            "assets/images/1000777060.jpeg",
-            "assets/images/1000777384.jpeg",
-            "assets/images/1000778153.png",
-            "assets/images/1000778723.jpeg",
-            "assets/images/1000778725.jpeg",
-            "assets/images/1000779367.jpeg"
-        ],
-        "mostrarLogoLiga": false,
-        "contenido": [
-            {
-                "tipo": "parrafo",
-                "texto": "Una vez más, el tenis de mesa santafesino demostró su enorme crecimiento, nivel y pasión en el plano nacional. La delegación de Santa Fe tuvo una destacada participación en el 71° Campeonato Argentino disputado del 22 al 26 de julio de 2026 en Buenos Aires, consolidando el trabajo que se viene realizando desde las bases hasta la alta competencia."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "A lo largo de las distintas jornadas, nuestras jugadoras y jugadores de ASATEME dejaron todo sobre las mesas del Parque Olímpico, enfrentando a los mejores exponentes del país y tiñendo el torneo con los colores de nuestra provincia en numerosos podios."
-            },
-            {
-                "tipo": "tarjetaInformativa",
-                "icono": "fas fa-trophy",
-                "titulo": "Orgullo Santafesino",
-                "text": "• Gran cosecha de medallas y copas en categorías formativas y superiores.\n• Demostración de compañerismo, esfuerzo y fair play en cada partido.\n• El respaldo incondicional de entrenadores, familias y dirigentes acompañando en cada paso."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Este tipo de torneos reflejan que el esfuerzo diario en los entrenamientos da sus frutos. Desde los más pequeños que dan sus primeros pasos competitivos hasta los referentes de las categorías mayores, cada integrante de la delegación aportó su granito de arena para hacer historia en esta edición."
-            },
-            {
-                "tipo": "cita",
-                "texto": "¡Felicitaciones a todos los atletas, entrenadores y familias que forman parte de este gran equipo! Seguimos construyendo el futuro del tenis de mesa en Santa Fe. 🏓🇦🇷"
-            }
-        ]
-    },
-    {
-        "id": "torneo-invierno-asateme-2026",
-        "titulo": "¡Vuelve nuestro Tradicional Torneo de Invierno ASATEME!",
-        "resumen": "Reencuentro en las mesas para vivir nuestro clásico torneo invernal. Una jornada que combina competencia, sorteos exclusivos y un propósito solidario para apoyar a nuestra Selección de Santa Fe.",
-        "fecha": "Julio, 2026",
-        "imagenPortada": "assets/images/5to asateme.jpeg",
-        "galeria": [
-            "assets/images/5to asateme.jpeg"
-        ],
-        "mostrarLogoLiga": false,
-        "contenido": [
-            {
-                "tipo": "parrafo",
-                "texto": "¡Vuelve nuestro Tradicional Torneo de Invierno ASATEME! 🏓❄️ Este mes nos reencontramos en las mesas para vivir una nueva edición de nuestro clásico torneo invernal. Es el momento ideal para entrar en calor, medir el nivel y disfrutar junto a la gran familia del tenis de mesa santafesino."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "En esta oportunidad, preparamos una jornada muy especial que combina la pasión por la competencia con el espíritu de equipo:"
-            },
-            {
-                "tipo": "tarjetaInformativa",
-                "icono": "fas fa-gift",
-                "titulo": "Destacados del evento",
-                "text": "• Premios en todas las categorías: Reconocimiento al esfuerzo y rendimiento en cada nivel.\n• Sorteos exclusivos: Sorpresas especiales dedicados a todos nuestros socios.\n• Propósito solidario: Todo lo recaudado será destinado a apoyar a nuestra Selección de Santa Fe."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Desde ASATEME, queremos invitarles a participar de esta gran jornada de tenis de mesa de la provincia. Ya sea compitiendo, alentando o colaborando, su presencia es fundamental para seguir haciendo crecer nuestro deporte y a nuestros atletas."
-            },
-            {
-                "tipo": "cita",
-                "texto": "¡Preparen sus paletas, inviten a sus familias y súmense a esta verdadera fiesta deportiva! - Comisión Directiva ASATEME"
-            }
-        ]
-    },
-    {
-        "id": "exito-torneo-provincial-asateme-2026",
-        "titulo": "¡Éxito Total en el Torneo Provincial ASATEME!",
-        "resumen": "Jugadores de diversas ciudades protagonizaron una jornada inolvidable de tenis de mesa en Rosario, con un alto nivel competitivo y una gran concurrencia.",
-        "fecha": "Junio, 2026",
-        "imagenPortada": "assets/images/asateme2.jpeg",
-        "galeria": [
-            "assets/images/asateme1.jpeg",
-            "assets/images/asateme2.jpeg",
-            "assets/images/asateme3.jpeg",
-            "assets/images/asateme4.jpeg",
-            "assets/images/asateme5.jpeg",
-            "assets/images/asateme6.jpeg"
-        ],
-        "mostrarLogoLiga": false,
-        "contenido": [
-            {
-                "tipo": "parrafo",
-                "texto": "Nuestro torneo provincial ASATEME fue un éxito total. Jugadores de Paraná, Santa Fe, Venado Tuerto, Villa Constitución, Pergamino, San Nicolás, Buenos Aires, entre otras ciudades, dieron lo mejor y dejaron todo en la mesa."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Se vivió un gran nivel en todas las categorías y contamos con una excelente respuesta del público. Queremos agradecer especialmente a la Municipalidad de Rosario por el espacio brindado en el Gimnasio Emilio Lotuf  y a todos los padres por acompañarnos en esta verdadera fiesta del tenis de mesa santafesino."
-            }
-        ]
-    },
-    {
-        "id": "importancia-liga-equipos-2026",
-        "titulo": "La Liga de Equipos: El pilar fundamental para el crecimiento del Tenis de Mesa",
-        "resumen": "El tenis de mesa en Rosario encuentra en las ligas de equipos un pilar fundamental para su crecimiento integral, permitiendo que todas las personas se acerquen a los clubes a vivir los partidos en primera persona.",
-        "fecha": "Junio, 2026",
-        "imagenPortada": "assets/images/Liga-Equipos.png",
-        "galeria": [
-            "assets/images/Liga-Equipos.png"
-        ],
-        "mostrarLogoLiga": false,
-        "contenido": [
-            {
-                "tipo": "parrafo",
-                "texto": "El tenis de mesa en Rosario, enmarcado en el constante desarrollo deportivo de Argentina, encuentra en las ligas de equipos un pilar fundamental para su crecimiento integral. Según destaca la comisión directiva de ASATEME, este formato comunitario y competitivo permite que todas las personas se acerquen a los clubes a vivir los partidos en primera persona, elevando la disciplina a un nivel federativo superior donde cada participante defiende con orgullo los colores de la institution que lo respalda."
-            },
-            {
-                "tipo": "cita",
-                "texto": "Este formato permite que la disciplina se eleve a un nivel donde los premios obtenidos impactan directo en el crecimiento material e institucional de nuestros clubes."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Además, esta modalidad otorga una mayor relevancia de la disciplina dentro de los propios clubes, ya que los premios que se obtienen están destinados a las instituciones participantes. Esto se traduce en una vía directa para adquirir materiales, mesas e infraestructura clave para seguir creciendo en el deporte."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "A nivel federativo, el impacto es crucial: de este semillero se desprenden los mejores clubes de la provincia. Al finalizar el año, los planteles destacados acceden a galardones especiales y obtienen la plaza para representar a sus ciudades frente a otras provincias de la Argentina que compiten bajo este mismo formato. Un punto alto a resaltar es que los ganadores quedan habilitados para gestionar y recibir apoyos económicos directos para los jugadores que integran el selectivo santafesino."
-            },
-            {
-                "tipo": "tarjetaInformativa",
-                "icono": "fas fa-handshake",
-                "titulo": "El rol de los referentes",
-                "text": "El trabajo diario de los profesores, entrenadores y directivos es indispensable para brindar el espacio y los recursos necesarios para que el torneo se desarrolle con éxito sostenido."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Finalmente, esta dinámica fomenta el desarrollo de partidos de altísimo nivel durante la semana mediante las visitas interclubes. Esta circulación constante rompe las barreras tradicionales del entrenamiento cerrado y logra que nuestra disciplina sea cada vez más conocida, afianzándose firmemente en las diversas instituciones donde hacen vida nuestros clubes de tenis de mesa en toda la provincia de Santa Fe."
-            }
-        ]
-    },
-    {
-        "id": "recordatorio-afiliaciones-liga-rosarina-2026",
-        "titulo": "Recordatorio: Regularización de Afiliaciones - Liga Rosarina 2026",
-        "resumen": "La Comisión Directiva solicita a delegados y clubes la regularización de las afiliaciones anuales de jugadores y equipos para garantizar el correcto funcionamiento del cronograma y el sistema de rankings.",
-        "fecha": "Junio, 2026",
-        "imagenPortada": "assets/images/Liga-Equipos.png",
-        "galeria": [
-            "assets/images/Liga-Equipos.png"
-        ],
-        "mostrarLogoLiga": false,
-        "contenido": [
-            {
-                "tipo": "parrafo",
-                "texto": "Estimados delegados y representantes de clubes: a medida que avanzamos con el calendario de la Liga Rosarina de Tenis de Mesa, queremos agradecerles el enorme esfuerzo y compromiso constante para que nuestro circuito local siga creciendo en nivel y organización."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Con el fin de mantener el cronograma actualizado, garantizar la integridad de los datos en nuestra página web y asegurar el correcto funcionamiento del sistema de rankings, les recordamos los requisitos administrativos vigentes para esta temporada 2026."
-            },
-            {
-                "tipo": "tarjetaInformativa",
-                "icono": "fas fa-file-invoice-dollar",
-                "titulo": "Requisitos de Afiliación",
-                "text": "• Afiliación de Jugadores: $15.000 (Jugadores de la provincia/ASATEME).\n• Afiliación de Clubes/Equipos: $40.000 (Pago institucional por equipo)."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Cumplir con estos puntos es fundamental para que podamos gestionar los avales correspondientes, mantener el orden de las fechas y asegurar la participación de todos los competidores sin demoras de último momento."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Les solicitamos canalizar los pagos y enviar los comprobantes correspondientes a través de las vías habituales a la brevedad. Recordamos a los delegados que también cuentan con la opción de realizar la carga y gestión directamente a través de nuestro sitio web."
-            },
-            {
-                "tipo": "cita",
-                "texto": "¡Muchas gracias por su colaboración y por hacer que el tenis de mesa de la región siga sumando!"
-            }
-        ]
-    },
-    {
-        "id": "convocatoria-nacional-menores-maxis-2026",
-        "titulo": "Convocatoria: Campeonato Nacional de Menores y Maxis 2026",
-        "resumen": "ASATEME abre la inscripción para la delegación que representará a nuestra institución en el próximo Campeonato Nacional de Menores y Maxis, a celebrarse del 22 al 26 de julio.",
-        "fecha": "Junio, 2026",
-        "imagenPortada": "assets/images/nacionalArgentino.jpeg",
-        "galeria": [
-            "assets/images/nacionalArgentino.jpeg"
-        ],
-        "mostrarLogoLiga": false,
-        "contenido": [
-            {
-                "tipo": "parrafo",
-                "texto": "La Comisión Directiva de ASATEME se complace en anunciar la próxima participación de nuestra delegación en el Campeonato Nacional de Menores y Maxis, que tendrá lugar del 22 al 26 de julio. Invitamos a todos los atletas interesados a sumarse a este gran evento, fundamental para el calendario deportivo de nuestro tenis de mesa."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Para facilitar la organización logística y la conformación de las listas por categorías, solicitamos a los jugadores interesados que completen su inscripción a través del formulario disponible en nuestra página web bajo el enlace 'Nacional 2026', detallando su categoría y modalidades de participación (Individual, Dobles y/o Equipos)."
-            },
-            {
-                "tipo": "tarjetaInformativa",
-                "icono": "fas fa-exclamation-circle",
-                "titulo": "Requisitos obligatorios para la inscripción",
-                "text": "Para tramitar los avales ante la Federación y asegurar su lugar, es indispensable contar con la afiliación anual 2026 de ASATEME ($15.000) y la afiliación anual de la FATM. Por favor, adjuntar los comprobantes de pago junto a sus datos al momento de la inscripción."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "Les recordamos la importancia de realizar este proceso con la mayor antelación posible. La gestión temprana de la documentación y los pagos es clave para trabajar con orden y asegurar que todos los representantes de nuestra asociación puedan participar sin contratiempos."
-            },
-            {
-                "tipo": "cita",
-                "texto": "¡Nos espera un gran torneo! Invitamos a cada atleta a ser parte de esta experiencia y representar con orgullo los colores de ASATEME a nivel nacional."
-            },
-            {
-                "tipo": "parrafo",
-                "texto": "<a href='https://docs.google.com/forms/d/e/1FAIpQLSdI-SZmaMSyS3ph0CdtyBM5LdEPHrfMjPj7zFCgsyJJbyP1TQ/viewform?usp=header' target='_blank' rel='noopener noreferrer' class='inline-flex items-center gap-2 bg-asatemeRed hover:bg-asatemeBlue text-white font-bold px-6 py-3 rounded-md shadow transition duration-300 my-2'><i class='fab fa-google mr-1'></i> Completar Formulario de Inscripción</a>"
-            }
-        ]
-    }
+  {
+    "id": "clinica-exclusiva-galvano-rajmil-agosto-2026",
+    "titulo": "¡Seguimos sumando y evolucionando en el tenis de mesa santafesino!",
+    "resumen": "Tras un semestre intenso de capacitaciones, arrancamos la segunda mitad del año con una clínica exclusiva de altísimo nivel dictada por Nicolás Galvano y Damián Rajmil.",
+    "fecha": "Agosto, 2026",
+    "imagenPortada": "assets/images/clinica.png",
+    "galeria": ["assets/images/clinica.png"],
+    "mostrarLogoLiga": false,
+    "contenido": [
+      {
+        "tipo": "parrafo",
+        "texto": "¡Seguimos sumando y evolucionando! 🏓✨ Tras un semestre intenso de capacitaciones nacionales y provinciales en nuestra provincia, arrancamos esta segunda mitad del año con toda la energía. 🚀"
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Nos enorgullece anunciar una clínica exclusiva de altísimo nivel, dictada por el destacado jugador internacional <strong>Nicolás Galvano</strong> y nuestro referente, el entrenador nacional <strong>Damián Rajmil</strong>."
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-chalkboard-teacher",
+        "titulo": "Detalles de la Clínica",
+        "text": "• Fecha: Este próximo 29 de agosto.\n• Objetivo: El intercambio de experiencias y la búsqueda constante de la excelencia técnica para seguir impulsando el potencial de nuestros deportistas.\n• Enfoque: Alto rendimiento y desarrollo deportivo en Santa Fe."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Este tipo de iniciativas reafirman nuestro compromiso con el crecimiento constante de la disciplina, brindando herramientas de jerarquía internacional a nuestros atletas. ¡Vamos por un semestre lleno de aprendizaje! 💪🔥"
+      },
+      {
+        "tipo": "cita",
+
+        "texto": "#TenisDeMesa #Capacitación #ClínicaDeportiva #DesarrolloDeportivo #SantaFe #AltoRendimiento #DeporteArgentino"
+      }
+    ]
+  },
+  {
+    "id": "6to-torneo-asateme-resultados",
+    "titulo": "¡Gran éxito y nivel en el 6to Torneo ASATEME!",
+    "resumen": "Repasamos los mejores momentos y resultados de una nueva y apasionante jornada de competencias, donde nuestros deportistas demostraron su gran crecimiento, talento y pasión por el tenis de mesa.",
+    "fecha": "Agosto, 2026",
+    "imagenPortada": "assets/images/6toasateme1.jpeg",
+    "galeria": [
+      "assets/images/6toasateme.jpeg",
+      "assets/images/6toasateme1.jpeg",
+      "assets/images/6toasateme2.jpeg",
+      "assets/images/6toasateme3.jpeg",
+      "assets/images/6toasateme4.jpeg",
+      "assets/images/6toasateme5.jpeg",
+      "assets/images/6toasateme6.jpeg",
+      "assets/images/6toasateme7.jpeg"
+    ],
+    "mostrarLogoLiga": false,
+    "contenido": [
+      {
+        "tipo": "parrafo",
+        "texto": "La pasión por el tenis de mesa regional volvió a vivirse a pleno en una nueva jornada inolvidable. El 6to Torneo ASATEME reunió a una gran cantidad de competidores que colmaron las instalaciones para disputar partidos de alto vuelo y compartir un excelente clima deportivo."
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-medal",
+        "titulo": "Balance de la Jornada",
+        "text": "• Gran convocatoria de jugadores de todas las categorías, desde los más pequeños hasta los experimentados.\n• Partidos vibrantes y de excelente nivel técnico a lo largo de todo el certamen.\n• Celebración del esfuerzo, el compañerismo y el crecimiento sostenido del tenis de mesa en nuestra comunidad."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Queremos felicitar a todos los participantes, entrenadores y familias que acompañan y hacen posible que cada fecha sea una verdadera fiesta del deporte. ¡El trabajo diario se refleja en cada punto y en cada mesa!"
+      },
+      {
+        "tipo": "cita",
+        "texto": "¡Seguimos consolidando el camino del tenis de mesa santafesino! 🏓💪 #Asateme #TenisDeMesa #Competencia #OrgulloSantafesino"
+      }
+    ]
+  },
+  {
+    "id": "capacitacion-rajmil-doino-robert-gardos-2026",
+    "titulo": "Constancia, aprendizaje y pasión por el desarrollo en el tenis de mesa santafesino",
+    "resumen": "Nuestros entrenadores Damián Rajmil y Jorgelina Doino dijeron presente en el exclusivo curso de entrenadores dictado por el prestigioso Coach internacional Robert Gardos.",
+    "fecha": "Agosto, 2026",
+    "imagenPortada": "assets/images/cursoGrados.jpeg",
+    "galeria": ["assets/images/cursoGrados.jpeg "],
+    "mostrarLogoLiga": false,
+    "contenido": [
+      {
+        "tipo": "parrafo",
+        "texto": "¡Constancia, aprendizaje y pasión por el desarrollo! 🏓🔥"
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Nuestros entrenadores <strong>Damián Rajmil</strong> y <strong>Jorgelina Doino</strong> dijeron presente en el exclusivo curso de entrenadores dictado por el prestigioso Coach internacional <strong>Robert Gardos</strong>."
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-graduation-cap",
+        "titulo": "Capacitación Continua",
+        "text": "• Participantes: Damián Rajmil y Jorgelina Doino.\n• Referente internacional: Robert Gardos.\n• Objetivo: Incorporar nuevas herramientas y potenciar al máximo las capacidades de nuestros atletas en cada entrenamiento. 🚀"
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Desde Santa Fe, seguimos apostando fuertemente a la capacitación permanente para elevar la vara de nuestro deporte y brindar la mejor guía a los deportistas de la región."
+      },
+      {
+        "tipo": "cita",
+        "texto": "¡Orgullo santafesino elevando la vara! 💪📈 #TenisDeMesa #Entrenadores #Capacitación #SantaFe #Deporte #RobertGardos #FormaciónDeAtletas"
+      }
+    ]
+  },
+  {
+    "id": "torneo-asateme-15-de-agosto-gimnasio-lotuf",
+    "titulo": "¡Se viene el Torneo ASATEME en el Gimnasio Lotuf!",
+    "resumen": "Prepárate para una nueva jornada a pura competencia y pasión por el tenis de mesa. Te esperamos el próximo 15 de agosto con grandes premios en materiales.",
+    "fecha": "Agosto, 2026",
+    "imagenPortada": "assets/images/1000794754.png",
+    "galeria": ["assets/images/1000794754.png"],
+    "mostrarLogoLiga": false,
+    "contenido": [
+      {
+        "tipo": "parrafo",
+        "texto": "La emoción del tenis de mesa local vuelve a encenderse. El próximo **15 de agosto**, las instalaciones del **Gimnasio Lotuf** serán el escenario de una nueva edición del tradicional Torneo ASATEME, reuniendo a jugadores de todas las categorías y niveles de nuestra región."
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-calendar-alt",
+        "titulo": "Detalles del Evento",
+        "text": "• Fecha: 15 de Agosto\n• Sede: Gimnasio Lotuf\n• Incentivo especial: Premios en materiales para potenciar el desarrollo de los deportistas."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Este certamen está pensado para disfrutar de una jornada inolvidable de deporte, compartir en familia y seguir fomentando el crecimiento de nuestros atletas desde las categorías formativas hasta los más experimentados."
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-file-alt",
+        "titulo": "Inscripciones Abiertas",
+        "text": "Ya se encuentra disponible el formulario online para asegurar tu lugar en el torneo. ¡No te quedes sin participar!\n\n<a href='https://docs.google.com/forms/d/e/1FAIpQLScg91nE0aCyaQcS66EHwrCLeDlPexaieEFQXdKkczkLfXfd9Q/viewform?usp=header' target='_blank' class='inline-block mt-3 bg-asatemeRed hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md'><i class='fas fa-pen-to-square mr-2'></i> Inscribirme al Torneo</a>"
+      },
+      {
+        "tipo": "cita",
+        "texto": "¡Prepará tu paleta y sumate a esta gran fiesta del tenis de mesa santafesino! 🏓"
+      }
+    ]
+  },
+  {
+    "id": "juegos-suramericanos-santa-fe-2026-tenis-de-mesa",
+    "titulo": "Cuenta regresiva para los Juegos Suramericanos Santa Fe 2026: El tenis de mesa calienta motores",
+    "resumen": "Del 12 al 26 de septiembre de 2026, la provincia albergará la competencia deportiva más importante de su historia. Conoce los detalles, sedes y la conformación completa de las selecciones argentinas de tenis de mesa.",
+    "fecha": "Agosto, 2026",
+    "imagenPortada": "assets/images/odesur.jpeg",
+    "galeria": ["assets/images/odesur.jpeg"],
+    "mostrarLogoLiga": false,
+    "contenido": [
+      {
+        "tipo": "parrafo",
+        "texto": "Los XIII Juegos Suramericanos Santa Fe 2026 se disputarán del 12 al 26 de septiembre de 2026 en la provincia de Santa Fe, Argentina. El evento tendrá como sedes principales a las ciudades de Santa Fe, Rosario y Rafaela, además de contar con subsedes específicas en Paraná, Mar del Plata y Vicente López. Reunirá a más de 4.000 atletas de 15 países del continente, representando la competencia deportiva más importante de la historia de la provincia."
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-map-marker-alt",
+        "titulo": "Datos clave del evento",
+        "text": "• Fechas: Del 12 al 26 de septiembre de 2026.\n• Sedes principales: Santa Fe, Rosario y Rafaela.\n• Magnitud: Más de 4.000 atletas de 15 países y 43 deportes oficiales con 60 disciplinas (muchas clasificatorias para los Panamericanos Lima 2027)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "El programa oficial abarca una enorme variedad de disciplinas agrupadas en deportes acuáticos, de combate, de equipo, de raqueta, sobre ruedas, de tiempo y marca, entre otros. En este gran escenario, el tenis de mesa se posiciona como una de las disciplinas clave del evento."
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-table-tennis",
+        "titulo": "Selección Argentina y Expectativas",
+        "text": "• Plantel masculino mayor: Integrado por Martín Betancor, Horacio Cifuentes, Leandro Fuentes, Santiago Lorenzo, Francisco Sanchi y Lautaro Sato, bajo la dirección técnica de Franco Piruzi.\n• Plantel femenino mayor: Conformado por Ana Codina, Camila Argüelles y Candela Molero.\n• Beneficio de localía: Argentina sumó tres plazas individuales extra en varones, alcanzando 6 atletas.\n• Meta: Repetir o superar las 9 medallas obtenidas en Asunción 2022."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Como parte de la previa de los juegos, el gobierno santafesino ha utilizado el tenis de mesa en las exhibiciones del 'Fan Fest itinerante', acercando este deporte a las escuelas y comunidades de los 19 departamentos de la provincia."
+      },
+      {
+        "tipo": "cita",
+        "texto": "¡Vivimos la previa del evento deportivo más importante de la historia de nuestra provincia! 🏓🇦🇷"
+      }
+    ]
+  },
+  {
+    "id": "delegacion-santa-fe-71-campeonato-argentino-2026",
+    "titulo": "¡Excelente desempeño de la Delegación de Santa Fe en el 71° Campeonato Argentino!",
+    "resumen": "Nuestros atletas de ASATEME brillaron en Buenos Aires en el 71° Campeonato Argentino de Tenis de Mesa, dejando a la provincia en lo más alto con podios, esfuerzo y una gran fiesta deportiva.",
+    "fecha": "26 de Julio, 2026",
+    "imagenPortada": "assets/images/1000777055.jpeg",
+    "galeria": [
+      "assets/images/1000777055.jpeg",
+      "assets/images/1000777369.jpeg",
+      "assets/images/1000777060.jpeg",
+      "assets/images/1000777384.jpeg",
+      "assets/images/1000778153.png",
+      "assets/images/1000778723.jpeg",
+      "assets/images/1000778725.jpeg",
+      "assets/images/1000779367.jpeg"
+    ],
+    "mostrarLogoLiga": false,
+    "contenido": [
+      {
+        "tipo": "parrafo",
+        "texto": "Una vez más, el tenis de mesa santafesino demostró su enorme crecimiento, nivel y pasión en el plano nacional. La delegación de Santa Fe tuvo una destacada participación en el 71° Campeonato Argentino disputado del 22 al 26 de julio de 2026 en Buenos Aires, consolidando el trabajo que se viene realizando desde las bases hasta la alta competencia."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "A lo largo de las distintas jornadas, nuestras jugadoras y jugadores de ASATEME dejaron todo sobre las mesas del Parque Olímpico, enfrentando a los mejores exponentes del país y tiñendo el torneo con los colores de nuestra provincia en numerosos podios."
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-trophy",
+        "titulo": "Orgullo Santafesino",
+        "text": "• Gran cosecha de medallas y copas en categorías formativas y superiores.\n• Demostración de compañerismo, esfuerzo y fair play en cada partido.\n• El respaldo incondicional de entrenadores, familias y dirigentes acompañando en cada paso."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Este tipo de torneos reflejan que el esfuerzo diario en los entrenamientos da sus frutos. Desde los más pequeños que dan sus primeros pasos competitivos hasta los referentes de las categorías mayores, cada integrante de la delegación aportó su granito de arena para hacer historia en esta edición."
+      },
+      {
+        "tipo": "cita",
+        "texto": "¡Felicitaciones a todos los atletas, entrenadores y familias que forman parte de este gran equipo! Seguimos construyendo el futuro del tenis de mesa en Santa Fe. 🏓🇦🇷"
+      }
+    ]
+  },
+  {
+    "id": "torneo-invierno-asateme-2026",
+    "titulo": "¡Vuelve nuestro Tradicional Torneo de Invierno ASATEME!",
+    "resumen": "Reencuentro en las mesas para vivir nuestro clásico torneo invernal. Una jornada que combina competencia, sorteos exclusivos y un propósito solidario para apoyar a nuestra Selección de Santa Fe.",
+    "fecha": "Julio, 2026",
+    "imagenPortada": "assets/images/5to asateme.jpeg",
+    "galeria": ["assets/images/5to asateme.jpeg"],
+    "mostrarLogoLiga": false,
+    "contenido": [
+      {
+        "tipo": "parrafo",
+        "texto": "¡Vuelve nuestro Tradicional Torneo de Invierno ASATEME! 🏓❄️ Este mes nos reencontramos en las mesas para vivir una nueva edición de nuestro clásico torneo invernal. Es el momento ideal para entrar en calor, medir el nivel y disfrutar junto a la gran familia del tenis de mesa santafesino."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "En esta oportunidad, preparamos una jornada muy especial que combina la pasión por la competencia con el espíritu de equipo:"
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-gift",
+        "titulo": "Destacados del evento",
+        "text": "• Premios en todas las categorías: Reconocimiento al esfuerzo y rendimiento en cada nivel.\n• Sorteos exclusivos: Sorpresas especiales dedicados a todos nuestros socios.\n• Propósito solidario: Todo lo recaudado será destinado a apoyar a nuestra Selección de Santa Fe."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Desde ASATEME, queremos invitarles a participar de esta gran jornada de tenis de mesa de la provincia. Ya sea compitiendo, alentando o colaborando, su presencia es fundamental para seguir haciendo crecer nuestro deporte y a nuestros atletas."
+      },
+      {
+        "tipo": "cita",
+        "texto": "¡Preparen sus paletas, inviten a sus familias y súmense a esta verdadera fiesta deportiva! - Comisión Directiva ASATEME"
+      }
+    ]
+  },
+  {
+    "id": "exito-torneo-provincial-asateme-2026",
+    "titulo": "¡Éxito Total en el Torneo Provincial ASATEME!",
+    "resumen": "Jugadores de diversas ciudades protagonizaron una jornada inolvidable de tenis de mesa en Rosario, con un alto nivel competitivo y una gran concurrencia.",
+    "fecha": "Junio, 2026",
+    "imagenPortada": "assets/images/asateme2.jpeg",
+    "galeria": [
+      "assets/images/asateme1.jpeg",
+      "assets/images/asateme2.jpeg",
+      "assets/images/asateme3.jpeg",
+      "assets/images/asateme4.jpeg",
+      "assets/images/asateme5.jpeg",
+      "assets/images/asateme6.jpeg"
+    ],
+    "mostrarLogoLiga": false,
+    "contenido": [
+      {
+        "tipo": "parrafo",
+        "texto": "Nuestro torneo provincial ASATEME fue un éxito total. Jugadores de Paraná, Santa Fe, Venado Tuerto, Villa Constitución, Pergamino, San Nicolás, Buenos Aires, entre otras ciudades, dieron lo mejor y dejaron todo en la mesa."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Se vivió un gran nivel en todas las categorías y contamos con una excelente respuesta del público. Queremos agradecer especialmente a la Municipalidad de Rosario por el espacio brindado en el Gimnasio Emilio Lotuf  y a todos los padres por acompañarnos en esta verdadera fiesta del tenis de mesa santafesino."
+      }
+    ]
+  },
+  {
+    "id": "importancia-liga-equipos-2026",
+    "titulo": "La Liga de Equipos: El pilar fundamental para el crecimiento del Tenis de Mesa",
+    "resumen": "El tenis de mesa en Rosario encuentra en las ligas de equipos un pilar fundamental para su crecimiento integral, permitiendo que todas las personas se acerquen a los clubes a vivir los partidos en primera persona.",
+    "fecha": "Junio, 2026",
+    "imagenPortada": "assets/images/Liga-Equipos.png",
+    "galeria": ["assets/images/Liga-Equipos.png"],
+    "mostrarLogoLiga": false,
+    "contenido": [
+      {
+        "tipo": "parrafo",
+        "texto": "El tenis de mesa en Rosario, enmarcado en el constante desarrollo deportivo de Argentina, encuentra en las ligas de equipos un pilar fundamental para su crecimiento integral. Según destaca la comisión directiva de ASATEME, este formato comunitario y competitivo permite que todas las personas se acerquen a los clubes a vivir los partidos en primera persona, elevando la disciplina a un nivel federativo superior donde cada participante defiende con orgullo los colores de la institution que lo respalda."
+      },
+      {
+        "tipo": "cita",
+        "texto": "Este formato permite que la disciplina se eleve a un nivel donde los premios obtenidos impactan directo en el crecimiento material e institucional de nuestros clubes."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Además, esta modalidad otorga una mayor relevancia de la disciplina dentro de los propios clubes, ya que los premios que se obtienen están destinados a las instituciones participantes. Esto se traduce en una vía directa para adquirir materiales, mesas e infraestructura clave para seguir creciendo en el deporte."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "A nivel federativo, el impacto es crucial: de este semillero se desprenden los mejores clubes de la provincia. Al finalizar el año, los planteles destacados acceden a galardones especiales y obtienen la plaza para representar a sus ciudades frente a otras provincias de la Argentina que compiten bajo este mismo formato. Un punto alto a resaltar es que los ganadores quedan habilitados para gestionar y recibir apoyos económicos directos para los jugadores que integran el selectivo santafesino."
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-handshake",
+        "titulo": "El rol de los referentes",
+        "text": "El trabajo diario de los profesores, entrenadores y directivos es indispensable para brindar el espacio y los recursos necesarios para que el torneo se desarrolle con éxito sostenido."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Finalmente, esta dinámica fomenta el desarrollo de partidos de altísimo nivel durante la semana mediante las visitas interclubes. Esta circulación constante rompe las barreras tradicionales del entrenamiento cerrado y logra que nuestra disciplina sea cada vez más conocida, afianzándose firmemente en las diversas instituciones donde hacen vida nuestros clubes de tenis de mesa en toda la provincia de Santa Fe."
+      }
+    ]
+  },
+  {
+    "id": "recordatorio-afiliaciones-liga-rosarina-2026",
+    "titulo": "Recordatorio: Regularización de Afiliaciones - Liga Rosarina 2026",
+    "resumen": "La Comisión Directiva solicita a delegados y clubes la regularización de las afiliaciones anuales de jugadores y equipos para garantizar el correcto funcionamiento del cronograma y el sistema de rankings.",
+    "fecha": "Junio, 2026",
+    "imagenPortada": "assets/images/Liga-Equipos.png",
+    "galeria": ["assets/images/Liga-Equipos.png"],
+    "mostrarLogoLiga": false,
+    "contenido": [
+      {
+        "tipo": "parrafo",
+        "texto": "Estimados delegados y representantes de clubes: a medida que avanzamos con el calendario de la Liga Rosarina de Tenis de Mesa, queremos agradecerles el enorme esfuerzo y compromiso constante para que nuestro circuito local siga creciendo en nivel y organización."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Con el fin de mantener el cronograma actualizado, garantizar la integridad de los datos en nuestra página web y asegurar el correcto funcionamiento del sistema de rankings, les recordamos los requisitos administrativos vigentes para esta temporada 2026."
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-file-invoice-dollar",
+        "titulo": "Requisitos de Afiliación",
+        "text": "• Afiliación de Jugadores: $15.000 (Jugadores de la provincia/ASATEME).\n• Afiliación de Clubes/Equipos: $40.000 (Pago institucional por equipo)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Cumplir con estos puntos es fundamental para que podamos gestionar los avales correspondientes, mantener el orden de las fechas y asegurar la participación de todos los competidores sin demoras de último momento."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Les solicitamos canalizar los pagos y enviar los comprobantes correspondientes a través de las vías habituales a la brevedad. Recordamos a los delegados que también cuentan con la opción de realizar la carga y gestión directamente a través de nuestro sitio web."
+      },
+      {
+        "tipo": "cita",
+        "texto": "¡Muchas gracias por su colaboración y por hacer que el tenis de mesa de la región siga sumando!"
+      }
+    ]
+  },
+  {
+    "id": "convocatoria-nacional-menores-maxis-2026",
+    "titulo": "Convocatoria: Campeonato Nacional de Menores y Maxis 2026",
+    "resumen": "ASATEME abre la inscripción para la delegación que representará a nuestra institución en el próximo Campeonato Nacional de Menores y Maxis, a celebrarse del 22 al 26 de julio.",
+    "fecha": "Junio, 2026",
+    "imagenPortada": "assets/images/nacionalArgentino.jpeg",
+    "galeria": ["assets/images/nacionalArgentino.jpeg"],
+    "mostrarLogoLiga": false,
+    "contenido": [
+      {
+        "tipo": "parrafo",
+        "texto": "La Comisión Directiva de ASATEME se complace en anunciar la próxima participación de nuestra delegación en el Campeonato Nacional de Menores y Maxis, que tendrá lugar del 22 al 26 de julio. Invitamos a todos los atletas interesados a sumarse a este gran evento, fundamental para el calendario deportivo de nuestro tenis de mesa."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Para facilitar la organización logística y la conformación de las listas por categorías, solicitamos a los jugadores interesados que completen su inscripción a través del formulario disponible en nuestra página web bajo el enlace 'Nacional 2026', detallando su categoría y modalidades de participación (Individual, Dobles y/o Equipos)."
+      },
+      {
+        "tipo": "tarjetaInformativa",
+        "icono": "fas fa-exclamation-circle",
+        "titulo": "Requisitos obligatorios para la inscripción",
+        "text": "Para tramitar los avales ante la Federación y asegurar su lugar, es indispensable contar con la afiliación anual 2026 de ASATEME ($15.000) y la afiliación anual de la FATM. Por favor, adjuntar los comprobantes de pago junto a sus datos al momento de la inscripción."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Les recordamos la importancia de realizar este proceso con la mayor antelación posible. La gestión temprana de la documentación y los pagos es clave para trabajar con orden y asegurar que todos los representantes de nuestra asociación puedan participar sin contratiempos."
+      },
+      {
+        "tipo": "cita",
+        "texto": "¡Nos espera un gran torneo! Invitamos a cada atleta a ser parte de esta experiencia y representar con orgullo los colores de ASATEME a nivel nacional."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "<a href='https://docs.google.com/forms/d/e/1FAIpQLSdI-SZmaMSyS3ph0CdtyBM5LdEPHrfMjPj7zFCgsyJJbyP1TQ/viewform?usp=header' target='_blank' rel='noopener noreferrer' class='inline-flex items-center gap-2 bg-asatemeRed hover:bg-asatemeBlue text-white font-bold px-6 py-3 rounded-md shadow transition duration-300 my-2'><i class='fab fa-google mr-1'></i> Completar Formulario de Inscripción</a>"
+      }
+    ]
+  }
 ]
