@@ -22,6 +22,11 @@ export const ligaState = {
     equiposMap: {},
     cargando: false,
 
+    playoffsData: {
+        LIGA_A: [],
+        LIGA_B: []
+    },
+
     // GETTERS / SETTERS DE CONTROL DE FLUJO
     get currentTab() { return this._currentTab; },
     set currentTab(val) { this._currentTab = val; },
@@ -44,7 +49,6 @@ export const ligaState = {
     get equipoSeleccionadoId() { return this._equipoSeleccionadoId; },
     set equipoSeleccionadoId(val) { this._equipoSeleccionadoId = val; },
 
-    // NUEVO: Getter para exponer la lista de partidos requerida por la vista de Carga
     get partidos() {
         return this._fixture || [];
     },
@@ -53,7 +57,6 @@ export const ligaState = {
     // MÉTODOS DE DATOS Y CONEXIÓN (Supabase)
     // =============================================================================
 
-    // NUEVO: Alias estándar init()
     async init(supabaseClient = window.supabase) {
         if (!supabaseClient) {
             console.error("❌ No se proporcionó el cliente de Supabase a ligaState.init()");
@@ -65,11 +68,12 @@ export const ligaState = {
     async cargarDatosDesdeSupabase(supabaseClient) {
         this.cargando = true;
         try {
-            const [resEquipos, resFixture, resJugadores, resDetalles] = await Promise.all([
+            const [resEquipos, resFixture, resJugadores, resDetalles, resPlayoffs] = await Promise.all([
                 supabaseClient.from('equipos').select('*'),
                 supabaseClient.from('fixture').select('*'),
                 supabaseClient.from('jugadores').select('*'),
-                supabaseClient.from('fixture_detalles').select('*')
+                supabaseClient.from('fixture_detalles').select('*'),
+                supabaseClient.from('liga_playoffs').select('*').order('created_at', { ascending: true })
             ]);
 
             if (resEquipos.error) throw resEquipos.error;
@@ -90,7 +94,17 @@ export const ligaState = {
                 this._fixtureDetallesCache[d.partido_id].push(d);
             });
 
+            // Procesar estadísticas y posiciones ANTES de actualizar playoffs
             this._procesarEstadisticasYPosiciones();
+
+            if (!resPlayoffs.error && resPlayoffs.data && resPlayoffs.data.length > 0) {
+                this.playoffsData.LIGA_A = resPlayoffs.data.filter(p => p.liga === 'LIGA_A');
+                this.playoffsData.LIGA_B = resPlayoffs.data.filter(p => p.liga === 'LIGA_B');
+
+                // Propagar asignaciones de fase regular y avance de ganadores
+                this.actualizarAvancePlayoffs('LIGA_A');
+                this.actualizarAvancePlayoffs('LIGA_B');
+            }
 
             return true;
         } catch (error) {
@@ -104,7 +118,6 @@ export const ligaState = {
     _procesarEstadisticasYPosiciones() {
         this.equiposMap = {};
 
-        // Mapeo directo respetando LIGA_A y LIGA_B de Supabase
         let listaEquiposClon = this._equipos.map(e => {
             const ligaActual = String(e.liga || e.liga_id || 'LIGA_A').trim();
 
@@ -116,19 +129,21 @@ export const ligaState = {
 
             return {
                 ...e,
+                id: String(e.id),
                 liga: ligaActual,
-                sj: 0, sg: 0, sp: 0, pg: 0, pp: 0, pts: 0
+                sj: 0, sg: 0, sp: 0, pg: 0, pp: 0, pts: 0,
+                sets_favor: 0, sets_contra: 0
             };
         });
 
-        // Cálculo de estadisticas según resultados finalizados
+        // 1. Acumular estadísticas desde los resultados finalizados de la Fase Regular
         this._fixture.forEach(partido => {
             if (partido.estado && partido.estado.toLowerCase() === 'finalizado') {
                 const locId = String(partido.local_id);
                 const visId = String(partido.visitante_id);
 
-                const eqLocal = listaEquiposClon.find(e => String(e.id) === locId);
-                const eqVisitante = listaEquiposClon.find(e => String(e.id) === visId);
+                const eqLocal = listaEquiposClon.find(e => e.id === locId);
+                const eqVisitante = listaEquiposClon.find(e => e.id === visId);
 
                 if (eqLocal && eqVisitante) {
                     eqLocal.sj += 1;
@@ -141,14 +156,12 @@ export const ligaState = {
                         eqLocal.pts += 0;
                         eqVisitante.sg += 1;
                         eqVisitante.pts += 2;
-                    }
-                    else if (quienFalto === 'VISITANTE') {
+                    } else if (quienFalto === 'VISITANTE') {
                         eqVisitante.sp += 1;
                         eqVisitante.pts += 0;
                         eqLocal.sg += 1;
                         eqLocal.pts += 2;
-                    }
-                    else {
+                    } else {
                         const scoreLoc = Number(partido.score_local || 0);
                         const scoreVis = Number(partido.score_visitante || 0);
 
@@ -156,6 +169,17 @@ export const ligaState = {
                         eqLocal.pp += scoreVis;
                         eqVisitante.pg += scoreVis;
                         eqVisitante.pp += scoreLoc;
+
+                        // Suma de sets individuales para criterio de desempate
+                        const detalles = this._fixtureDetallesCache[partido.id] || [];
+                        detalles.forEach(d => {
+                            const sL = Number(d.score_sets_local || 0);
+                            const sV = Number(d.score_sets_visitante || 0);
+                            eqLocal.sets_favor += sL;
+                            eqLocal.sets_contra += sV;
+                            eqVisitante.sets_favor += sV;
+                            eqVisitante.sets_contra += sL;
+                        });
 
                         if (scoreLoc > scoreVis) {
                             eqLocal.sg += 1;
@@ -176,21 +200,38 @@ export const ligaState = {
             }
         });
 
+        // 2. Aplicación de Criterios de Desempate
         const funcionOrdenamientoAvanzado = (a, b) => {
-            const puntosA = a.pts ?? 0;
-            const puntosB = b.pts ?? 0;
-            if (puntosB !== puntosA) return puntosB - puntosA;
+            // 1° Criterio: Puntos
+            if (b.pts !== a.pts) return b.pts - a.pts;
 
-            const pgA = a.pg ?? 0; const ppA = a.pp ?? 0;
-            const pgB = b.pg ?? 0; const ppB = b.pp ?? 0;
+            // 2° Criterio: Coeficiente Partidos (PG/PP)
+            const coefPartidosA = a.pp === 0 ? a.pg : a.pg / a.pp;
+            const coefPartidosB = b.pp === 0 ? b.pg : b.pg / b.pp;
+            if (coefPartidosB !== coefPartidosA) return coefPartidosB - coefPartidosA;
 
-            const coeficienteA = ppA === 0 ? pgA : pgA / ppA;
-            const coeficienteB = ppB === 0 ? pgB : pgB / ppB;
+            // 3° Criterio: Diferencia de Sets (favor - contra)
+            const difSetsA = a.sets_favor - a.sets_contra;
+            const difSetsB = b.sets_favor - b.sets_contra;
+            if (difSetsB !== difSetsA) return difSetsB - difSetsA;
 
-            return coeficienteB - coeficienteA;
+            // 4° Criterio: Enfrentamiento directo (Head to Head)
+            const partidoDirecto = this._fixture.find(f => 
+                f.estado && f.estado.toLowerCase() === 'finalizado' && 
+                ((String(f.local_id) === a.id && String(f.visitante_id) === b.id) ||
+                 (String(f.local_id) === b.id && String(f.visitante_id) === a.id))
+            );
+
+            if (partidoDirecto) {
+                const esALocal = String(partidoDirecto.local_id) === a.id;
+                const scoreA = esALocal ? Number(partidoDirecto.score_local) : Number(partidoDirecto.score_visitante);
+                const scoreB = esALocal ? Number(partidoDirecto.score_visitante) : Number(partidoDirecto.score_local);
+                if (scoreB !== scoreA) return scoreB - scoreA;
+            }
+
+            return 0;
         };
 
-        // Filtrado exacto usando las claves directas de Supabase
         this.ligasData = {
             LIGA_A: listaEquiposClon.filter(e => e.liga === 'LIGA_A').sort(funcionOrdenamientoAvanzado),
             LIGA_B: listaEquiposClon.filter(e => e.liga === 'LIGA_B').sort(funcionOrdenamientoAvanzado)
@@ -201,7 +242,6 @@ export const ligaState = {
     // MÉTODOS DE CONSULTA Y SELECCIÓN
     // =============================================================================
 
-    // NUEVO: Método para resolver el nombre del equipo por ID
     getNombreEquipo(equipoId) {
         if (!equipoId) return 'Equipo';
         if (this.equiposMap[String(equipoId)]) {
@@ -270,12 +310,10 @@ export const ligaState = {
         });
     },
 
-    // Método para detectar qué equipo queda libre en la fecha y liga actual
     obtenerEquipoLibreJornada() {
         const equiposDeLiga = this.ligasData[this._currentLigaFixture] || [];
         if (equiposDeLiga.length === 0) return null;
 
-        // Obtener los IDs de los equipos que tienen partido en esta fecha
         const partidosFecha = this.obtenerPartidosFixture();
         const idsOcupados = new Set();
 
@@ -288,7 +326,6 @@ export const ligaState = {
             }
         });
 
-        // Buscar el equipo de la liga que no figura en los partidos de la fecha
         const equipoLibreObj = equiposDeLiga.find(eq => !idsOcupados.has(String(eq.id)));
 
         if (!equipoLibreObj) return null;
@@ -304,6 +341,79 @@ export const ligaState = {
         if (!jugadorId) return 'W.O. / Sin asignar';
         const j = this._jugadores.find(jug => Number(jug.id) === Number(jugadorId));
         return j ? j.nombre : `Jugador (${jugadorId})`;
+    },
+
+    obtenerPlayoffsLiga(ligaId) {
+        return this.playoffsData[ligaId || 'LIGA_A'] || [];
+    },
+
+    obtenerPartidoPorIdUnificado(partidoId) {
+        // 1. Buscar en Fixture Regular
+        const partidoRegular = this._fixture.find(p => String(p.id) === String(partidoId));
+        if (partidoRegular) {
+            return { ...partidoRegular, esPlayoff: false };
+        }
+
+        // 2. Buscar en Playoffs
+        const todosPlayoffs = [
+            ...(this.playoffsData.LIGA_A || []),
+            ...(this.playoffsData.LIGA_B || [])
+        ];
+        const partidoPlayoff = todosPlayoffs.find(p => String(p.id) === String(partidoId));
+        if (partidoPlayoff) {
+            return {
+                ...partidoPlayoff,
+                esPlayoff: true,
+                local_id: partidoPlayoff.equipo_1_id,
+                visitante_id: partidoPlayoff.equipo_2_id,
+                score_local: partidoPlayoff.puntos_equipo_1,
+                score_visitante: partidoPlayoff.puntos_equipo_2
+            };
+        }
+
+        return null;
+    },
+    
+    // =======================================================================
+    // PROPAGACIÓN Y AVANCE DE LLAVES EN PLAYOFFS
+    // =======================================================================
+    actualizarAvancePlayoffs(liga) {
+        const lista = this.playoffsData[liga] || [];
+        if (lista.length === 0) return;
+
+        const qf1 = lista.find(p => p.codigo_llave === 'QF1');
+        const qf2 = lista.find(p => p.codigo_llave === 'QF2');
+        const sf1 = lista.find(p => p.codigo_llave === 'SF1');
+        const sf2 = lista.find(p => p.codigo_llave === 'SF2');
+        const final = lista.find(p => p.codigo_llave === 'FINAL');
+
+        // A. Asignar 1° y 2° de Fase Regular a Semifinales
+        const posiciones = this.ligasData[liga] || [];
+        if (posiciones.length >= 2) {
+            if (sf1 && !sf1.equipo_1_id) sf1.equipo_1_id = String(posiciones[0].id);
+            if (sf2 && !sf2.equipo_1_id) sf2.equipo_1_id = String(posiciones[1].id);
+        }
+
+        // B. Avanzar ganador QF2 a SF1 (equipo_2_id)
+        if (qf2 && (qf2.estado === 'FINALIZADO' || qf2.ganador_id) && sf1) {
+            sf1.equipo_2_id = qf2.ganador_id;
+        }
+
+        // C. Avanzar ganador QF1 a SF2 (equipo_2_id)
+        if (qf1 && (qf1.estado === 'FINALIZADO' || qf1.ganador_id) && sf2) {
+            sf2.equipo_2_id = qf1.ganador_id;
+        }
+
+        // D. Avanzar ganador SF1 a FINAL (equipo_1_id)
+        if (sf1 && (sf1.estado === 'FINALIZADO' || sf1.ganador_id) && final) {
+            final.equipo_1_id = sf1.ganador_id;
+        }
+
+        // E. Avanzar ganador SF2 a FINAL (equipo_2_id)
+        if (sf2 && (sf2.estado === 'FINALIZADO' || sf2.ganador_id) && final) {
+            final.equipo_2_id = sf2.ganador_id;
+        }
     }
+
     
 };
