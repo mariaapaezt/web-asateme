@@ -1,5 +1,3 @@
-// js/vistas/carga.js
-
 import { ligaState } from '../state/liga-state.js';
 import { SelectorPartido } from '../componentes/carga/SelectorPartido.js';
 import { AcordeonITTF } from '../componentes/carga/AcordeonITTF.js';
@@ -36,89 +34,105 @@ export class CargaVista {
         this.conectarEventos(container);
     }
 
-    async cargarDatos() {
-        await ligaState.init();
-        const [resPartidos, resEquipos] = await Promise.all([
-            window.supabase.from('fixture').select('*'),
-            window.supabase.from('equipos').select('*')
-        ]);
-
-        this.partidosCache = resPartidos.data || [];
-        (resEquipos.data || []).forEach(eq => this.equiposMapa[eq.id] = eq.nombre || `Club ${eq.id}`);
-
-        this.poblarFechas();
-        this.actualizarDesplegablePartidos();
-    }
-
-    conectarEventos(container) {
-        container.querySelector('#form-envio-planilla')?.addEventListener('submit', (e) => this.guardar(e));
-
-        const chkLocal = container.querySelector('#wo-local-check');
-        const chkVisitante = container.querySelector('#wo-visitante-check');
-
-        chkLocal?.addEventListener('change', () => this.manejarCambioWO('LOCAL'));
-        chkVisitante?.addEventListener('change', () => this.manejarCambioWO('VISITANTE'));
-    }
-
-    // --- LIMPIEZA DE FORMULARIO DELEGADA A CADA COMPONENTE ---
-    limpiarFormularioCompleto() {
-        const seccionIttf = document.getElementById('seccion-partidos-ittf');
-        if (seccionIttf) seccionIttf.classList.add('hidden');
-
-        const chkLocal = document.getElementById('wo-local-check');
-        const chkVisitante = document.getElementById('wo-visitante-check');
-        if (chkLocal) chkLocal.checked = false;
-        if (chkVisitante) chkVisitante.checked = false;
-
-        this.actualizarTotales(0, 0);
-
-        if (document.getElementById('txt-nombre-local')) document.getElementById('txt-nombre-local').textContent = 'Equipo Local';
-        if (document.getElementById('txt-nombre-visitante')) document.getElementById('txt-nombre-visitante').textContent = 'Equipo Visitante';
-
-        // Delegación limpia a los componentes
-        this.acordeon.resetearEstado();
-        this.comprobantes.limpiar();
-    }
-
-    // --- MANEJO DE WALKOVER (W.O.) ---
-    manejarCambioWO(tipo) {
-        const chkLocal = document.getElementById('wo-local-check');
-        const chkVisitante = document.getElementById('wo-visitante-check');
-        const seccionIttf = document.getElementById('seccion-partidos-ittf');
-
-        if (!chkLocal || !chkVisitante) return;
-
-        if (tipo === 'LOCAL' && chkLocal.checked) {
-            chkVisitante.checked = false;
-            this.actualizarTotales(0, 5);
-            if (seccionIttf) seccionIttf.classList.add('hidden');
-
-        } else if (tipo === 'VISITANTE' && chkVisitante.checked) {
-            chkLocal.checked = false;
-            this.actualizarTotales(5, 0);
-            if (seccionIttf) seccionIttf.classList.add('hidden');
-
-        } else {
-            this.actualizarTotales(0, 0);
-            if (this.partidoId) {
-                this.alSeleccionarPartido(this.partidoId);
-            }
-        }
-    }
-
-    // --- MÉTODOS INVOCADOS POR SELECTORPARTIDO ---
+    // --- MÉTODOS DE MANEJO DE CAMBIO DE LIGA Y FECHA/FASE ---
     cambiarLiga(liga) {
-        if (this.ligaActual === liga) return;
         this.ligaActual = liga;
-        this.limpiarFormularioCompleto();
         this.actualizarEstiloBotonesLiga();
-        this.poblarFechas();
+        if (this.selector && typeof this.selector.actualizarBotonesLiga === 'function') {
+            this.selector.actualizarBotonesLiga(liga);
+        }
+        this.poblarFechas(true); // Fuerza el reset de fecha a la 1ra opción de la nueva liga
         this.actualizarDesplegablePartidos();
+        this.limpiarFormularioCompleto();
     }
 
     cambiarFecha(fecha) {
-        this.fechaActual = Number(fecha);
+        this.fechaActual = fecha;
+        // Sincronizamos el estado de las opciones y los partidos filtrados
+        this.selector.renderFechas(this.obtenerNumerosFechas(), this.fechaActual);
+        this.actualizarDesplegablePartidos();
         this.limpiarFormularioCompleto();
+    }
+
+    // Método auxiliar para obtener los números de fecha según la liga
+    obtenerNumerosFechas() {
+        const partidosDeLiga = this.partidosCache.filter(
+            p => !p.esPlayoff && (p.liga || '').toUpperCase() === this.ligaActual.toUpperCase()
+        );
+        return [...new Set(
+            partidosDeLiga.map(p => Number(p.fecha_numero))
+        )].filter(n => !isNaN(n) && n > 0).sort((a, b) => a - b);
+    }
+
+    poblarFechas(resetearFecha = false) {
+        const numerosFecha = this.obtenerNumerosFechas();
+
+        if (resetearFecha) {
+            this.fechaActual = numerosFecha.length > 0 ? numerosFecha[0] : 'PLAYOFF_CUARTOS';
+        }
+
+        this.selector.renderFechas(numerosFecha, this.fechaActual);
+    }
+
+    limpiarFormularioCompleto() {
+        this.actualizarTotales(0, 0);
+
+        const seccionIttf = document.getElementById('seccion-partidos-ittf');
+        if (seccionIttf) seccionIttf.classList.add('hidden');
+
+        if (this.acordeon && typeof this.acordeon.resetearEstado === 'function') {
+            this.acordeon.resetearEstado();
+        }
+
+        if (this.comprobantes && typeof this.comprobantes.limpiar === 'function') {
+            this.comprobantes.limpiar();
+        }
+    }
+
+    conectarEventos(container = document) {
+        // Asignación de botones de cambio de liga si existen fuera del SelectorPartido
+        const btnA = container.querySelector('#btn-liga-a');
+        const btnB = container.querySelector('#btn-liga-b');
+
+        if (btnA) btnA.onclick = () => this.cambiarLiga('LIGA_A');
+        if (btnB) btnB.onclick = () => this.cambiarLiga('LIGA_B');
+
+        // Formulario principal de envío
+        const formEnvio = container.querySelector('#form-envio-planilla');
+        if (formEnvio) {
+            formEnvio.onsubmit = (e) => this.guardar(e);
+        }
+    }
+
+    async cargarDatos() {
+        await ligaState.init(window.supabase);
+
+        const [resPartidos, resEquipos, resPlayoffs] = await Promise.all([
+            window.supabase.from('fixture').select('*'),
+            window.supabase.from('equipos').select('*'),
+            window.supabase.from('liga_playoffs').select('*')
+        ]);
+
+        const partidosRegulares = (resPartidos.data || []).map(p => ({
+            ...p,
+            esPlayoff: false
+        }));
+
+        const partidosPlayoffs = (resPlayoffs.data || []).map(p => ({
+            ...p,
+            esPlayoff: true,
+            local_id: p.equipo_1_id,
+            visitante_id: p.equipo_2_id,
+            score_local: (p.puntos_equipo_1 !== null && p.puntos_equipo_1 !== undefined) ? p.puntos_equipo_1 : null,
+            score_visitante: (p.puntos_equipo_2 !== null && p.puntos_equipo_2 !== undefined) ? p.puntos_equipo_2 : null
+        }));
+
+        // Unificamos el caché
+        this.partidosCache = [...partidosRegulares, ...partidosPlayoffs];
+
+        (resEquipos.data || []).forEach(eq => this.equiposMapa[eq.id] = eq.nombre || `Club ${eq.id}`);
+
+        this.poblarFechas();
         this.actualizarDesplegablePartidos();
     }
 
@@ -128,18 +142,29 @@ export class CargaVista {
 
         if (!partidoId) return;
 
+        // Búsqueda exacta por ID
         const partido = this.partidosCache.find(p => String(p.id) === String(partidoId));
         if (!partido) return;
 
-        const estadoNormalizado = (partido.estado || '').toLowerCase();
-        const estaCerrado = estadoNormalizado === 'finalizado' ||
-            estadoNormalizado === 'cerrado' ||
-            partido.score_local !== null ||
-            partido.walkover !== null;
+        const estadoUpper = String(partido.estado || '').toUpperCase().trim();
+
+        // REGLA DE BLOQUEO:
+        let estaCerrado = false;
+        if (partido.esPlayoff) {
+            estaCerrado = (estadoUpper === 'FINALIZADO' || estadoUpper === 'CERRADO');
+        } else {
+            estaCerrado = (estadoUpper === 'FINALIZADO' || estadoUpper === 'CERRADO' || partido.score_local !== null || partido.walkover !== null);
+        }
 
         if (estaCerrado) {
             this.actualizarTotales(partido.score_local ?? 0, partido.score_visitante ?? 0);
             alert("🔒 Esta serie se encuentra cerrada y no permite la carga de nuevos resultados.");
+            return;
+        }
+
+        // Si la llave no tiene los dos equipos definidos aún
+        if (!partido.local_id || !partido.visitante_id) {
+            alert("⏳ Este cruce de playoffs aún no tiene los dos equipos definidos.");
             return;
         }
 
@@ -194,109 +219,136 @@ export class CargaVista {
         }
     }
 
-    poblarFechas() {
-        const selectFechas = document.getElementById('select-fecha-num');
-        if (!selectFechas) return;
+    actualizarDesplegablePartidos() {
+        let filtrados = [];
+        const esPlayoff = String(this.fechaActual).startsWith('PLAYOFF_');
 
-        const partidosDeLiga = this.partidosCache.filter(
-            p => (p.liga || '').toUpperCase() === this.ligaActual.toUpperCase()
-        );
+        if (esPlayoff) {
+            // Se recuperan los playoffs y garantizamos que todos lleven la bandera esPlayoff = true
+            const listaPlayoffsRaw = ligaState.playoffsData?.[this.ligaActual] || [];
 
-        const numerosFecha = [...new Set(
-            partidosDeLiga.map(p => Number(p.fecha_numero))
-        )].filter(n => !isNaN(n) && n > 0).sort((a, b) => a - b);
+            const listaPlayoffs = listaPlayoffsRaw.map(p => ({
+                ...p,
+                esPlayoff: true,
+                local_id: p.equipo_1_id,
+                visitante_id: p.equipo_2_id,
+                score_local: p.puntos_equipo_1,
+                score_visitante: p.puntos_equipo_2
+            }));
 
-        if (numerosFecha.length === 0) {
-            selectFechas.innerHTML = '<option value="">No hay fechas programadas</option>';
-            return;
+            if (this.fechaActual === 'PLAYOFF_CUARTOS') {
+                filtrados = listaPlayoffs.filter(p => p.fase === 'CUARTOS' || p.codigo_llave?.startsWith('QF'));
+            } else if (this.fechaActual === 'PLAYOFF_SEMI') {
+                filtrados = listaPlayoffs.filter(p => p.fase === 'SEMIFINAL' || p.codigo_llave?.startsWith('SF'));
+            } else if (this.fechaActual === 'PLAYOFF_FINAL') {
+                filtrados = listaPlayoffs.filter(p => p.fase === 'FINAL' || p.codigo_llave === 'FINAL');
+            }
+        } else {
+            // Filtro por Fase Regular
+            filtrados = this.partidosCache.filter(p =>
+                !p.esPlayoff &&
+                (p.liga || '').toUpperCase() === this.ligaActual.toUpperCase() &&
+                Number(p.fecha_numero) === Number(this.fechaActual)
+            );
         }
 
-        selectFechas.innerHTML = numerosFecha.map(num =>
-            `<option value="${num}">Fecha ${num}</option>`
-        ).join('');
-
-        this.fechaActual = numerosFecha[0];
-    }
-
-    actualizarDesplegablePartidos() {
-        const select = document.getElementById('select-partido-id');
-        if (!select) return;
-
-        const filtrados = this.partidosCache.filter(p =>
-            (p.liga || '').toUpperCase() === this.ligaActual.toUpperCase() &&
-            Number(p.fecha_numero || 1) === Number(this.fechaActual)
-        );
-
-        let html = '<option value="">-- Seleccioná la serie en juego --</option>';
-
-        html += filtrados.map(p => {
-            const nombreLocal = this.equiposMapa[p.local_id] || p.local_id;
-            const nombreVisitante = this.equiposMapa[p.visitante_id] || p.visitante_id;
-
-            const estadoNormalizado = (p.estado || '').toLowerCase();
-            const estaCerrado = estadoNormalizado === 'finalizado' ||
-                estadoNormalizado === 'cerrado' ||
-                p.score_local !== null ||
-                p.walkover !== null;
-
-            if (estaCerrado) {
-                return `<option value="${p.id}" class="bg-gray-100 text-gray-400 font-normal">
-                    ${nombreLocal} vs ${nombreVisitante} ( 🔒 Cerrada )
-                </option>`;
-            } else {
-                return `<option value="${p.id}">
-                    ${nombreLocal} vs ${nombreVisitante}
-                </option>`;
-            }
-        }).join('');
-
-        select.innerHTML = html;
+        this.selector.renderPartidos(filtrados, this.equiposMapa);
     }
 
     // --- PROCESO DE ENVÍO Y TRANSACCIÓN COMPLETA DE RESULTADOS ---
     async guardar(e) {
-        e.preventDefault();
+        if (e && typeof e.preventDefault === 'function') {
+            e.preventDefault();
+            e.stopPropagation();
+        }
 
+        // ----------------------------------------------------
+        // 1. Validar selección de partido
+        // ----------------------------------------------------
         if (!this.partidoId) {
-            return alert("⚠️ Por favor, seleccioná un partido del desplegable.");
+            alert("⚠️ Por favor, seleccioná un partido del desplegable.");
+            return false;
         }
 
         const partidoSeleccionado = this.partidosCache.find(p => String(p.id) === String(this.partidoId));
         if (!partidoSeleccionado) {
-            return alert("⚠️ Error: No se encontró el partido en memoria.");
+            alert("⚠️ Error: No se encontró el partido en memoria.");
+            return false;
         }
 
-        if (partidoSeleccionado.estado === "Finalizado" || partidoSeleccionado.walkover !== null) {
-            return alert("🔒 Esta serie ya fue enviada y se encuentra cerrada.");
+        // ----------------------------------------------------
+        // 2. VALIDAR COMPROBANTES Y PIN PRIMERO
+        // (Si faltan, corta de inmediato sin modificar BD ni el formulario)
+        // ----------------------------------------------------
+        const datosComprobantes = this.comprobantes.obtenerArchivosYToken();
+        if (!datosComprobantes.valido) {
+            alert(datosComprobantes.mensajeError);
+            return false;
         }
 
+        // ----------------------------------------------------
+        // 3. Consultar ESTADO REAL en Supabase antes de proceder
+        // ----------------------------------------------------
+        const esPlayoff = Boolean(partidoSeleccionado.esPlayoff || String(this.fechaActual).startsWith('PLAYOFF_'));
+        const tablaTarget = esPlayoff ? 'liga_playoffs' : 'fixture';
+        const columnasSelect = esPlayoff ? 'estado' : 'estado, walkover';
+
+        try {
+            const { data: partidoBD, error: errConsulta } = await window.supabase
+                .from(tablaTarget)
+                .select(columnasSelect)
+                .eq('id', this.partidoId)
+                .maybeSingle();
+
+            if (errConsulta) {
+                console.error("💥 Error devuelto por Supabase al consultar estado:", errConsulta);
+                alert(`⚠️ Error al verificar el estado del partido en el servidor.\nDetalle: ${errConsulta.message || 'Error de conexión/permisos'}`);
+                return false;
+            }
+
+            if (partidoBD) {
+                const estadoReal = String(partidoBD.estado || '').toUpperCase().trim();
+                const tieneWalkover = !esPlayoff && partidoBD.walkover !== null;
+
+                if (estadoReal === "FINALIZADO" || estadoReal === "CERRADO" || tieneWalkover) {
+                    alert("🔒 Esta serie ya fue enviada previamente y se encuentra cerrada.");
+                    return false;
+                }
+            }
+        } catch (errEstado) {
+            console.error("💥 Excepción al consultar estado:", errEstado);
+            alert(`⚠️ No se pudo verificar el estado actual del partido: ${errEstado.message || errEstado}`);
+            return false;
+        }
+
+        // ----------------------------------------------------
+        // 4. Validar estado de la planilla de partidos (si no es Walkover)
+        // ----------------------------------------------------
         const chkLocalWO = document.getElementById('wo-local-check')?.checked;
         const chkVisitanteWO = document.getElementById('wo-visitante-check')?.checked;
         const esWalkover = chkLocalWO || chkVisitanteWO;
 
         let estadoPlanilla = {};
 
-        // 1. Validaciones según modalidad (Norma ITTF o Walkover)
         if (!esWalkover) {
             estadoPlanilla = this.acordeon.obtenerEstadoPlanilla();
 
             for (let i = 1; i <= 5; i++) {
                 const part = estadoPlanilla[`partido${i}`];
                 if (!part || !part.terminado) {
-                    return alert(`⚠️ Planilla incompleta. El Partido ${i} no registra un ganador reglamentario.`);
+                    alert(`⚠️ Planilla incompleta. El Partido ${i} no registra un ganador reglamentario.`);
+                    return false;
                 }
                 if (!part.local1 || !part.vis1 || (part.modalidad === 'DOBLES' && (!part.local2 || !part.vis2))) {
-                    return alert(`⚠️ Falta asignar jugadores o parejas en el Partido ${i}.`);
+                    alert(`⚠️ Falta asignar jugadores o parejas en el Partido ${i}.`);
+                    return false;
                 }
             }
         }
 
-        // 2. Validación de adjuntos y Token desde ComprobantesForm
-        const datosComprobantes = this.comprobantes.obtenerArchivosYToken();
-        if (!datosComprobantes.valido) {
-            return alert(datosComprobantes.mensajeError);
-        }
-
+        // ----------------------------------------------------
+        // 5. Proceso de Envío y Subida
+        // ----------------------------------------------------
         const scoreLocal = parseInt(document.getElementById('score-local-input')?.value) || 0;
         const scoreVisitante = parseInt(document.getElementById('score-visitante-input')?.value) || 0;
 
@@ -309,7 +361,7 @@ export class CargaVista {
         }
 
         try {
-            // A. Validar Token del Club contra Supabase
+            // A. Verificación del PIN/Token en la tabla de equipos
             const { data: equiposValidados, error: errToken } = await window.supabase
                 .from('equipos')
                 .select('*')
@@ -322,10 +374,10 @@ export class CargaVista {
                     btnEnviar.disabled = false;
                     btnEnviar.innerHTML = textoOriginalBtn;
                 }
-                return;
+                return false;
             }
 
-            // B. Subida paralela de Comprobantes mediante storage-helper
+            // B. Subida de archivos a Storage
             if (btnEnviar) {
                 btnEnviar.innerHTML = `<i class="fas fa-spinner fa-spin mr-1.5"></i> Subiendo archivos...`;
             }
@@ -342,59 +394,84 @@ export class CargaVista {
                 visitanteNombre
             });
 
-            // C. Inserción en 'fixture_detalles' si no es Walkover
-            if (!esWalkover) {
-                if (btnEnviar) {
-                    btnEnviar.innerHTML = `<i class="fas fa-spinner fa-spin mr-1.5"></i> Guardando detalles...`;
-                }
+            // C. Guardar los 5 partidos individuales (si no es Walkover)
+if (!esWalkover) {
+    if (btnEnviar) {
+        btnEnviar.innerHTML = `<i class="fas fa-spinner fa-spin mr-1.5"></i> Guardando detalles...`;
+    }
 
-                const filasDetalle = [];
-                for (let i = 1; i <= 5; i++) {
-                    const part = estadoPlanilla[`partido${i}`];
-                    filasDetalle.push({
-                        partido_id: this.partidoId,
-                        orden: i,
-                        modalidad: part.modalidad,
-                        local_jugador1_id: parseInt(part.local1),
-                        local_jugador2_id: part.local2 ? parseInt(part.local2) : null,
-                        visitante_jugador1_id: parseInt(part.vis1),
-                        visitante_jugador2_id: part.vis2 ? parseInt(part.vis2) : null,
-                        sets_local: part.setsL,
-                        sets_visitante: part.setsV,
-                        score_sets_local: part.scoreL,
-                        score_sets_visitante: part.scoreV
-                    });
-                }
+    const tablaDetalles = esPlayoff ? 'liga_playoffs_detalles' : 'fixture_detalles';
 
-                const { error: errDetalle } = await window.supabase.from('fixture_detalles').insert(filasDetalle);
-                if (errDetalle) throw errDetalle;
-            }
+    const filasDetalle = [];
+    for (let i = 1; i <= 5; i++) {
+        const part = estadoPlanilla[`partido${i}`];
+        if (!part) continue;
 
-            // D. Actualización final de la tabla 'fixture'
-            if (btnEnviar) {
-                btnEnviar.innerHTML = `<i class="fas fa-spinner fa-spin mr-1.5"></i> Finalizando serie...`;
-            }
+        filasDetalle.push({
+            partido_id: esPlayoff ? this.partidoId : parseInt(this.partidoId),
+            orden: i,
+            modalidad: part.modalidad || 'INDIVIDUAL',
+            local_jugador1_id: parseInt(part.local1),
+            local_jugador2_id: part.local2 ? parseInt(part.local2) : null,
+            visitante_jugador1_id: parseInt(part.vis1),
+            visitante_jugador2_id: part.vis2 ? parseInt(part.vis2) : null,
+
+            // Puntos de cada set en formato Array [11, 11, 11, 0, 0]
+            sets_local: Array.isArray(part.setsL) ? part.setsL : [0, 0, 0, 0, 0],
+            sets_visitante: Array.isArray(part.setsV) ? part.setsV : [0, 0, 0, 0, 0],
+
+            // Total de sets ganados en formato String "3" / "0"
+            score_sets_local: String(part.scoreL ?? 0),
+            score_sets_visitante: String(part.scoreV ?? 0)
+        });
+    }
+
+    const { error: errDetalle } = await window.supabase
+        .from(tablaDetalles)
+        .insert(filasDetalle);
+
+    if (errDetalle) throw errDetalle;
+}
 
             let valorWalkover = null;
             if (chkLocalWO) valorWalkover = "LOCAL";
             if (chkVisitanteWO) valorWalkover = "VISITANTE";
 
-            const { error: errUpdate } = await window.supabase
-                .from('fixture')
-                .update({
-                    score_local: scoreLocal,
-                    score_visitante: scoreVisitante,
-                    estado: "Finalizado",
-                    url_acta: urlPlanilla,
-                    url_pago_local: urlPagoLoc,
-                    url_pago_visitante: urlPagoVis,
-                    walkover: valorWalkover
-                })
-                .eq('id', this.partidoId);
+            if (esPlayoff) {
+                let ganadorId = null;
+                if (scoreLocal > scoreVisitante) ganadorId = partidoSeleccionado.local_id;
+                else if (scoreVisitante > scoreLocal) ganadorId = partidoSeleccionado.visitante_id;
 
-            if (errUpdate) throw errUpdate;
+                const { error: errUpdatePlayoff } = await window.supabase
+                    .from('liga_playoffs')
+                    .update({
+                        puntos_equipo_1: scoreLocal,
+                        puntos_equipo_2: scoreVisitante,
+                        ganador_id: ganadorId,
+                        estado: "FINALIZADO"
+                    })
+                    .eq('id', this.partidoId);
 
-            alert("¡Resultados y comprobantes cargados con éxito absoluto!");
+                if (errUpdatePlayoff) throw errUpdatePlayoff;
+
+            } else {
+                const { error: errUpdate } = await window.supabase
+                    .from('fixture')
+                    .update({
+                        score_local: scoreLocal,
+                        score_visitante: scoreVisitante,
+                        estado: "Finalizado",
+                        url_acta: urlPlanilla,
+                        url_pago_local: urlPagoLoc,
+                        url_pago_visitante: urlPagoVis,
+                        walkover: valorWalkover
+                    })
+                    .eq('id', this.partidoId);
+
+                if (errUpdate) throw errUpdate;
+            }
+
+            alert("¡Resultados y comprobantes cargados con éxito!");
             window.location.href = "liga-equipos.html";
 
         } catch (error) {
@@ -408,7 +485,7 @@ export class CargaVista {
     }
 
     obtenerHTMLBase() {
-        return `...`;
+        return ``;
     }
 }
 
