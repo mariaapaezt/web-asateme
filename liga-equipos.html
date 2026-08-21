@@ -153,15 +153,19 @@
         <div class="container mx-auto px-4 md:px-6">
             <div class="flex space-x-2 md:space-x-6 overflow-x-auto">
                 <button onclick="switchTab('posiciones')" id="tab-posiciones"
-                    class="tab-btn px-4 py-4 text-sm font-bold border-b-2 border-asatemeRed text-asatemeRed whitespace-nowrap">
+                    class="tab-btn px-4 py-4 text-sm font-bold border-b-2 border-asatemeRed text-asatemeRed whitespace-nowrap cursor-pointer">
                     <i class="fas fa-table mr-2"></i>Tabla de Posiciones
                 </button>
                 <button onclick="switchTab('fixture')" id="tab-fixture"
-                    class="tab-btn px-4 py-4 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-asatemeBlue whitespace-nowrap">
+                    class="tab-btn px-4 py-4 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-asatemeBlue whitespace-nowrap cursor-pointer">
                     <i class="fas fa-calendar-alt mr-2"></i>Fixture y Resultados
                 </button>
+                <button onclick="switchTab('playoffs')" id="tab-playoffs"
+                    class="tab-btn px-4 py-4 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-asatemeBlue whitespace-nowrap cursor-pointer">
+                    <i class="fas fa-sitemap mr-2"></i>Playoffs / Llaves
+                </button>
                 <button onclick="switchTab('equipos')" id="tab-equipos"
-                    class="tab-btn px-4 py-4 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-asatemeBlue whitespace-nowrap">
+                    class="tab-btn px-4 py-4 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-asatemeBlue whitespace-nowrap cursor-pointer">
                     <i class="fas fa-users mr-2"></i>Equipos y Jugadores
                 </button>
             </div>
@@ -261,6 +265,45 @@
             </div>
 
             <div id="fixture-partidos-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- CONTENIDO: PLAYOFFS / LLAVES               -->
+        <!-- ========================================== -->
+        <div id="content-playoffs" class="tab-content">
+            <!-- Selector de Liga (A o B) -->
+            <div class="mb-6 flex gap-2 justify-center sm:justify-start">
+                <button onclick="switchLigaPlayoffs('LIGA_A')" id="btn-playoffs-ligaA"
+                    class="px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-asatemeBlue text-white border border-gray-200 transition-all cursor-pointer">
+                    Liga A
+                </button>
+                <button onclick="switchLigaPlayoffs('LIGA_B')" id="btn-playoffs-ligaB"
+                    class="px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all cursor-pointer">
+                    Liga B
+                </button>
+            </div>
+        
+            <!-- Encabezado de la Fase de Eliminación Directa -->
+            <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-gray-200 pb-4">
+                <div>
+                    <h2 id="playoffs-titulo-liga" class="text-xl font-bold text-asatemeBlue">Fase Final - Liga A</h2>
+                    <p class="text-sm text-gray-500">Cuadro de eliminación directa: Cuartos de Final, Semifinales y Gran Final.
+                    </p>
+                </div>
+                <span
+                    class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-medium bg-amber-100 text-amber-800 self-start sm:self-auto">
+                    <i class="fas fa-trophy text-amber-600"></i> Definición del Campeón
+                </span>
+            </div>
+        
+            <!-- Contenedor donde se dibujará la llave gráfica -->
+            <div id="playoffs-tree-container" class="overflow-x-auto pb-6">
+                <!-- Se poblará dinámicamente en la Fase 3 -->
+                <div class="text-center py-12 text-gray-400">
+                    <i class="fas fa-spinner fa-spin text-2xl text-asatemeBlue mb-2"></i>
+                    <p class="text-sm">Cargando cuadro de llaves...</p>
+                </div>
             </div>
         </div>
 
