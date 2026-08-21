@@ -3,8 +3,7 @@ import { SelectorPartido } from "../componentes/carga/SelectorPartido.js";
 import { AcordeonITTF } from "../componentes/carga/AcordeonITTF.js";
 import { ComprobantesForm } from "../componentes/carga/ComprobantesForm.js";
 import { subirComprobantesPartido } from "../utils/storage-helper.js";
-import { propagarGanadoresPlayoffs } from "../componentes/liga/playoffLogic.js";    
-
+import { propagarGanadoresPlayoffs } from "../componentes/liga/playoffLogic.js";
 
 export class CargaVista {
   constructor() {
