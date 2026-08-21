@@ -63,7 +63,7 @@ export class CargaVista {
     this.actualizarDesplegablePartidos();
     this.limpiarFormularioCompleto();
   }
-    
+
   // Método auxiliar para obtener los números de fecha según la liga
   obtenerNumerosFechas() {
     const partidosDeLiga = this.partidosCache.filter(
@@ -109,6 +109,36 @@ export class CargaVista {
 
     if (btnA) btnA.onclick = () => this.cambiarLiga("LIGA_A");
     if (btnB) btnB.onclick = () => this.cambiarLiga("LIGA_B");
+
+    // ⚡ EVENTO: Actualización dinámica de marcador al cambiar los Checkboxes de Walkover (WO)
+    const chkLocalWO = container.querySelector("#wo-local-check");
+    const chkVisitanteWO = container.querySelector("#wo-visitante-check");
+
+    const manejarCambioWO = (e) => {
+      const target = e.target;
+
+      if (target === chkLocalWO && chkLocalWO.checked) {
+        if (chkVisitanteWO) chkVisitanteWO.checked = false; // Desmarca el otro si está tildado
+        this.actualizarTotales(0, 5);
+      } else if (target === chkVisitanteWO && chkVisitanteWO.checked) {
+        if (chkLocalWO) chkLocalWO.checked = false; // Desmarca el otro si está tildado
+        this.actualizarTotales(5, 0);
+      } else if (!chkLocalWO?.checked && !chkVisitanteWO?.checked) {
+        // Si se destildan ambos, se recalculan los puntos según los partidos individuales
+        if (
+          this.acordeon &&
+          typeof this.acordeon.obtenerTotales === "function"
+        ) {
+          const { local, visitante } = this.acordeon.obtenerTotales();
+          this.actualizarTotales(local, visitante);
+        } else {
+          this.actualizarTotales(0, 0);
+        }
+      }
+    };
+
+    if (chkLocalWO) chkLocalWO.onchange = manejarCambioWO;
+    if (chkVisitanteWO) chkVisitanteWO.onchange = manejarCambioWO;
 
     // Formulario principal de envío
     const formEnvio = container.querySelector("#form-envio-planilla");
@@ -544,7 +574,7 @@ export class CargaVista {
       if (chkLocalWO) valorWalkover = "LOCAL";
       if (chkVisitanteWO) valorWalkover = "VISITANTE";
 
-        // D. Actualizar el partido principal con los resultados y URLs 
+      // D. Actualizar el partido principal con los resultados y URLs
       if (esPlayoff) {
         let ganadorId = null;
         let puntosEq1 = scoreLocal;
@@ -586,11 +616,25 @@ export class CargaVista {
         // ⚡ 2. Refrescar estado y caché local
         await this.cargarDatos();
       } else {
+        // ⚡ Ajuste de marcadores para Fase Regular si hubo Walkover (WO)
+        let scoreFinalLocal = scoreLocal;
+        let scoreFinalVisitante = scoreVisitante;
+
+        if (chkLocalWO) {
+          // Si el Local da Walkover, gana el Visitante 0 - 5
+          scoreFinalLocal = 0;
+          scoreFinalVisitante = 5;
+        } else if (chkVisitanteWO) {
+          // Si el Visitante da Walkover, gana el Local 5 - 0
+          scoreFinalLocal = 5;
+          scoreFinalVisitante = 0;
+        }
+
         const { error: errUpdate } = await window.supabase
           .from("fixture")
           .update({
-            score_local: scoreLocal,
-            score_visitante: scoreVisitante,
+            score_local: scoreFinalLocal, // <--- Usamos la variable corregida
+            score_visitante: scoreFinalVisitante, // <--- Usamos la variable corregida
             estado: "Finalizado",
             url_acta: urlPlanilla,
             url_pago_local: urlPagoLoc,
