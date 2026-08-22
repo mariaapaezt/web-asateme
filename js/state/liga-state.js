@@ -169,7 +169,7 @@ export const ligaState = {
       this.cargando = false;
     }
   },
-  
+
   _procesarEstadisticasYPosiciones() {
     this.equiposMap = {};
 
@@ -339,9 +339,30 @@ export const ligaState = {
   },
 
   obtenerMaxFechasFixture() {
-    return this._fixture.length > 0
-      ? Math.max(...this._fixture.map((p) => Number(p.fecha_numero || 1)))
-      : 5;
+    const ligaActiva = this.currentLigaFixture || "LIGA_A";
+    const equiposLiga = this.ligasData[ligaActiva] || [];
+    const cantEquipos = equiposLiga.length;
+
+    // Si no hay equipos cargados, retorna 1 por defecto
+    if (cantEquipos === 0) return 1;
+
+    // Si la cantidad de equipos es par, las fechas totales son (Equipos - 1).
+    // Si es impar, las fechas totales son igual a la cantidad de equipos (ya que cada fecha descansa uno).
+    const maxFechasCalculadas =
+      cantEquipos % 2 === 0 ? cantEquipos - 1 : cantEquipos;
+
+    // Como respaldo, verifica si hay alguna fecha con un número mayor registrada en los partidos
+    const partidosLiga = (this._fixture || []).filter(
+      (p) =>
+        !p.esPlayoff &&
+        (p.liga || "").toUpperCase() === ligaActiva.toUpperCase(),
+    );
+    const maxFechaRegistrada =
+      partidosLiga.length > 0
+        ? Math.max(...partidosLiga.map((p) => Number(p.fecha_numero) || 0))
+        : 0;
+
+    return Math.max(maxFechasCalculadas, maxFechaRegistrada);
   },
 
   obtenerEquiposGrid() {
