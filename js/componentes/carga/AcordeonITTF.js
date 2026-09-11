@@ -73,24 +73,24 @@ export class AcordeonITTF {
                             <div class="space-y-2">
                                 <label class="block text-[10px] font-bold text-gray-400 uppercase">Alineación Local</label>
                                 <select data-p="${i}" data-campo="local1" class="select-jugador w-full bg-gray-50 border rounded-lg p-2 text-xs font-medium text-gray-700 focus:outline-none focus:border-asatemeBlue">
-                                    <option value="">-- Seleccionar Jugador --</option>
+                                    <option value=""> Seleccionar Jugador </option>
                                     ${this.jugadoresLocales.map(j => `<option value="${j.id}" ${p.local1 == j.id ? 'selected' : ''}>${j.nombre || j.name}</option>`).join('')}
                                 </select>
                                 ${esDobles ? `
                                 <select data-p="${i}" data-campo="local2" class="select-jugador w-full bg-gray-50 border rounded-lg p-2 text-xs font-medium text-gray-700 focus:outline-none focus:border-asatemeBlue">
-                                    <option value="">-- Pareja Jugador 2 --</option>
+                                    <option value=""> Pareja Jugador 2 </option>
                                     ${this.jugadoresLocales.map(j => `<option value="${j.id}" ${p.local2 == j.id ? 'selected' : ''}>${j.nombre || j.name}</option>`).join('')}
                                 </select>` : ''}
                             </div>
                             <div class="space-y-2">
                                 <label class="block text-[10px] font-bold text-gray-400 uppercase text-right">Alineación Visitante</label>
                                 <select data-p="${i}" data-campo="vis1" class="select-jugador w-full bg-gray-50 border rounded-lg p-2 text-xs font-medium text-gray-700 focus:outline-none focus:border-asatemeBlue">
-                                    <option value="">-- Seleccionar Jugador --</option>
+                                    <option value=""> Seleccionar Jugador </option>
                                     ${this.jugadoresVisitantes.map(j => `<option value="${j.id}" ${p.vis1 == j.id ? 'selected' : ''}>${j.nombre || j.name}</option>`).join('')}
                                 </select>
                                 ${esDobles ? `
                                 <select data-p="${i}" data-campo="vis2" class="select-jugador w-full bg-gray-50 border rounded-lg p-2 text-xs font-medium text-gray-700 focus:outline-none focus:border-asatemeBlue">
-                                    <option value="">-- Pareja Jugador 2 --</option>
+                                    <option value=""> Pareja Jugador 2 </option>
                                     ${this.jugadoresVisitantes.map(j => `<option value="${j.id}" ${p.vis2 == j.id ? 'selected' : ''}>${j.nombre || j.name}</option>`).join('')}
                                 </select>` : ''}
                             </div>
