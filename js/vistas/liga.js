@@ -6,6 +6,64 @@ import { TarjetaFixture } from '../componentes/liga/TarjetaFixture.js';
 import { TarjetaEquipo } from '../componentes/liga/TarjetaEquipo.js';
 import { DesplegableFixture } from '../componentes/liga/DesplegableFixture.js';
 import { ModalHistorial } from '../componentes/liga/ModalHistorial.js';
+import { TarjetaPlayoff } from '../componentes/liga/TarjetaPlayoff.js';
+import { PlayoffDetalleModal } from '../componentes/liga/PlayoffDetalleModal.js';
+import { actualizarAvancePlayoffs, verificarEInicializarPlayoffs } from '../componentes/liga/playoffLogic.js';
+
+// ==========================================
+// REGISTRO DIRECTO Y GLOBAL PARA EL MODAL DE PLAYOFFS
+// ==========================================
+window.abrirModalPlayoff = async function (partidoId) {
+    try {
+        if (!ligaController.supabase) {
+            console.error("Cliente Supabase no inicializado aún.");
+            return;
+        }
+
+        // Consultar el partido y sus detalles a Supabase
+        const { data: partido, error } = await ligaController.supabase
+            .from('liga_playoffs')
+            .select(`
+                *,
+                equipo_1:equipos!liga_playoffs_equipo_1_id_fkey(nombre),
+                equipo_2:equipos!liga_playoffs_equipo_2_id_fkey(nombre),
+                detalles:liga_playoffs_detalles(*)
+            `)
+            .eq('id', partidoId)
+            .single();
+
+        if (error) throw error;
+
+        // Renderizar las líneas con los nombres de los jugadores
+        const htmlLineas = PlayoffDetalleModal.renderLineasPlanilla(
+            partido.detalles || [],
+            (id) => ligaState.obtenerNombreJugadorLocal(id)
+        );
+
+        // Generar e inyectar el HTML del modal
+        const htmlModal = PlayoffDetalleModal.renderModal(partido, htmlLineas);
+
+        let contenedor = document.getElementById('contenedor-modal-playoff');
+        if (!contenedor) {
+            contenedor = document.createElement('div');
+            contenedor.id = 'contenedor-modal-playoff';
+            document.body.appendChild(contenedor);
+        }
+        contenedor.innerHTML = htmlModal;
+
+    } catch (err) {
+        console.error("💥 Error al abrir el detalle de playoff:", err);
+        alert("No se pudieron cargar los detalles del partido de playoff.");
+    }
+};
+
+window.cerrarModalPlayoff = function () {
+    const contenedor = document.getElementById('contenedor-modal-playoff');
+    if (contenedor) {
+        contenedor.innerHTML = '';
+    }
+};
+
 
 export const ligaController = {
     supabase: null,
@@ -27,26 +85,26 @@ export const ligaController = {
         this.actualizarContadoresBanner();
         this._configurarListenersDOM();
 
+        // Renderizar vista acorde al tab activo inicial
+        await this.renderizarVistaActual();
+
         // Establecer pestañas y ligas iniciales activas
         window.switchLiga('LIGA_A');
         window.switchLigaFixture('LIGA_A');
+        if (window.switchLigaPlayoffs) window.switchLigaPlayoffs('LIGA_A');
         window.seleccionarLigaEquipos('LIGA_A');
-
-        // Renderizar vista acorde al tab activo inicial
-        this.renderizarVistaActual();
     },
 
     _registrarPuentesGlobales() {
-        window.switchTab = (tabId) => {
+        window.switchTab = async (tabId) => {
             ligaState.currentTab = tabId;
             this._actualizarEstiloTabsSuperiores(tabId);
-            this.renderizarVistaActual();
+            await this.renderizarVistaActual();
         };
 
         window.switchLiga = (ligaId) => {
             ligaState.currentLigaPosiciones = ligaId;
 
-            // --- ACTUALIZACIÓN DE TÍTULO EN TABLA DE POSICIONES ---
             const tituloPosiciones = document.getElementById('titulo-liga-actual');
             if (tituloPosiciones) {
                 tituloPosiciones.textContent = ligaId === 'LIGA_A' ? 'Liga A' : 'Liga B';
@@ -60,7 +118,6 @@ export const ligaController = {
             ligaState.currentLigaFixture = ligaId;
             ligaState.currentFechaFiltro = 1;
 
-            // --- ACTUALIZACIÓN DE TÍTULO EN FIXTURE ---
             const tituloFixture = document.getElementById('fixture-titulo-liga');
             if (tituloFixture) {
                 tituloFixture.textContent = ligaId === 'LIGA_A' ? 'Liga A' : 'Liga B';
@@ -90,9 +147,28 @@ export const ligaController = {
         window.seleccionarEquipoDetalle = (equipoId) => this.seleccionarEquipoDetalle(equipoId);
         window.verDetalleJugador = (jugadorId, equipoId) => this.verDetalleJugador(jugadorId, equipoId);
         window.cerrarModalJugador = () => this.cerrarModalJugador();
+
+        window.switchLigaPlayoffs = async (ligaId) => {
+            ligaState.currentLigaPlayoffs = ligaId;
+            const tituloPlayoffs = document.getElementById('playoffs-titulo-liga');
+            if (tituloPlayoffs) {
+                tituloPlayoffs.textContent = ligaId === 'LIGA_A' ? 'Fase Final - Liga A' : 'Fase Final - Liga B';
+            }
+            await this.renderizarTabPlayoffs();
+            this._actualizarBotonesEstilo('button[onclick*="switchLigaPlayoffs"]', ligaId);
+        };
     },
 
     _configurarListenersDOM() {
+        // Escuchador global de clics para los playoffs
+        document.addEventListener('click', (e) => {
+            const btnModal = e.target.closest('[data-action="abrir-modal-playoff"]');
+            if (btnModal) {
+                const partidoId = btnModal.dataset.id;
+                window.abrirModalPlayoff(partidoId);
+            }
+        });
+
         document.getElementById('input-busqueda-equipos')?.addEventListener('input', (e) => {
             ligaState.filtroTextoEquipos = e.target.value;
             this.renderizarGridEquiposUnicamente();
@@ -133,17 +209,14 @@ export const ligaController = {
 
         const historial = ligaState.obtenerHistorialJugador(jugadorId);
 
-        // 1. Obtener total de fechas en la competencia
         const totalFechas = ligaState.obtenerMaxFechasFixture() || 12;
 
-        // 2. Contabilizar en cuántas fechas distintas jugó el deportista
         const fechasUnicasJugadas = new Set(
             historial
                 .map(p => Number(p.fecha_numero))
                 .filter(f => !isNaN(f) && f > 0)
         ).size;
 
-        // 3. Renderizar partidos pasándole el club rival
         const htmlPartidos = ModalHistorial.renderListaPartidos(
             historial,
             jugadorId,
@@ -154,7 +227,6 @@ export const ligaController = {
             }
         );
 
-        // 4. Renderizar modal con el total de fechas contabilizadas (ej: 5 de 13)
         const modalHTML = ModalHistorial.renderModal(
             jugador,
             equipoActual.nombre,
@@ -179,20 +251,24 @@ export const ligaController = {
         }
     },
 
-    renderizarVistaActual() {
-        const paneles = ['content-posiciones', 'content-fixture', 'content-equipos'];
-        paneles.forEach(id => document.getElementById(id)?.classList.remove('active'));
+    async renderizarVistaActual() {
+        const paneles = ['content-posiciones', 'content-fixture', 'content-playoffs', 'content-equipos'];
+        paneles.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
+        });
 
         const tabActiva = `content-${ligaState.currentTab}`;
-        document.getElementById(tabActiva)?.classList.add('active');
+        const panelActivo = document.getElementById(tabActiva);
+        if (panelActivo) panelActivo.classList.add('active');
 
         if (ligaState.currentTab === 'posiciones') this.renderizarTabPosiciones();
         if (ligaState.currentTab === 'fixture') this.renderizarTabFixture();
+        if (ligaState.currentTab === 'playoffs') await this.renderizarTabPlayoffs();
         if (ligaState.currentTab === 'equipos') this.renderizarTabEquipos();
     },
 
     renderizarTabPosiciones() {
-        // Sincronizar título HTML según el estado
         const tituloPosiciones = document.getElementById('titulo-liga-actual');
         if (tituloPosiciones) {
             tituloPosiciones.textContent = ligaState.currentLigaPosiciones === 'LIGA_A' ? 'Liga A' : 'Liga B';
@@ -210,7 +286,6 @@ export const ligaController = {
     },
 
     renderizarTabFixture() {
-        // Sincronizar título HTML según el estado
         const tituloFixture = document.getElementById('fixture-titulo-liga');
         if (tituloFixture) {
             tituloFixture.textContent = ligaState.currentLigaFixture === 'LIGA_A' ? 'Liga A' : 'Liga B';
@@ -233,9 +308,46 @@ export const ligaController = {
             const partidos = ligaState.obtenerPartidosFixture();
             const equiposLiga = ligaState.ligasData[ligaState.currentLigaFixture] || [];
 
-            // --- CÁLCULO DE EQUIPO LIBRE Y RENDERIZADO COMPLETO ---
             const equipoLibre = ligaState.obtenerEquipoLibreJornada ? ligaState.obtenerEquipoLibreJornada() : null;
             contenedorCards.innerHTML = TarjetaFixture.render(partidos, ligaState.equiposMap, equiposLiga, equipoLibre);
+        }
+    },
+
+    async renderizarTabPlayoffs() {
+        const ligaActual = ligaState.currentLigaPlayoffs || 'LIGA_A';
+
+        // 1. Validar e inicializar en Supabase si toda la Fase Regular finalizó
+        const resultado = await verificarEInicializarPlayoffs(ligaActual, this.supabase);
+
+        // 2. Propagar avance de ganadores en memoria
+        actualizarAvancePlayoffs(ligaActual);
+
+        const tituloPlayoffs = document.getElementById('playoffs-titulo-liga');
+        if (tituloPlayoffs) {
+            tituloPlayoffs.textContent = ligaActual === 'LIGA_A' ? 'Fase Final - Liga A' : 'Fase Final - Liga B';
+        }
+
+        const playoffs = ligaState.obtenerPlayoffsLiga ? ligaState.obtenerPlayoffsLiga(ligaActual) : [];
+        const container = document.getElementById('playoffs-tree-container');
+
+        if (container) {
+            if (!playoffs || playoffs.length === 0) {
+                const mensajeDetalle = resultado.mensaje 
+                    ? resultado.mensaje 
+                    : 'Aún no hay datos cargados para los playoffs de esta liga.';
+
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500 max-w-md mx-auto">
+                        <i class="fas fa-trophy text-4xl text-amber-500 mb-3 animate-bounce"></i>
+                        <p class="font-bold text-gray-700 text-lg mb-1">Fase Final - ${ligaActual === 'LIGA_A' ? 'Liga A' : 'Liga B'}</p>
+                        <p class="text-sm text-gray-500 bg-amber-50 border border-amber-200 rounded-lg p-3 mt-2">
+                            ${mensajeDetalle}
+                        </p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = TarjetaPlayoff.renderArbol(playoffs, ligaState.equiposMap);
+            }
         }
     },
 
@@ -300,5 +412,6 @@ export const ligaController = {
                 ? "px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-[#003366] text-white border border-gray-200 transition-all cursor-pointer"
                 : "px-4 py-2 text-sm font-semibold rounded-lg shadow-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all cursor-pointer";
         });
-    }
+    },
+    
 };
