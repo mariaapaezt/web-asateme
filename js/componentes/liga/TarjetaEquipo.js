@@ -65,20 +65,30 @@ export const TarjetaEquipo = {
           ? jugador.nombre.charAt(0).toUpperCase()
           : "J";
 
-        // Cálculo de presencia / fechas jugadas
+        // Filtrar partidos donde participó el jugador
         const partidosJugados = (detallesPartidos || []).filter(
           (d) =>
-            Number(d.local_jugador1_id) === Number(jugador.id) ||
-            Number(d.local_jugador2_id) === Number(jugador.id) ||
-            Number(d.visitante_jugador1_id) === Number(jugador.id) ||
-            Number(d.visitante_jugador2_id) === Number(jugador.id),
+            !d.esPlayoff && // Se excluyen partidos de playoffs de la asistencia
+            (Number(d.local_jugador1_id) === Number(jugador.id) ||
+              Number(d.local_jugador2_id) === Number(jugador.id) ||
+              Number(d.visitante_jugador1_id) === Number(jugador.id) ||
+              Number(d.visitante_jugador2_id) === Number(jugador.id)),
         );
 
-        // Fechas únicas en las que participó
-        const fechasUnicas = new Set(partidosJugados.map((p) => p.partido_id))
-          .size;
-        const porcentajePresencia =
-          maxFechas > 0 ? Math.round((fechasUnicas / maxFechas) * 100) : 0;
+        // Agrupar por número de fecha única (fecha_numero o partido_id como respaldo)
+        const fechasUnicasSet = new Set(
+          partidosJugados.map((p) => p.fecha_numero || p.partido_id),
+        );
+
+        // Si maxFechas está definido, las fechas contabilizadas no pueden exceder la cantidad total
+        const totalFechasValidas = maxFechas > 0 ? maxFechas : 1;
+        const fechasUnicas = Math.min(fechasUnicasSet.size, totalFechasValidas);
+
+        // Cálculo de porcentaje con tope en 100%
+        const porcentajeCalculado = Math.round(
+          (fechasUnicas / totalFechasValidas) * 100,
+        );
+        const porcentajePresencia = Math.min(100, porcentajeCalculado);
 
         return `
                 <div onclick="window.verDetalleJugador('${jugador.id}', '${jugador.equipo_id}')" 
@@ -95,7 +105,6 @@ export const TarjetaEquipo = {
                             <h5 class="text-xs font-bold text-gray-800 group-hover:text-[#003366] transition-colors truncate">
                                 ${jugador.nombre}
                             </h5>
-                            // En el método renderJugadores(jugadores, detallesPartidos, maxFechas)
                             <span class="text-[10px] text-gray-400 block mt-0.5">
                                 Fechas: ${fechasUnicas} / ${maxFechas || 0}
                             </span>

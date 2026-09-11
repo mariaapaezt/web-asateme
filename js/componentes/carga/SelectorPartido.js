@@ -97,7 +97,7 @@ export class SelectorPartido {
             return;
         }
 
-        let html = '<option value="">-- Seleccioná la serie en juego --</option>';
+        let html = '<option value=""> Seleccioná la serie en juego </option>';
         html += partidos.map(p => {
             const locId = p.local_id || p.equipo_1_id;
             const visId = p.visitante_id || p.equipo_2_id;
