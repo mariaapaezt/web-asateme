@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripciones Torneo - ASATEME</title>
+
+    <link rel="icon" type="image/png" href="assets/images/logo-asateme.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        asatemeBlue: '#003366',
+                        asatemeRed: '#D32F2F',
+                        asatemeGray: '#F1F5F9',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-asatemeGray font-sans text-gray-800 min-h-screen flex flex-col justify-between">
+
+    <!-- NAVBAR -->
+    <nav class="bg-asatemeBlue text-white sticky top-0 z-50 shadow-xl">
+        <div class="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition duration-150 group">
+                    <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="h-10 w-auto object-contain">
+                    <div>
+                        <h1
+                            class="text-lg md:text-xl font-extrabold tracking-wide leading-none group-hover:text-gray-200 transition">
+                            ASATEME</h1>
+                        <span class="text-[10px] text-gray-300 uppercase tracking-widest block mt-0.5">Asociación
+                            Santafesina de Tenis de Mesa</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="hidden lg:flex space-x-6 font-semibold text-sm items-center">
+                <a href="index.html#mas-noticias" class="hover:text-asatemeRed transition duration-300">Noticias</a>
+                <a href="index.html#destacados" class="hover:text-asatemeRed transition duration-300">Destacados</a>
+                <a href="index.html#ranking" class="hover:text-asatemeRed transition duration-300">Ranking</a>
+                <a href="index.html#calendario" class="hover:text-asatemeRed transition duration-300">Calendario</a>
+
+                <a href="liga-equipos.html"
+                    class="bg-white/10 hover:bg-asatemeRed hover:text-white px-3 py-1.5 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide">
+                    <i class="fas fa-trophy text-amber-400"></i> Liga de Equipos
+                </a>
+                <a href="inscripciones.html"
+                    class="bg-asatemeRed text-white px-3 py-1.5 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide">
+                    <i class="fas fa-clipboard-list text-white"></i> Inscripciones Torneo
+                </a>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdBdc_petoieFpV5CcZYIEc4iv2BKG_uIGpsRVDu0iIV0ELyg/viewform?usp=header#afiliaciones"
+                    target="_blank" rel="noopener noreferrer"
+                    class="bg-asatemeRed hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition shadow-md text-sm flex items-center gap-1">
+                    <i class="fas fa-user-plus"></i> Afiliate
+                </a>
+                <button id="menu-toggle" class="lg:hidden text-2xl focus:outline-none cursor-pointer p-2 relative z-50"
+                    aria-label="Abrir Menú">
+                    <i class="fas fa-bars pointer-events-none"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu"
+            class="hidden bg-asatemeBlue border-t border-blue-900 px-4 py-4 space-y-3 font-semibold text-sm absolute top-full left-0 w-full shadow-2xl z-50">
+            <a href="index.html#mas-noticias" class="block text-white hover:text-asatemeRed py-1">Noticias</a>
+            <a href="index.html#destacados" class="block text-white hover:text-asatemeRed py-1">Destacados</a>
+            <a href="index.html#ranking" class="block text-white hover:text-asatemeRed py-1">Ranking</a>
+            <a href="index.html#calendario" class="block text-white hover:text-asatemeRed py-1">Calendario</a>
+            <a href="liga-equipos.html"
+                class="bg-white/10 hover:bg-asatemeRed hover:text-white px-3 py-2 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide text-white">
+                <i class="fas fa-trophy text-amber-400"></i> Liga de Equipos
+            </a>
+            <a href="inscripciones.html"
+                class="bg-asatemeRed text-white px-3 py-2 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide">
+                <i class="fas fa-clipboard-list text-white"></i> Inscripciones Torneo
+            </a>
+        </div>
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL DÓNDE SE INYECTARÁ LA VISTA -->
+    <main id="app-inscripciones" class="flex-grow">
+        <!-- El contenido de la vista se carga aquí -->
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-asatemeBlue text-white py-12 border-t-4 border-asatemeRed">
+        <div class="container mx-auto px-4 md:px-6 text-center">
+            <p class="font-bold text-lg mb-2">ASATEME</p>
+            <p class="text-gray-400 text-sm mb-6">Asociación Santafesina de Tenis de Mesa · Regulando el deporte a nivel
+                provincial</p>
+            <div class="text-xs text-gray-500">&copy; 2026 ASATEME. Todos los derechos reservados.</div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS DE CARGA Y CONFIGURACIÓN (EN ORDEN ESTRICTO) -->
+
+    <!-- 1. Librería oficial de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Configuración global centralizada (genera window.supabase) -->
+    <script src="js/supabase-config.js"></script>
+
+    <!-- 3. Inicialización de la vista principal -->
+    <script type="module">
+        import { InscripcionesVista } from './js/vistas/InscripcionesVista.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const contenedorApp = document.getElementById('app-inscripciones');
+            if (contenedorApp) {
+                const vista = new InscripcionesVista();
+                vista.render(contenedorApp);
+            }
+        });
+    </script>
+</body>
+
+</html>
