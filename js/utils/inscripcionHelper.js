@@ -9,42 +9,42 @@ export const CATEGORIAS_EDADES = [
   { nombre: "Sub-19", edadMax: 19 },
   { nombre: "Sub-23", edadMax: 23 },
   { nombre: "Todo Competidor", edadMax: 99 },
+  { nombre: "Maxi", edadMin: 30 } // Maxi general para mayores de 30 años
 ];
 
-export function calcularEdad(fechaNacimiento) {
-  const hoy = new Date();
-  const nacimiento = new Date(fechaNacimiento);
-  let edad = hoy.getFullYear() - nacimiento.getFullYear();
-  const m = hoy.getMonth() - nacimiento.getMonth();
-  if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
-    edad--;
-  }
-  return edad;
-}
+export function obtenerCategoriasPermitidas(fechaNacimientoStr) {
+  if (!fechaNacimientoStr) return [];
 
-export function obtenerCategoriasPermitidas(fechaNacimiento) {
-  if (!fechaNacimiento) return [];
-  const edad = calcularEdad(fechaNacimiento);
+  const anioNacimiento = new Date(fechaNacimientoStr).getFullYear();
+  const anioActual = 2026; // Año en curso de los torneos
+  const edad = anioActual - anioNacimiento;
 
-  let indiceBase = CATEGORIAS_EDADES.findIndex((cat) => edad <= cat.edadMax);
-  if (indiceBase === -1) indiceBase = CATEGORIAS_EDADES.length - 2;
+  let permitidas = [];
 
-  const categoriasPermitidas = [];
+  // 1. Determinar categoría mínima por edad y habilitar esa y las superiores
+  let encontreMinima = false;
+  CATEGORIAS_EDADES.forEach((cat) => {
+    if (cat.nombre === "Todo Competidor") {
+      permitidas.push(cat.nombre); // Todo Competidor siempre está habilitado
+    } else if (cat.nombre === "Maxi") {
+      // Maxi se habilita si tiene 30 años o más
+      if (edad >= 30) {
+        permitidas.push(cat.nombre);
+      }
+    } else {
+      // Para las categorías por edades (Sub-9 a Sub-23)
+      if (!encontreMinima) {
+        if (edad <= cat.edadMax) {
+          encontreMinima = true;
+          permitidas.push(cat.nombre);
+        }
+      } else {
+        // Todas las categorías superiores a la edad del jugador también se habilitan
+        permitidas.push(cat.nombre);
+      }
+    }
+  });
 
-  // 1. Su categoría por edad
-  const catBase = CATEGORIAS_EDADES[indiceBase];
-  if (catBase) categoriasPermitidas.push(catBase.nombre);
-
-  // 2. La categoría siguiente (siempre que no sea Todo Competidor)
-  const catSiguiente = CATEGORIAS_EDADES[indiceBase + 1];
-  if (catSiguiente && catSiguiente.nombre !== "Todo Competidor") {
-    categoriasPermitidas.push(catSiguiente.nombre);
-  }
-
-  // 3. Todo Competidor (obligatorio para todos)
-  if (!categoriasPermitidas.includes("Todo Competidor")) {
-    categoriasPermitidas.push("Todo Competidor");
-  }
-
-  return categoriasPermitidas;
+  // Si por alguna razón la edad excede Sub-23 y no entró en ninguna de menores menor o igual, se aseguran Todo Competidor y Maxi si corresponde
+  return permitidas;
 }

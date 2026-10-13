@@ -355,6 +355,7 @@ export class InscripcionesVista {
       "Sub-17",
       "Sub-19",
       "Sub-23",
+      "Maxi",
       "Todo Competidor",
     ];
     const ramas = ["Masculino", "Femenino"];
