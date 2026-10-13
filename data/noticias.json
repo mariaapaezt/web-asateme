@@ -1,4 +1,5 @@
-[{
+[
+    {
     "id": "torneo-regional-abierto-17-18-octubre-2026",
     "titulo": "¡Se viene el Torneo Regional Abierto en Rosario!",
     "resumen": "Los días 17 y 18 de octubre, el tenis de mesa de la región se cita en Rosario para disputar un gran torneo abierto con premios en materiales y sorteos.",
@@ -28,7 +29,7 @@
             "texto": "¡Prepará tu paleta y sé parte de este gran torneo regional! 🏓🔥"
         }
     ]
-},
+    },
     {
     "id": "hazana-historica-santa-fe-ranking-mundial-juvenil-ittf-2026",
     "titulo": "¡Hazaña histórica para Santa Fe en el Ranking Mundial Juvenil de la ITTF!",
@@ -71,7 +72,7 @@
             "texto": "¡Vamos por más! 🏓💪 #ASATEME #ITTF #TenisDeMesa #OrgulloSantafesino #OrgulloArgentino"
         }
     ]
-},
+    },
     {
     "id": "jornada-aura-tenis-de-mesa-club-atletico-provincial",
     "titulo": "¡Una jornada de AURA, pasión y alto nivel de tenis de mesa en el Club Atlético Provincial!",
