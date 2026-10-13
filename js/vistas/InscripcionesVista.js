@@ -60,7 +60,7 @@ export class InscripcionesVista {
                                     <i class="fas fa-calendar-alt text-amber-400"></i>
                                     <div>
                                         <span class="block text-[10px] uppercase font-bold text-blue-200">Fecha</span>
-                                        <span class="text-xs font-bold">18 y 19 de Octubre</span>
+                                        <span class="text-xs font-bold">17 y 18 de Octubre</span>
                                     </div>
                                 </div>
                                 <div class="bg-white/10 backdrop-blur-xs border border-white/20 rounded-xl px-4 py-2.5 flex items-center gap-3">
