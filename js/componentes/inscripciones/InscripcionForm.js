@@ -64,7 +64,7 @@ export class InscripcionForm {
                             <div class="w-8 h-8 rounded-lg bg-blue-50 text-asatemeBlue font-bold flex items-center justify-center">2</div>
                             <div>
                                 <h3 class="text-base font-bold text-gray-800">Categorías habilitadas</h3>
-                                <p class="text-xs text-gray-500">Podés anotarte en tu categoría por edad, la siguiente y Todo Competidor.</p>
+                                <p class="text-xs text-gray-500">Podés anotarte en tu categoría por edad, superiores, Todo Competidor y Maxi (si cumplís con la edad).</p>
                             </div>
                         </div>
 
@@ -132,7 +132,6 @@ export class InscripcionForm {
           btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
         }
 
-        // Esperamos la respuesta asíncrona de Supabase
         const exito = await this.onInscripcionExitosa(this.datosForm);
 
         if (btnSubmit) {
@@ -171,7 +170,7 @@ export class InscripcionForm {
                     <input type="checkbox" value="${cat.nombre}" ${esPermitida ? "checked" : "disabled"} class="cat-checkbox w-4 h-4 text-asatemeBlue rounded border-gray-300 focus:ring-asatemeBlue">
                     <div>
                         <span class="block text-xs font-bold text-gray-800">${cat.nombre}</span>
-                        <span class="text-[10px] text-gray-400">${esPermitida ? (cat.nombre === "Todo Competidor" ? "Abierto" : "Habilitada") : "No habilitada"}</span>
+                        <span class="text-[10px] text-gray-400">${esPermitida ? (cat.nombre === "Todo Competidor" ? "Abierto" : cat.nombre === "Maxi" ? "Veteranos (+30)" : "Habilitada") : "No habilitada"}</span>
                     </div>
                 </label>
             `;

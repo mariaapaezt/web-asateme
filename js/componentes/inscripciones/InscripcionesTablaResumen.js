@@ -5,7 +5,7 @@ export const InscripcionesTablaResumen = {
     const totalJugadoresUnicos = new Set(inscriptosList.map((i) => i.dni)).size;
     let totalInscripcionesCategorias = 0;
 
-    // Definimos las categorías separadas por rama (Masculino y Femenino)
+    // Definimos las categorías separadas por rama (Masculino y Femenino), incluyendo Maxi
     const categoriasDefinidas = [
       {
         nombre: "Sub-9 Masculino",
@@ -90,6 +90,18 @@ export const InscripcionesTablaResumen = {
         cat: "Sub-23",
         genero: "Femenino",
         desc: "Hasta 23 años",
+      },
+      {
+        nombre: "Maxi Masculino",
+        cat: "Maxi",
+        genero: "Masculino",
+        desc: "Mayores de 30 años",
+      },
+      {
+        nombre: "Maxi Femenino",
+        cat: "Maxi",
+        genero: "Femenino",
+        desc: "Mayores de 30 años",
       },
       {
         nombre: "Todo Competidor Masculino",
