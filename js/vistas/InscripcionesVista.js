@@ -348,13 +348,13 @@ export class InscripcionesVista {
         `;
 
     const listadoCategorias = [
-      "Sub-9",
+    //  "Sub-9",
       "Sub-11",
       "Sub-13",
       "Sub-15",
-      "Sub-17",
+    //  "Sub-17",
       "Sub-19",
-      "Sub-23",
+     // "Sub-23",
       "Maxi",
       "Todo Competidor",
     ];

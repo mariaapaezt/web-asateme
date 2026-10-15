@@ -7,7 +7,7 @@ export const InscripcionesTablaResumen = {
 
     // Definimos las categorías separadas por rama (Masculino y Femenino), incluyendo Maxi
     const categoriasDefinidas = [
-      {
+      /*{
         nombre: "Sub-9 Masculino",
         cat: "Sub-9",
         genero: "Masculino",
@@ -18,7 +18,7 @@ export const InscripcionesTablaResumen = {
         cat: "Sub-9",
         genero: "Femenino",
         desc: "Hasta 9 años",
-      },
+      },*/
       {
         nombre: "Sub-11 Masculino",
         cat: "Sub-11",
@@ -55,7 +55,7 @@ export const InscripcionesTablaResumen = {
         genero: "Femenino",
         desc: "Hasta 15 años",
       },
-      {
+      /*{
         nombre: "Sub-17 Masculino",
         cat: "Sub-17",
         genero: "Masculino",
@@ -66,7 +66,7 @@ export const InscripcionesTablaResumen = {
         cat: "Sub-17",
         genero: "Femenino",
         desc: "Hasta 17 años",
-      },
+      },*/
       {
         nombre: "Sub-19 Masculino",
         cat: "Sub-19",
@@ -79,7 +79,7 @@ export const InscripcionesTablaResumen = {
         genero: "Femenino",
         desc: "Hasta 19 años",
       },
-      {
+     /* {
         nombre: "Sub-23 Masculino",
         cat: "Sub-23",
         genero: "Masculino",
@@ -90,7 +90,7 @@ export const InscripcionesTablaResumen = {
         cat: "Sub-23",
         genero: "Femenino",
         desc: "Hasta 23 años",
-      },
+      },*/
       {
         nombre: "Maxi Masculino",
         cat: "Maxi",

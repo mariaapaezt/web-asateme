@@ -1,13 +1,13 @@
 // js/utils/inscripcionHelper.js
 
 export const CATEGORIAS_EDADES = [
-  { nombre: "Sub-9", edadMax: 9 },
+ // { nombre: "Sub-9", edadMax: 9 },
   { nombre: "Sub-11", edadMax: 11 },
   { nombre: "Sub-13", edadMax: 13 },
   { nombre: "Sub-15", edadMax: 15 },
-  { nombre: "Sub-17", edadMax: 17 },
+//  { nombre: "Sub-17", edadMax: 17 },
   { nombre: "Sub-19", edadMax: 19 },
-  { nombre: "Sub-23", edadMax: 23 },
+//  { nombre: "Sub-23", edadMax: 23 },
   { nombre: "Todo Competidor", edadMax: 99 },
   { nombre: "Maxi", edadMin: 30 } // Maxi general para mayores de 30 años
 ];
