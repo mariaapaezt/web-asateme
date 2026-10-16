@@ -171,7 +171,7 @@ export class InscripcionesVista {
 
       const esProvincial = torneoActual?.tipo === "provincial";
 
-      // 1. Buscamos al jugador en el padrón usando el DNI limpio de forma segura
+      // 1. Buscamos al jugador en el padrón usando el DNI limpio
       let { data: jugadorExistente, error: errBusqueda } = await clienteSupabase
         .from("jugadores")
         .select("id")
@@ -195,7 +195,7 @@ export class InscripcionesVista {
           return false;
         }
 
-        // Si es Regional, insertamos el nuevo jugador (dejando equipo_id en null de forma explícita)
+        // Si es Regional, insertamos el nuevo jugador
         let { data: nuevoJugadorInsertado, error: errInsertarJugador } =
           await clienteSupabase
             .from("jugadores")
@@ -204,7 +204,7 @@ export class InscripcionesVista {
               dni: dniLimpio,
               fecha_nacimiento: nuevoJugador.fechaNacimiento,
               genero: nuevoJugador.genero,
-              equipo_id: null, // Explicitamente nulo para jugadores de torneos individuales
+              equipo_id: null,
             })
             .select("id")
             .single();
@@ -216,7 +216,35 @@ export class InscripcionesVista {
         jugadorId = nuevoJugadorInsertado.id;
       }
 
-      // 2. Registramos la inscripción vinculada al torneo activo
+      // 2. Validación estricta previa: Verificar si este jugador ya está inscripto en este torneo
+      let { data: inscripcionPrevia, error: errBusqInscripcion } =
+        await clienteSupabase
+          .from("inscripciones")
+          .select("id")
+          .eq("torneo_id", this.torneoIdActivo)
+          .eq("jugador_id", jugadorId)
+          .maybeSingle();
+
+      if (errBusqInscripcion) {
+        console.error(
+          "Error verificando inscripción previa:",
+          errBusqInscripcion,
+        );
+      }
+
+      if (inscripcionPrevia) {
+        alert(
+          `⚠️ El DNI ${dniLimpio} ya se encuentra inscripto en este torneo. Si necesitas modificar tus categorías, comunícate con la organización.`,
+        );
+        const inputDni = document.getElementById("ins-dni");
+        if (inputDni) {
+          inputDni.focus();
+          inputDni.select();
+        }
+        return false;
+      }
+
+      // 3. Registramos la inscripción vinculada al torneo activo
       const { error: errInscripcion } = await clienteSupabase
         .from("inscripciones")
         .insert({
@@ -227,7 +255,7 @@ export class InscripcionesVista {
 
       if (errInscripcion) {
         if (errInscripcion.code === "23505") {
-          alert("⚠️ Este DNI ya se encuentra inscripto en este torneo.");
+          alert(`⚠️ El DNI ${dniLimpio} ya figura inscripto en este torneo.`);
           const inputDni = document.getElementById("ins-dni");
           if (inputDni) {
             inputDni.focus();
@@ -348,13 +376,10 @@ export class InscripcionesVista {
         `;
 
     const listadoCategorias = [
-    //  "Sub-9",
       "Sub-11",
       "Sub-13",
       "Sub-15",
-    //  "Sub-17",
       "Sub-19",
-     // "Sub-23",
       "Maxi",
       "Todo Competidor",
     ];
