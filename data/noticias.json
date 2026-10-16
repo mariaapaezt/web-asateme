@@ -1,5 +1,36 @@
 [
     {
+    "id": "torneo-provincial-asateme-club-atletico-provincial-octubre-2026",
+    "titulo": "¡Un evento de primer nivel te espera en el Torneo Provincial ASATEME!",
+    "resumen": "Invitamos a todos los jugadores de la provincia de Santa Fe a participar del Torneo Provincial el próximo sábado 31 de octubre en el Club Atlético Provincial.",
+    "fecha": "Octubre, 2026",
+    "imagenPortada": "assets/images/torneo-provincial-31-oct.jpeg",
+    "galeria": [
+        "assets/images/torneo-provincial-31-oct.jpeg"
+    ],
+    "mostrarLogoLiga": false,
+    "contenido": [
+        {
+            "tipo": "parrafo",
+            "texto": "¡Un evento de primer nivel te espera! 🏓✨ Invitamos a todos los jugadores de tenis de mesa de la provincia de Santa Fe al Torneo Provincial ASATEME, una cita imperdible para cerrar el mes a puro deporte y competencia."
+        },
+        {
+            "tipo": "tarjetaInformativa",
+            "icono": "fas fa-trophy",
+            "titulo": "Información del Torneo",
+            "text": "• Fecha: Sábado 31 de Octubre.\n• Sede: Gimnasio del Club Atlético Provincial (Rosario).\n• Infraestructura: Área equipada con piso de goma de nivel internacional.\n• Beneficios: Doble puntuación para el Ranking Provincial, excelentes premios y sorteos para toda la comunidad tenimesista."
+        },
+        {
+            "tipo": "parrafo",
+            "texto": "¡Esperamos que puedan participar y disfrutar de esta gran fiesta del tenis de mesa santafesino! Prepará tu paleta y sumate a una jornada pensada para la integración, el alto rendimiento y la pasión deportiva."
+        },
+        {
+            "tipo": "cita",
+            "texto": "¡Nos vemos en la mesa el próximo 31 de octubre! 🏓🔥 #ASATEME #TenisDeMesa #ClubProvincial #Rosario #RankingProvincial"
+        }
+    ]
+    },
+    {
     "id": "torneo-regional-abierto-17-18-octubre-2026",
     "titulo": "¡Se viene el Torneo Regional Abierto en Rosario!",
     "resumen": "Los días 17 y 18 de octubre, el tenis de mesa de la región se cita en Rosario para disputar un gran torneo abierto con premios en materiales y sorteos.",
