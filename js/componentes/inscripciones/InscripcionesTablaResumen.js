@@ -79,7 +79,7 @@ export const InscripcionesTablaResumen = {
         genero: "Femenino",
         desc: "Hasta 19 años",
       },
-     /* {
+      /* {
         nombre: "Sub-23 Masculino",
         cat: "Sub-23",
         genero: "Masculino",
@@ -158,10 +158,10 @@ export const InscripcionesTablaResumen = {
                     <div class="px-6 py-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center">
                         <div>
                             <h3 class="text-base font-bold text-gray-800">Inscriptos por categoría y rama</h3>
-                            <p class="text-xs text-gray-500">Desglose oficial masculino y femenino en tiempo real.</p>
+                            <p class="text-xs text-gray-500">Desglose oficial masculino y femenino del torneo.</p>
                         </div>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> En vivo
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200">
+                            <span class="w-2 h-2 rounded-full bg-gray-400"></span> Finalizada
                         </span>
                     </div>
 

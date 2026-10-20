@@ -5,8 +5,9 @@ import {
 } from "../../utils/inscripcionHelper.js";
 
 export class InscripcionForm {
-  constructor({ onInscripcionExitosa }) {
+  constructor({ onInscripcionExitosa, inscripcionesAbiertas = false }) {
     this.onInscripcionExitosa = onInscripcionExitosa;
+    this.inscripcionesAbiertas = inscripcionesAbiertas; // Control dinámico futuro para abierto/cerrado
     this.datosForm = {
       nombre: "",
       dni: "",
@@ -20,6 +21,33 @@ export class InscripcionForm {
     const contenedor = document.getElementById(containerId);
     if (!contenedor) return;
 
+    // Si las inscripciones están cerradas, mostramos el aviso pero conservamos la estructura/aviso institucional sin romper código
+    if (!this.inscripcionesAbiertas) {
+      contenedor.innerHTML = `
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8 opacity-90">
+            <div class="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
+                <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 font-bold flex items-center justify-center">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-gray-800">Inscripciones Cerradas</h3>
+                    <p class="text-xs text-gray-500">El periodo de inscripción para este torneo ha finalizado.</p>
+                </div>
+            </div>
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 text-center space-y-3">
+                <div class="text-amber-800 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                    <i class="fas fa-info-circle text-base"></i> Evento Concluido
+                </div>
+                <p class="text-xs text-amber-700 leading-relaxed max-w-lg mx-auto">
+                    Ya no se aceptan nuevos registros ni modificaciones de categorías. Podés consultar el listado oficial y descargar el PDF con los inscriptos definitivos en las secciones superiores.
+                </p>
+            </div>
+        </div>
+      `;
+      return;
+    }
+
+    // Renderizado completo original con toda su lógica de registro e interacciones
     contenedor.innerHTML = `
             <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
                 <div class="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">

@@ -1,5 +1,44 @@
 [
     {
+    "id": "exito-torneo-regional-circuito-nacional-rosario-2026",
+    "titulo": "¡Un éxito total el Torneo Regional del Circuito Nacional en Rosario!",
+    "resumen": "Rosario vivió una gran jornada de tenis de mesa nacional con la participación de atletas de diversas provincias, clubes y familias que hicieron de este evento una verdadera fiesta deportiva.",
+    "fecha": "Octubre, 2026",
+    "imagenPortada": "assets/images/regional1.jpeg",
+    "galeria": [
+        "assets/images/regional1.jpeg",
+        "assets/images/regional2.jpeg",
+        "assets/images/regional3.jpeg",
+        "assets/images/regional4.jpeg",
+        "assets/images/regional5.jpeg",
+        "assets/images/regional6.jpeg",
+        "assets/images/regional7.jpeg",
+        "assets/images/regional8.jpeg",
+        "assets/images/regional9.jpeg"
+    ],
+    "mostrarLogoLiga": false,
+    "contenido": [
+        {
+            "tipo": "parrafo",
+            "texto": "¡Un éxito total fue el Torneo Regional del Circuito Nacional de Tenis de Mesa disputado ayer en la ciudad de Rosario! 🏓🔥 Una jornada a pura competencia que reunió a destacados deportistas de la región."
+        },
+        {
+            "tipo": "tarjetaInformativa",
+            "icono": "fas fa-handshake",
+            "titulo": "Agradecimientos Especiales",
+            "text": "• Municipalidad de Rosario: Por ser nuestro aliado constante en la organización de eventos de alto nivel.\n• Comunidad deportiva: A los padres, clubes y jugadores de provincias vecinas que hicieron de este torneo una verdadera fiesta."
+        },
+        {
+            "tipo": "parrafo",
+            "texto": "El compromiso y la pasión demostrados en cada mesa reafirman nuestro camino. ¡Seguimos trabajando día a día para llevar el tenis de mesa de Santa Fe a lo más alto!"
+        },
+        {
+            "tipo": "cita",
+            "texto": "¡Gracias a todos por ser parte de esta gran jornada! 🏓💪 #ASATEME #CircuitoNacional #TenisDeMesa #Rosario #DeporteSantafesino"
+        }
+    ]
+    },
+    {
     "id": "torneo-provincial-asateme-club-atletico-provincial-octubre-2026",
     "titulo": "¡Un evento de primer nivel te espera en el Torneo Provincial ASATEME!",
     "resumen": "Invitamos a todos los jugadores de la provincia de Santa Fe a participar del Torneo Provincial el próximo sábado 31 de octubre en el Club Atlético Provincial.",
