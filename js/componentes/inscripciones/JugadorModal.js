@@ -145,8 +145,11 @@ export class JugadorModal {
                                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue">
                             </div>
                         </div>
-                        <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-800 text-xs space-y-1">
-                            <div><i class="fab fa-whatsapp mr-1 text-green-600 font-bold"></i> <b>Aviso importante:</b> Al registrarte, se abrirá automáticamente WhatsApp con un mensaje redactado con tus datos para notificar al administrador. Podrás usar ese mismo chat para indicarle la categoría en la que querés participar.</div>
+                        <div class="p-3.5 bg-red-50 border-l-4 border-asatemeRed rounded-r-xl text-gray-800 text-xs space-y-1 shadow-xs">
+                            <div class="font-extrabold text-asatemeRed uppercase tracking-wide text-[11px] flex items-center gap-1.5 mb-1">
+                                <i class="fab fa-whatsapp text-sm text-green-600"></i> Aviso importante sobre tu registro
+                            </div>
+                            <p class="leading-relaxed">Al registrarte, se abrirá automáticamente <b>WhatsApp</b> con un mensaje redactado con tus datos para notificar al administrador. Podrás usar ese mismo chat para indicarle la categoría en la que querés participar.</p>
                         </div>
                       `
                           : ""

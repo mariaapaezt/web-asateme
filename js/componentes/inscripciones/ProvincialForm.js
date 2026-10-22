@@ -45,13 +45,13 @@ export class ProvincialForm {
    */
   notificarAdminWhatsApp(datos) {
     const mensaje = encodeURIComponent(
-      `👋 *¡Hola Admin ASATEME!*\n\n` +
+      `*¡Hola Admin ASATEME!*\n\n` +
         `Se ha registrado un *NUEVO JUGADOR* en el padrón provincial y requiere validación de ranking:\n\n` +
-        `👤 *Nombre:* ${datos.nombre}\n` +
-        `🪪 *DNI:* ${datos.dni}\n` +
-        `🏓 *Club:* ${datos.nombreClub || "Sin Club"}\n` +
-        `📞 *Teléfono:* ${datos.telefono || "No especificado"}\n` +
-        `✉️ *Email:* ${datos.email || "No especificado"}\n\n` +
+        `*Nombre:* ${datos.nombre}\n` +
+        `*DNI:* ${datos.dni}\n` +
+        `*Club:* ${datos.nombreClub || "Sin Club"}\n` +
+        `*Teléfono:* ${datos.telefono || "No especificado"}\n` +
+        `*Email:* ${datos.email || "No especificado"}\n\n` +
         `Por favor, validar la categoría asignada para habilitar sus próximas inscripciones.`,
     );
 
