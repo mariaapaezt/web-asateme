@@ -19,13 +19,14 @@ export class ProvincialVista {
 
     this.formComponent = new ProvincialForm({
       onInscripcionExitosa: async (nuevoInscripto) => {
-        // Si es jugador nuevo puro, solo se registra en el padrón y no requiere inserción directa en inscripciones
+        // 1. Si es un jugador nuevo puro, NO mostramos modal de inscripción exitosa
+        // (solo fue registrado en el padrón y ya fue notificado por WhatsApp)
         if (nuevoInscripto.esNuevoPuro) {
-          this.abrirModalExito(nuevoInscripto);
           window.scrollTo({ top: 0, behavior: "smooth" });
           return true;
         }
 
+        // 2. Si es un jugador del ranking que se inscribe a categorías:
         const exito = await this.guardarInscripcionEnSupabase(nuevoInscripto);
         if (exito) {
           await this.cargarInscriptosDeSupabase();
@@ -285,7 +286,6 @@ export class ProvincialVista {
       return false;
     }
 
-    // Validación de seguridad para evitar insertar inscripciones sin categorías
     if (
       !nuevoInscripto.categoriasSeleccionadas ||
       nuevoInscripto.categoriasSeleccionadas.length === 0
@@ -316,14 +316,15 @@ export class ProvincialVista {
   }
 
   abrirModalExito(inscripto) {
-    const mensaje = inscripto.esNuevoPuro
-      ? `${inscripto.nombre} se registró en el padrón y está pendiente de validación.`
-      : `${inscripto.nombre} (${inscripto.nombreClub || "Sin Club"}) ha quedado inscripto correctamente.`;
+    // Obtenemos el nombre limpio del club
+    const clubLimpio =
+      this.limpiarNombreClub(inscripto.nombreClub) || "Sin Club";
 
-    this.modalComponent.mostrar("¡Registro Exitoso!", [
+    // Pasamos el objeto limpio a InscriptosProvModal sin concatenar textos largos en el campo nombre
+    this.modalComponent.mostrar("¡Inscripción Exitosa!", [
       {
-        nombre: mensaje,
-        club: "",
+        nombre: `${inscripto.nombre} ha quedado inscripto correctamente.`,
+        club: clubLimpio,
       },
     ]);
   }
