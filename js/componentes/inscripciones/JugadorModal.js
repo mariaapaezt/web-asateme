@@ -145,8 +145,8 @@ export class JugadorModal {
                                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue">
                             </div>
                         </div>
-                        <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs space-y-1">
-                            <div><i class="fas fa-info-circle mr-1"></i> Al ser un jugador nuevo, sus datos se registrarán en el padrón oficial y quedarán pendientes de validación por parte del administrador.</div>
+                        <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-800 text-xs space-y-1">
+                            <div><i class="fab fa-whatsapp mr-1 text-green-600 font-bold"></i> <b>Aviso importante:</b> Al registrarte, se abrirá automáticamente WhatsApp con un mensaje redactado con tus datos para notificar al administrador. Podrás usar ese mismo chat para indicarle la categoría en la que querés participar.</div>
                         </div>
                       `
                           : ""
@@ -162,7 +162,7 @@ export class JugadorModal {
 
                       <div class="flex gap-3 pt-2">
                           <button type="submit" class="flex-grow py-3 bg-asatemeBlue hover:bg-slate-800 text-white font-bold rounded-xl text-xs cursor-pointer shadow-md transition">
-                              ${esEdicion ? "Guardar Cambios e Inscribir" : esJugadorNuevoPuro ? "Registrar en Padrón" : "Registrar e Inscribir al Torneo"}
+                              ${esEdicion ? "Guardar Cambios e Inscribir" : esJugadorNuevoPuro ? "Registrar en Padrón y Notificar" : "Registrar e Inscribir al Torneo"}
                           </button>
                           <button type="button" id="btn-cancelar-modal" class="px-5 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl text-xs cursor-pointer">Cancelar</button>
                       </div>
@@ -396,7 +396,7 @@ export class JugadorModal {
 
         if (esJugadorNuevoPuro) {
           alert(
-            "✅ ¡Jugador registrado correctamente en el padrón! Quedará pendiente de validación por parte del administrador.",
+            "✅ ¡Jugador registrado en el padrón! A continuación se abrirá WhatsApp para notificar al administrador.",
           );
 
           if (typeof this.onGuardarExitoso === "function") {
