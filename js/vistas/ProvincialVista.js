@@ -102,14 +102,14 @@ export class ProvincialVista {
                               <i class="fas fa-calendar-alt text-amber-400"></i>
                               <div>
                                   <span class="block text-[10px] uppercase font-bold text-blue-200">FECHA</span>
-                                  <span class="text-xs font-bold">18 de Octubre</span>
+                                  <span class="text-xs font-bold">31 de Octubre</span>
                               </div>
                           </div>
                           <div class="bg-white/10 backdrop-blur-xs border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3">
                               <i class="fas fa-map-marker-alt text-amber-400"></i>
                               <div>
                                   <span class="block text-[10px] uppercase font-bold text-blue-200">SEDE</span>
-                                  <span class="text-xs font-bold">Gimnasio Emilio Lotuf, Rosario</span>
+                                  <span class="text-xs font-bold">Club Atletico Provincial, Rosario</span>
                               </div>
                           </div>
                       </div>
