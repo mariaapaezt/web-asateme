@@ -57,10 +57,26 @@
                     class="bg-white/10 hover:bg-asatemeRed hover:text-white px-3 py-1.5 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide">
                     <i class="fas fa-trophy text-amber-400"></i> Liga de Equipos
                 </a>
-                <a href="inscripciones.html"
-                    class="bg-asatemeRed text-white px-3 py-1.5 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide">
-                    <i class="fas fa-clipboard-list text-white"></i> Inscripciones Torneo
-                </a>
+
+                <!-- Menú Desplegable (Dropdown) de Inscripciones en Escritorio -->
+                <div class="relative group py-2">
+                    <button
+                        class="bg-asatemeRed text-white px-3 py-1.5 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide cursor-pointer focus:outline-none">
+                        <i class="fas fa-clipboard-list text-white"></i> Inscripciones Torneo <i
+                            class="fas fa-chevron-down text-[10px] ml-1"></i>
+                    </button>
+                    <div
+                        class="absolute left-0 top-full w-56 bg-white rounded-xl shadow-2xl py-2 invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-all duration-200 border border-gray-100 z-[100]">
+                        <a href="#" onclick="window.location.href='inscripciones.html?torneo=regional'; return false;"
+                            class="block px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-blue-50 hover:text-asatemeBlue transition flex items-center gap-2">
+                            <i class="fas fa-map-pin text-asatemeRed w-4 text-center"></i> Torneo Regional FATM
+                        </a>
+                        <a href="#" onclick="window.location.href='inscripciones.html?torneo=provincial'; return false;"
+                            class="block px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-blue-50 hover:text-asatemeBlue transition flex items-center gap-2">
+                            <i class="fas fa-shield-alt text-asatemeBlue w-4 text-center"></i> Torneo Provincial ASATEME
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <div class="flex items-center gap-3">
@@ -83,13 +99,22 @@
             <a href="index.html#ranking" class="block text-white hover:text-asatemeRed py-1">Ranking</a>
             <a href="index.html#calendario" class="block text-white hover:text-asatemeRed py-1">Calendario</a>
             <a href="liga-equipos.html"
-                class="bg-white/10 hover:bg-asatemeRed hover:text-white px-3 py-2 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide text-white">
-                <i class="fas fa-trophy text-amber-400"></i> Liga de Equipos
+                class="block bg-white/10 hover:bg-asatemeRed hover:text-white px-3 py-2 rounded-md transition duration-300 text-white">
+                <i class="fas fa-trophy text-amber-400 mr-1.5"></i> Liga de Equipos
             </a>
-            <a href="inscripciones.html"
-                class="bg-asatemeRed text-white px-3 py-2 rounded-md transition duration-300 flex items-center gap-1.5 text-xs uppercase font-bold tracking-wide">
-                <i class="fas fa-clipboard-list text-white"></i> Inscripciones Torneo
-            </a>
+            <!-- Opciones en Mobile -->
+            <div class="pt-2 border-t border-blue-900/50 space-y-2">
+                <span class="text-[10px] uppercase text-blue-300 font-bold tracking-wider block px-1">Inscripciones de
+                    Torneos:</span>
+                <a href="#" onclick="window.location.href='inscripciones.html?torneo=regional'; return false;"
+                    class="block bg-white/10 hover:bg-asatemeRed text-white px-3 py-2 rounded-md text-xs font-bold transition flex items-center gap-2">
+                    <i class="fas fa-map-pin text-asatemeRed"></i> Torneo Regional FATM
+                </a>
+                <a href="#" onclick="window.location.href='inscripciones.html?torneo=provincial'; return false;"
+                    class="block bg-white/10 hover:bg-asatemeRed text-white px-3 py-2 rounded-md text-xs font-bold transition flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-amber-400"></i> Torneo Provincial ASATEME
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -108,23 +133,29 @@
         </div>
     </footer>
 
-    <!-- SCRIPTS DE CARGA Y CONFIGURACIÓN (EN ORDEN ESTRICTO) -->
-
-    <!-- 1. Librería oficial de Supabase -->
+    <!-- SCRIPTS DE CARGA Y CONFIGURACIÓN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- 2. Configuración global centralizada (genera window.supabase) -->
     <script src="js/supabase-config.js"></script>
+    <script src="js/main.js"></script>
 
-    <!-- 3. Inicialización de la vista principal -->
+    <!-- Enrutador Dinámico según parámetro URL (?torneo=regional o ?torneo=provincial) -->
     <script type="module">
         import { InscripcionesVista } from './js/vistas/InscripcionesVista.js';
-
+        import { ProvincialVista } from './js/vistas/ProvincialVista.js'; 
+        
         document.addEventListener('DOMContentLoaded', () => {
             const contenedorApp = document.getElementById('app-inscripciones');
             if (contenedorApp) {
-                const vista = new InscripcionesVista();
-                vista.render(contenedorApp);
+                const params = new URLSearchParams(window.location.search);
+                const tipoTorneo = params.get('torneo') || 'regional';
+
+                if (tipoTorneo === 'provincial') {
+                    const vistaProvincial = new ProvincialVista();
+                    vistaProvincial.render(contenedorApp);
+                } else {
+                    const vistaRegional = new InscripcionesVista();
+                    vistaRegional.render(contenedorApp);
+                }
             }
         });
     </script>

@@ -1,11 +1,12 @@
 // js/vistas/InscripcionesVista.js
+// js/vistas/InscripcionesVista.js
 import { InscripcionForm } from "../componentes/inscripciones/InscripcionForm.js";
 import { InscripcionesTablaResumen } from "../componentes/inscripciones/InscripcionesTablaResumen.js";
 
 export class InscripcionesVista {
   constructor() {
     this.inscriptos = [];
-    this.torneoIdActivo = 1; // ID del torneo regional activo
+    this.torneoIdActivo = 1; // ID del torneo regional FATM activo
 
     this.formComponent = new InscripcionForm({
       onInscripcionExitosa: async (nuevoJugador) => {
@@ -50,9 +51,9 @@ export class InscripcionesVista {
                     <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
                         <div class="space-y-4 max-w-2xl">
                             <span class="inline-block px-3 py-1 rounded-full bg-red-600 text-white font-extrabold text-[10px] tracking-wider uppercase">
-                                • Inscripciones Abiertas
+                                • Torneo Regional FATM
                             </span>
-                            <h1 class="text-3xl md:text-5xl font-black tracking-tight">Torneo Regional<br>de Tenis de Mesa</h1>
+                            <h1 class="text-3xl md:text-5xl font-black tracking-tight">Torneo Regional<br>FATM</h1>
                             <p class="text-blue-100 text-xs md:text-sm">Asociación Santafesina de Tenis de Mesa (ASATEME). Categorías formativas, juveniles y Todo Competidor, en ramas masculina y femenina.</p>
                             
                             <div class="flex flex-wrap gap-4 pt-2">
@@ -162,7 +163,6 @@ export class InscripcionesVista {
     }
 
     try {
-      // 0. Consultamos si el torneo activo es Regional o Provincial
       let { data: torneoActual, error: errTorneo } = await clienteSupabase
         .from("torneos")
         .select("tipo")
@@ -171,7 +171,6 @@ export class InscripcionesVista {
 
       const esProvincial = torneoActual?.tipo === "provincial";
 
-      // 1. Buscamos al jugador en el padrón usando el DNI limpio
       let { data: jugadorExistente, error: errBusqueda } = await clienteSupabase
         .from("jugadores")
         .select("id")
@@ -195,7 +194,6 @@ export class InscripcionesVista {
           return false;
         }
 
-        // Si es Regional, insertamos el nuevo jugador
         let { data: nuevoJugadorInsertado, error: errInsertarJugador } =
           await clienteSupabase
             .from("jugadores")
@@ -216,7 +214,6 @@ export class InscripcionesVista {
         jugadorId = nuevoJugadorInsertado.id;
       }
 
-      // 2. Validación estricta previa: Verificar si este jugador ya está inscripto en este torneo
       let { data: inscripcionPrevia, error: errBusqInscripcion } =
         await clienteSupabase
           .from("inscripciones")
@@ -244,7 +241,6 @@ export class InscripcionesVista {
         return false;
       }
 
-      // 3. Registramos la inscripción vinculada al torneo activo
       const { error: errInscripcion } = await clienteSupabase
         .from("inscripciones")
         .insert({
@@ -354,7 +350,7 @@ export class InscripcionesVista {
     let htmlContenido = `
             <html>
             <head>
-                <title>Listado General de Inscriptos - Torneo Regional ASATEME</title>
+                <title>Listado General de Inscriptos - Torneo Regional FATM</title>
                 <style>
                     body { font-family: Arial, sans-serif; color: #333; margin: 20px; }
                     .header { text-align: center; border-bottom: 2px solid #003366; padding-bottom: 10px; margin-bottom: 20px; }
@@ -370,7 +366,7 @@ export class InscripcionesVista {
             <body>
                 <div class="header">
                     <h1>ASOCIACIÓN SANTAFESINA DE TENIS DE MESA (ASATEME)</h1>
-                    <p>Torneo Regional | 18 y 19 de Octubre - Centro Municipal Distrito Oeste</p>
+                    <p>Torneo Regional FATM | 18 y 19 de Octubre - Centro Municipal Distrito Oeste</p>
                     <p>Listado General de Inscriptos al ${fechaActual}</p>
                 </div>
         `;
