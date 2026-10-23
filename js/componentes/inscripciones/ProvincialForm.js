@@ -98,7 +98,7 @@ export class ProvincialForm {
           </div>
 
           <div class="flex gap-3">
-              <input type="text" id="prov-nombre-buscar" placeholder="Ej.: Pérez Juan (o apellido)..." 
+              <input type="text" id="prov-nombre-buscar" placeholder="Buscar por NOMBRE o APELLIDO" 
                      class="flex-grow bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue focus:bg-white">
               <button type="button" id="btn-buscar-nombre" class="px-6 py-3 bg-asatemeBlue hover:bg-slate-800 text-white font-extrabold rounded-xl text-xs transition-all cursor-pointer shadow-md">
                   <i class="fas fa-search mr-1.5"></i> Buscar

@@ -18,11 +18,10 @@ export class JugadorModal {
     const esEdicion = !!jugadorData;
     const esJugadorNuevoPuro = !jugadorData && !rankingData;
 
-    const nombreFinal = jugadorData
-      ? jugadorData.nombre
-      : rankingData
-        ? rankingData.nombre
-        : "";
+    const nombreFinal = (
+      jugadorData ? jugadorData.nombre : rankingData ? rankingData.nombre : ""
+    ).toUpperCase();
+
     const dniFinal = jugadorData ? jugadorData.dni || "" : "";
     const fnacFinal = jugadorData ? jugadorData.fecha_nacimiento || "" : "";
     const generoFinal = jugadorData
@@ -93,12 +92,12 @@ export class JugadorModal {
                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
                               <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Nombre Completo *</label>
-                              <input type="text" id="perfil-nombre" value="${nombreFinal}" required 
-                                     class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue">
+                              <input type="text" id="perfil-nombre" value="${nombreFinal}" required placeholder="EJ: PÉREZ JUAN"
+                                     class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue uppercase">
                           </div>
                           <div>
                               <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">DNI *</label>
-                              <input type="text" id="perfil-dni" value="${dniFinal}" required placeholder="Sin puntos"
+                              <input type="text" id="perfil-dni" value="${dniFinal}" maxlength="8" required placeholder="Solo números (ej: 38123456)"
                                      class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue">
                           </div>
                       </div>
@@ -126,7 +125,7 @@ export class JugadorModal {
                               <option value="OTRO">➕ Agregar club nuevo...</option>
                           </select>
                           <input type="text" id="perfil-club-nuevo" placeholder="Escribí el nombre del nuevo club..." 
-                                 class="hidden mt-2 w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue">
+                                 class="hidden mt-2 w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue uppercase">
                       </div>
 
                       <!-- Campos exclusivos para Jugador Nuevo (Teléfono y Email de contacto) -->
@@ -136,7 +135,7 @@ export class JugadorModal {
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-gray-100">
                             <div>
                                 <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Teléfono de Contacto *</label>
-                                <input type="tel" id="perfil-telefono" required placeholder="Ej: 3415123456" 
+                                <input type="tel" id="perfil-telefono" required placeholder="Ej: 3415123456 (Mín. 10 dígitos)" 
                                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue">
                             </div>
                             <div>
@@ -174,6 +173,20 @@ export class JugadorModal {
           </div>
       </div>
     `;
+
+    const inputDniElem = document.getElementById("perfil-dni");
+    if (inputDniElem) {
+      inputDniElem.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/\D/g, "");
+      });
+    }
+
+    const inputTelElem = document.getElementById("perfil-telefono");
+    if (inputTelElem) {
+      inputTelElem.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/\D/g, "");
+      });
+    }
 
     const actualizarCategoriasHabilitadas = () => {
       if (esJugadorNuevoPuro) return;
@@ -266,13 +279,43 @@ export class JugadorModal {
 
     document.getElementById("form-perfil-jugador").onsubmit = async (e) => {
       e.preventDefault();
-      const nombre = document.getElementById("perfil-nombre").value.trim();
-      const dni = document.getElementById("perfil-dni").value.trim();
+
+      // 1. Formatear Nombre a Mayúsculas
+      const nombre = document
+        .getElementById("perfil-nombre")
+        .value.trim()
+        .toUpperCase();
+
+      // 2. Validación y Limpieza Estricta de DNI
+      const dniCrudo = document.getElementById("perfil-dni").value.trim();
+      const dni = dniCrudo.replace(/\D/g, "");
+
+      if (!/^\d{7,8}$/.test(dni)) {
+        alert(
+          "⚠️ Ingresá un número de DNI válido (entre 7 y 8 dígitos numéricos, sin puntos ni letras).",
+        );
+        return;
+      }
+
       const fechaNacimiento = document.getElementById("perfil-fnac").value;
       const genero = document.getElementById("perfil-genero").value;
-      const telefono = esJugadorNuevoPuro
-        ? document.getElementById("perfil-telefono").value.trim()
-        : null;
+
+      // 3. Validación y Limpieza Estricta de Teléfono (Mínimo 10 dígitos)
+      let telefono = null;
+      if (esJugadorNuevoPuro) {
+        const telCrudo = document
+          .getElementById("perfil-telefono")
+          .value.trim();
+        telefono = telCrudo.replace(/\D/g, "");
+
+        if (telefono.length < 10) {
+          alert(
+            "⚠️ Ingresá un número de teléfono válido con al menos 10 dígitos (incluyendo el código de área, ej: 3415123456).",
+          );
+          return;
+        }
+      }
+
       const email = esJugadorNuevoPuro
         ? document.getElementById("perfil-email").value.trim()
         : null;
@@ -292,26 +335,26 @@ export class JugadorModal {
       }
 
       try {
-        let queryDni = window.supabase
+        let { data: jugadorPorDni } = await window.supabase
           .from("jugadores")
           .select("id")
-          .eq("dni", dni);
-        if (jugadorData && jugadorData.id) {
-          queryDni = queryDni.neq("id", jugadorData.id);
-        }
-        const { data: dniRepetido } = await queryDni.maybeSingle();
+          .eq("dni", dni)
+          .maybeSingle();
 
-        if (dniRepetido) {
-          alert(
-            "⚠️ Ya existe otro jugador registrado con el número de DNI " +
-              dni +
-              ". Verificá los datos ingresados.",
-          );
-          return;
+        let jugadorIdFinal = jugadorData ? jugadorData.id : null;
+
+        if (jugadorPorDni) {
+          if (jugadorIdFinal && jugadorPorDni.id !== jugadorIdFinal) {
+            alert(
+              "⚠️ El DNI ingresado ya pertenece a otro jugador en el padrón.",
+            );
+            return;
+          }
+          jugadorIdFinal = jugadorPorDni.id;
         }
 
         if (equipoIdFinal === "OTRO") {
-          const nombreNuevoClub = inputClubNuevo.value.trim();
+          const nombreNuevoClub = inputClubNuevo.value.trim().toUpperCase();
           if (!nombreNuevoClub) {
             alert("⚠️ Ingresá el nombre del nuevo club.");
             return;
@@ -362,8 +405,6 @@ export class JugadorModal {
         } else {
           equipoIdFinal = null;
         }
-
-        let jugadorIdFinal = jugadorData ? jugadorData.id : null;
 
         if (jugadorIdFinal) {
           const { error: errUpd } = await window.supabase

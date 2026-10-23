@@ -294,19 +294,34 @@ export class ProvincialVista {
     }
 
     try {
-      const { error } = await clienteSupabase.from("inscripciones").insert({
-        torneo_id: this.torneoIdActivo,
-        jugador_id: nuevoInscripto.jugadorId,
-        categorias: nuevoInscripto.categoriasSeleccionadas,
-      });
+      // 1. Verificamos si ya existe una inscripción para este jugador en este torneo
+      const { data: inscripcionExistente } = await clienteSupabase
+        .from("inscripciones")
+        .select("id")
+        .eq("torneo_id", this.torneoIdActivo)
+        .eq("jugador_id", nuevoInscripto.jugadorId)
+        .maybeSingle();
 
-      if (error) {
-        if (error.code === "23505") {
-          alert("⚠️ Este jugador ya se encuentra inscripto en este torneo.");
-          return false;
-        }
-        throw error;
+      let errorSupabase = null;
+
+      if (inscripcionExistente) {
+        // 2. Si ya está inscripto, ACTUALIZAMOS sus categorías
+        const { error } = await clienteSupabase
+          .from("inscripciones")
+          .update({ categorias: nuevoInscripto.categoriasSeleccionadas })
+          .eq("id", inscripcionExistente.id);
+        errorSupabase = error;
+      } else {
+        // 3. Si no está inscripto, INSERTAMOS el nuevo registro
+        const { error } = await clienteSupabase.from("inscripciones").insert({
+          torneo_id: this.torneoIdActivo,
+          jugador_id: nuevoInscripto.jugadorId,
+          categorias: nuevoInscripto.categoriasSeleccionadas,
+        });
+        errorSupabase = error;
       }
+
+      if (errorSupabase) throw errorSupabase;
       return true;
     } catch (err) {
       console.error("Error guardando inscripción provincial:", err);
@@ -314,7 +329,7 @@ export class ProvincialVista {
       return false;
     }
   }
-
+  
   abrirModalExito(inscripto) {
     // Obtenemos el nombre limpio del club
     const clubLimpio =
