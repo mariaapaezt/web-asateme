@@ -19,9 +19,13 @@ export class JugadorModal {
     const esJugadorNuevoPuro = !jugadorData && !rankingData;
 
     const nombreFinal = (
-      jugadorData ? jugadorData.nombre : rankingData ? rankingData.nombre : ""
+      jugadorData
+        ? jugadorData.nombre
+        : rankingData
+          ? rankingData.nombre
+          : ""
     ).toUpperCase();
-
+    
     const dniFinal = jugadorData ? jugadorData.dni || "" : "";
     const fnacFinal = jugadorData ? jugadorData.fecha_nacimiento || "" : "";
     const generoFinal = jugadorData
@@ -128,7 +132,7 @@ export class JugadorModal {
                                  class="hidden mt-2 w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue uppercase">
                       </div>
 
-                      <!-- Campos exclusivos para Jugador Nuevo (Teléfono y Email de contacto) -->
+                      <!-- Campos exclusivos para Jugador Nuevo (Teléfono, Email y Nota de Categoría) -->
                       ${
                         esJugadorNuevoPuro
                           ? `
@@ -144,11 +148,18 @@ export class JugadorModal {
                                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue">
                             </div>
                         </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Categoría/s en las que desea participar *</label>
+                            <textarea id="perfil-nota-categoria" required rows="2" placeholder="Ej: Me quiero anotar en Tercera y Cuarta" 
+                                      class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue"></textarea>
+                        </div>
+
                         <div class="p-3.5 bg-red-50 border-l-4 border-asatemeRed rounded-r-xl text-gray-800 text-xs space-y-1 shadow-xs">
                             <div class="font-extrabold text-asatemeRed uppercase tracking-wide text-[11px] flex items-center gap-1.5 mb-1">
                                 <i class="fab fa-whatsapp text-sm text-green-600"></i> Aviso importante sobre tu registro
                             </div>
-                            <p class="leading-relaxed">Al registrarte, se abrirá automáticamente <b>WhatsApp</b> con un mensaje redactado con tus datos para notificar al administrador. Podrás usar ese mismo chat para indicarle la categoría en la que querés participar.</p>
+                            <p class="leading-relaxed">Al registrarte, se abrirá automáticamente <b>WhatsApp</b> con un mensaje redactado con tus datos y la categoría solicitada para notificar al administrador.</p>
                         </div>
                       `
                           : ""
@@ -279,41 +290,33 @@ export class JugadorModal {
 
     document.getElementById("form-perfil-jugador").onsubmit = async (e) => {
       e.preventDefault();
+      
+      const nombre = document.getElementById("perfil-nombre").value.trim().toUpperCase();
 
-      // 1. Formatear Nombre a Mayúsculas
-      const nombre = document
-        .getElementById("perfil-nombre")
-        .value.trim()
-        .toUpperCase();
-
-      // 2. Validación y Limpieza Estricta de DNI
       const dniCrudo = document.getElementById("perfil-dni").value.trim();
       const dni = dniCrudo.replace(/\D/g, "");
 
       if (!/^\d{7,8}$/.test(dni)) {
-        alert(
-          "⚠️ Ingresá un número de DNI válido (entre 7 y 8 dígitos numéricos, sin puntos ni letras).",
-        );
+        alert("⚠️ Ingresá un número de DNI válido (entre 7 y 8 dígitos numéricos, sin puntos ni letras).");
         return;
       }
 
       const fechaNacimiento = document.getElementById("perfil-fnac").value;
       const genero = document.getElementById("perfil-genero").value;
 
-      // 3. Validación y Limpieza Estricta de Teléfono (Mínimo 10 dígitos)
       let telefono = null;
+      let notaCategoria = null;
+
       if (esJugadorNuevoPuro) {
-        const telCrudo = document
-          .getElementById("perfil-telefono")
-          .value.trim();
+        const telCrudo = document.getElementById("perfil-telefono").value.trim();
         telefono = telCrudo.replace(/\D/g, "");
 
         if (telefono.length < 10) {
-          alert(
-            "⚠️ Ingresá un número de teléfono válido con al menos 10 dígitos (incluyendo el código de área, ej: 3415123456).",
-          );
+          alert("⚠️ Ingresá un número de teléfono válido con al menos 10 dígitos (incluyendo el código de área, ej: 3415123456).");
           return;
         }
+
+        notaCategoria = document.getElementById("perfil-nota-categoria").value.trim();
       }
 
       const email = esJugadorNuevoPuro
@@ -345,9 +348,7 @@ export class JugadorModal {
 
         if (jugadorPorDni) {
           if (jugadorIdFinal && jugadorPorDni.id !== jugadorIdFinal) {
-            alert(
-              "⚠️ El DNI ingresado ya pertenece a otro jugador en el padrón.",
-            );
+            alert("⚠️ El DNI ingresado ya pertenece a otro jugador en el padrón.");
             return;
           }
           jugadorIdFinal = jugadorPorDni.id;
@@ -451,6 +452,7 @@ export class JugadorModal {
               telefono: telefono,
               email: email,
               nombreClub: nombreClubFinal,
+              notaCategoria: notaCategoria, // <-- Enviamos la nota de categoría al gestor superior
               esNuevoPuro: true,
             });
           }

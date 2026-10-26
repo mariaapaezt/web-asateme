@@ -6,7 +6,6 @@ export class ProvincialForm {
     this.onInscripcionExitosa = onInscripcionExitosa;
     this.clubesRegistrados = [];
 
-    // ⚠️ Reemplazar por el número real del administrador (+54 9 341 XXX-XXXX)
     this.numeroAdminWhatsApp = "5493412293463";
 
     // Instanciamos el modal modular de jugadores
@@ -41,18 +40,19 @@ export class ProvincialForm {
   }
 
   /**
-   * Genera el mensaje estructurado y redirige a WhatsApp Web/App
+   * Genera el mensaje estructurado y redirige a WhatsApp con la nota de categoría
    */
   notificarAdminWhatsApp(datos) {
     const mensaje = encodeURIComponent(
       `*¡Hola Admin ASATEME!*\n\n` +
-        `Se ha registrado un *NUEVO JUGADOR* en el padrón provincial y requiere validación de ranking:\n\n` +
+        `Se ha registrado un *NUEVO JUGADOR* en el padrón provincial y requiere validación:\n\n` +
         `*Nombre:* ${datos.nombre}\n` +
         `*DNI:* ${datos.dni}\n` +
         `*Club:* ${datos.nombreClub || "Sin Club"}\n` +
         `*Teléfono:* ${datos.telefono || "No especificado"}\n` +
-        `*Email:* ${datos.email || "No especificado"}\n\n` +
-        `Por favor, validar la categoría asignada para habilitar sus próximas inscripciones.`,
+        `*Email:* ${datos.email || "No especificado"}\n` +
+        `*Categoría solicitada:* ${datos.notaCategoria || "No especificada"}\n\n` +
+        `Por favor, validar su inscripción y asignar la categoría correspondiente en el sistema.`,
     );
 
     const urlWhatsApp = `https://wa.me/${this.numeroAdminWhatsApp}?text=${mensaje}`;
