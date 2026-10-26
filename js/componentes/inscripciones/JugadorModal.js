@@ -429,6 +429,8 @@ export class JugadorModal {
               fecha_nacimiento: fechaNacimiento,
               genero,
               equipo_id: equipoIdFinal,
+              telefono,
+              email
             })
             .select("id")
             .single();
