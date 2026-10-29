@@ -88,7 +88,7 @@ export class ProvincialVista {
       <div class="min-h-screen bg-[#F8F9FA] pb-20">
           <!-- Banner Superior Provincial -->
           <div class="bg-asatemeBlue text-white py-10 px-6 md:px-16 relative overflow-hidden shadow-md">
-              <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
+              <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 relative z-10">
                   <div class="space-y-4 max-w-2xl">
                       <span class="inline-block px-3 py-1 rounded-full bg-blue-600 text-white font-extrabold text-[10px] tracking-wider uppercase">
                           • Torneo Provincial ASATEME
@@ -97,7 +97,7 @@ export class ProvincialVista {
                       <p class="text-blue-100 text-xs md:text-sm">Competencia oficial regulada por la Asociación Santafesina de Tenis de Mesa. Inscripciones validadas por padrón y ranking oficial.</p>
                       
                       <!-- Bloques de Fecha y Sede -->
-                      <div class="flex flex-wrap gap-4 pt-2">
+                      <div class="flex flex-wrap gap-4 pt-1">
                           <div class="bg-white/10 backdrop-blur-xs border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3">
                               <i class="fas fa-calendar-alt text-amber-400"></i>
                               <div>
@@ -113,19 +113,52 @@ export class ProvincialVista {
                               </div>
                           </div>
                       </div>
-
-                      <div class="pt-2">
-                          <a href="#seccion-formulario-prov" class="inline-flex items-center gap-2 bg-asatemeRed hover:bg-red-700 text-white font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg cursor-pointer">
-                              <i class="fas fa-pen-to-square"></i> INSCRIBIRME AHORA
-                          </a>
-                      </div>
                   </div>
 
-                  <div class="shrink-0">
-                      <div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white/20 flex items-center justify-center p-3 overflow-hidden bg-white/5">
-                          <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="w-full h-full object-contain">
+                  <!-- Horarios Integrados en el Banner -->
+                  <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 w-full lg:w-auto lg:min-w-[420px] space-y-3.5 shadow-xl">
+                      <div class="flex items-center gap-2 text-amber-300 font-extrabold text-xs uppercase tracking-wider">
+                          <i class="fas fa-clock"></i> Horarios por Categoría
+                      </div>
+                      
+                      <div class="grid grid-cols-3 gap-2 text-center">
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Quinta</span>
+                              <span class="text-xs font-black">09:30 hs</span>
+                          </div>
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Tercera</span>
+                              <span class="text-xs font-black">10:30 hs</span>
+                          </div>
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Sub-13</span>
+                              <span class="text-xs font-black">12:30 hs</span>
+                          </div>
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Primera</span>
+                              <span class="text-xs font-black">13:45 hs</span>
+                          </div>
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Cuarta</span>
+                              <span class="text-xs font-black">14:00 hs</span>
+                          </div>
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Segunda</span>
+                              <span class="text-xs font-black">16:30 hs</span>
+                          </div>
+                      </div>
+
+                      <div class="text-[10px] text-blue-100 space-y-1 pt-1 border-t border-white/10">
+                          <p>🕧 <i>Según inscriptos, el horario puede variar +/- 30 minutos.</i></p>
+                          <p class="text-amber-300 font-bold">⌛ Cierre de inscripciones: Viernes 30 hasta las 14 hs.</p>
                       </div>
                   </div>
+              </div>
+
+              <div class="mt-6">
+                  <a href="#seccion-formulario-prov" class="inline-flex items-center gap-2 bg-asatemeRed hover:bg-red-700 text-white font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg cursor-pointer">
+                      <i class="fas fa-pen-to-square"></i> INSCRIBIRME AHORA
+                  </a>
               </div>
           </div>
 
@@ -294,7 +327,6 @@ export class ProvincialVista {
     }
 
     try {
-      // 1. Verificamos si ya existe una inscripción para este jugador en este torneo
       const { data: inscripcionExistente } = await clienteSupabase
         .from("inscripciones")
         .select("id")
@@ -305,14 +337,12 @@ export class ProvincialVista {
       let errorSupabase = null;
 
       if (inscripcionExistente) {
-        // 2. Si ya está inscripto, ACTUALIZAMOS sus categorías
         const { error } = await clienteSupabase
           .from("inscripciones")
           .update({ categorias: nuevoInscripto.categoriasSeleccionadas })
           .eq("id", inscripcionExistente.id);
         errorSupabase = error;
       } else {
-        // 3. Si no está inscripto, INSERTAMOS el nuevo registro
         const { error } = await clienteSupabase.from("inscripciones").insert({
           torneo_id: this.torneoIdActivo,
           jugador_id: nuevoInscripto.jugadorId,
@@ -329,13 +359,11 @@ export class ProvincialVista {
       return false;
     }
   }
-  
+
   abrirModalExito(inscripto) {
-    // Obtenemos el nombre limpio del club
     const clubLimpio =
       this.limpiarNombreClub(inscripto.nombreClub) || "Sin Club";
 
-    // Pasamos el objeto limpio a InscriptosProvModal sin concatenar textos largos en el campo nombre
     this.modalComponent.mostrar("¡Inscripción Exitosa!", [
       {
         nombre: `${inscripto.nombre} ha quedado inscripto correctamente.`,
