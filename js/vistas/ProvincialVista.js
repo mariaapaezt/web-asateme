@@ -269,10 +269,18 @@ export class ProvincialVista {
     const contenedor = document.getElementById("seccion-resumen-provincial");
     if (!contenedor) return;
 
-    const totalJugadoresUnicos = new Set(this.inscriptos.map((i) => i.dni))
-      .size;
-    let totalInscripcionesCategorias = 0;
+    // 1. Filtramos solo los jugadores que tienen al menos 1 categoría inscripta en este torneo
+    const jugadoresConInscripcion = this.inscriptos.filter(
+      (i) => i.categoriasSeleccionadas && i.categoriasSeleccionadas.length > 0,
+    );
 
+    // 2. Contamos la cantidad de DNI/Jugadores únicos realmente inscriptos
+    const totalJugadoresUnicos = new Set(
+      jugadoresConInscripcion.map((i) => i.dni),
+    ).size;
+
+    // 3. Calculamos la suma total de inscripciones por categoría
+    let totalInscripcionesCategorias = 0;
     const estadisticasCategorias = this.categoriasProvinciales.map((cat) => {
       const inscriptosEnCat = this.inscriptos.filter((i) =>
         i.categoriasSeleccionadas?.includes(cat),
