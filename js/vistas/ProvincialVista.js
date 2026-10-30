@@ -6,6 +6,10 @@ export class ProvincialVista {
   constructor() {
     this.inscriptos = [];
     this.torneoIdActivo = 2; // ID del torneo provincial en la tabla torneos
+
+    // Control de estado de inscripciones para el torneo activo
+    this.inscripcionesAbiertas = false; // Cambiar a true si deseas abrirlas nuevamente
+
     this.categoriasProvinciales = [
       "Primera",
       "Segunda",
@@ -18,9 +22,16 @@ export class ProvincialVista {
     this.modalComponent = new InscriptosProvModal();
 
     this.formComponent = new ProvincialForm({
+      inscripcionesAbiertas: this.inscripcionesAbiertas,
       onInscripcionExitosa: async (nuevoInscripto) => {
+        if (!this.inscripcionesAbiertas) {
+          alert(
+            "⚠️ Las inscripciones para este torneo se encuentran cerradas.",
+          );
+          return false;
+        }
+
         // 1. Si es un jugador nuevo puro, NO mostramos modal de inscripción exitosa
-        // (solo fue registrado en el padrón y ya fue notificado por WhatsApp)
         if (nuevoInscripto.esNuevoPuro) {
           window.scrollTo({ top: 0, behavior: "smooth" });
           return true;
@@ -156,9 +167,15 @@ export class ProvincialVista {
               </div>
 
               <div class="mt-6">
-                  <a href="#seccion-formulario-prov" class="inline-flex items-center gap-2 bg-asatemeRed hover:bg-red-700 text-white font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg cursor-pointer">
-                      <i class="fas fa-pen-to-square"></i> INSCRIBIRME AHORA
-                  </a>
+                  ${
+                    this.inscripcionesAbiertas
+                      ? `<a href="#seccion-formulario-prov" class="inline-flex items-center gap-2 bg-asatemeRed hover:bg-red-700 text-white font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg cursor-pointer">
+                             <i class="fas fa-pen-to-square"></i> INSCRIBIRME AHORA
+                         </a>`
+                      : `<div class="inline-flex items-center gap-2 bg-gray-800/90 text-amber-300 border border-amber-300/30 font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-md">
+                             <i class="fas fa-lock"></i> INSCRIPCIONES FINALIZADAS
+                         </div>`
+                  }
               </div>
           </div>
 
@@ -180,45 +197,71 @@ export class ProvincialVista {
       const clienteSupabase = await this.obtenerClienteSupabase();
       if (!clienteSupabase) return;
 
-      const { data, error } = await clienteSupabase
+      // 1. Traemos TODOS los jugadores del padrón general junto con sus equipos (clubes)
+      const { data: jugadoresData, error: errJug } = await clienteSupabase
+        .from("jugadores")
+        .select(
+          `
+            id,
+            nombre, 
+            dni, 
+            genero, 
+            fecha_nacimiento,
+            telefono,
+            email,
+            equipos (nombre)
+        `,
+        )
+        .not("dni", "is", null)
+        .neq("dni", "");
+
+      if (errJug) throw errJug;
+
+      // 2. Traemos las inscripciones exclusivas de este torneo activo
+      const { data: inscripcionesData, error: errIns } = await clienteSupabase
         .from("inscripciones")
         .select(
           `
-            categorias,
-            jugadores (
-              nombre, 
-              dni, 
-              genero, 
-              fecha_nacimiento,
-              equipos (nombre)
-            )
+            jugador_id,
+            categorias
         `,
         )
         .eq("torneo_id", this.torneoIdActivo);
 
-      if (error) throw error;
+      if (errIns) throw errIns;
 
-      if (data) {
-        this.inscriptos = data
-          .filter((item) => item.jugadores !== null)
-          .map((item) => {
-            const nombreClubCrudo = item.jugadores.equipos
-              ? item.jugadores.equipos.nombre
-              : "";
-            return {
-              nombre: item.jugadores.nombre,
-              dni: item.jugadores.dni,
-              genero: item.jugadores.genero,
-              fechaNacimiento: item.jugadores.fecha_nacimiento,
-              club: this.limpiarNombreClub(nombreClubCrudo) || "Sin Club",
-              categoriasSeleccionadas: item.categorias,
-            };
-          });
-
-        this.renderizarResumenYTarjetas();
+      // 3. Creamos un mapa rápido de inscripciones por jugador_id
+      const mapaInscripciones = new Map();
+      if (inscripcionesData) {
+        inscripcionesData.forEach((ins) => {
+          mapaInscripciones.set(ins.jugador_id, ins.categorias || []);
+        });
       }
+
+      // 4. Fusionamos el padrón con sus respectivas categorías del torneo
+      this.inscriptos = [];
+      if (jugadoresData) {
+        jugadoresData.forEach((j) => {
+          const categoriasDelJugador = mapaInscripciones.get(j.id) || [];
+          const nombreClubCrudo = j.equipos ? j.equipos.nombre : "";
+
+          this.inscriptos.push({
+            id: j.id,
+            nombre: j.nombre,
+            dni: j.dni,
+            genero: j.genero,
+            fechaNacimiento: j.fecha_nacimiento,
+            telefono: j.telefono,
+            email: j.email,
+            club: this.limpiarNombreClub(nombreClubCrudo) || "Sin Club",
+            categoriasSeleccionadas: categoriasDelJugador,
+          });
+        });
+      }
+
+      this.renderizarResumenYTarjetas();
     } catch (error) {
-      console.error("Error al cargar inscriptos provinciales:", error);
+      console.error("Error al cargar inscriptos y padrón provincial:", error);
     }
   }
 
@@ -264,16 +307,22 @@ export class ProvincialVista {
               </div>
           </div>
 
-          <!-- Cuadrícula en Rectángulos Compactos (3 columnas en pantallas grandes) -->
+          <!-- Cuadrícula de Categorías -->
           <div class="lg:col-span-3 space-y-3">
               <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 px-5 flex justify-between items-center">
                   <div>
                       <h3 class="text-xs font-bold text-gray-800">Categorías del Torneo Provincial</h3>
                       <p class="text-[10px] text-gray-400">Desglose de inscriptos según ranking y categorías oficiales.</p>
                   </div>
-                  <span class="px-2 py-0.5 bg-blue-50 text-asatemeBlue font-bold rounded-md text-[10px]">
-                      Abierto
-                  </span>
+                  ${
+                    this.inscripcionesAbiertas
+                      ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-black rounded-md text-[10px] uppercase border border-emerald-100">
+                             • Abierto
+                         </span>`
+                      : `<span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-black rounded-md text-[10px] uppercase border border-amber-100 flex items-center gap-1">
+                             <i class="fas fa-lock text-[9px]"></i> Cerrado
+                         </span>`
+                  }
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -327,8 +376,6 @@ export class ProvincialVista {
     }
 
     try {
-      // Usamos UPSERT aprovechando la restricción UNIQUE(torneo_id, jugador_id)
-      // Esto actualiza las categorías si ya existía la fila, o la crea si es nueva, evitando duplicados.
       const { error } = await clienteSupabase.from("inscripciones").upsert(
         {
           torneo_id: this.torneoIdActivo,
@@ -348,7 +395,7 @@ export class ProvincialVista {
       return false;
     }
   }
-  
+
   abrirModalExito(inscripto) {
     const clubLimpio =
       this.limpiarNombreClub(inscripto.nombreClub) || "Sin Club";
