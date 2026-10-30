@@ -19,18 +19,19 @@ export class JugadorModal {
     const esJugadorNuevoPuro = !jugadorData && !rankingData;
 
     const nombreFinal = (
-      jugadorData
-        ? jugadorData.nombre
-        : rankingData
-          ? rankingData.nombre
-          : ""
+      jugadorData ? jugadorData.nombre : rankingData ? rankingData.nombre : ""
     ).toUpperCase();
-    
+
     const dniFinal = jugadorData ? jugadorData.dni || "" : "";
     const fnacFinal = jugadorData ? jugadorData.fecha_nacimiento || "" : "";
     const generoFinal = jugadorData
       ? jugadorData.genero || "Masculino"
       : "Masculino";
+
+    // Extraemos el teléfono y email si ya están guardados en jugadorData
+    const telefonoFinal = jugadorData ? jugadorData.telefono || "" : "";
+    const emailFinal = jugadorData ? jugadorData.email || "" : "";
+
     const puntosFinal = rankingData
       ? rankingData.puntos
       : jugadorData
@@ -132,23 +133,24 @@ export class JugadorModal {
                                  class="hidden mt-2 w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue uppercase">
                       </div>
 
-                      <!-- Campos exclusivos para Jugador Nuevo (Teléfono, Email y Nota de Categoría) -->
+                      <!-- Teléfono y Email precargados y obligatorios para todos los casos -->
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-gray-100">
+                          <div>
+                              <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Teléfono de Contacto *</label>
+                              <input type="tel" id="perfil-telefono" value="${telefonoFinal}" required placeholder="Ej: 3415123456 (Mín. 10 dígitos)" 
+                                     class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue">
+                          </div>
+                          <div>
+                              <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Correo Electrónico *</label>
+                              <input type="email" id="perfil-email" value="${emailFinal}" required placeholder="correo@ejemplo.com" 
+                                     class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue">
+                          </div>
+                      </div>
+
+                      <!-- Nota de categoría exclusiva para jugador nuevo puro -->
                       ${
                         esJugadorNuevoPuro
                           ? `
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-gray-100">
-                            <div>
-                                <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Teléfono de Contacto *</label>
-                                <input type="tel" id="perfil-telefono" required placeholder="Ej: 3415123456 (Mín. 10 dígitos)" 
-                                       class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Correo Electrónico *</label>
-                                <input type="email" id="perfil-email" required placeholder="correo@ejemplo.com" 
-                                       class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue">
-                            </div>
-                        </div>
-
                         <div>
                             <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Categoría/s en las que desea participar *</label>
                             <textarea id="perfil-nota-categoria" required rows="2" placeholder="Ej: Me quiero anotar en Tercera y Cuarta" 
@@ -174,7 +176,7 @@ export class JugadorModal {
                       </div>
 
                       <div class="flex gap-3 pt-2">
-                          <button type="submit" class="flex-grow py-3 bg-asatemeBlue hover:bg-slate-800 text-white font-bold rounded-xl text-xs cursor-pointer shadow-md transition">
+                          <button type="submit" id="btn-submit-perfil" class="flex-grow py-3 bg-asatemeBlue hover:bg-slate-800 text-white font-bold rounded-xl text-xs cursor-pointer shadow-md transition">
                               ${esEdicion ? "Guardar Cambios e Inscribir" : esJugadorNuevoPuro ? "Registrar en Padrón y Notificar" : "Registrar e Inscribir al Torneo"}
                           </button>
                           <button type="button" id="btn-cancelar-modal" class="px-5 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl text-xs cursor-pointer">Cancelar</button>
@@ -290,54 +292,75 @@ export class JugadorModal {
 
     document.getElementById("form-perfil-jugador").onsubmit = async (e) => {
       e.preventDefault();
-      
-      const nombre = document.getElementById("perfil-nombre").value.trim().toUpperCase();
 
-      const dniCrudo = document.getElementById("perfil-dni").value.trim();
-      const dni = dniCrudo.replace(/\D/g, "");
+      const btnSubmit = document.getElementById("btn-submit-perfil");
+      if (btnSubmit.disabled) return;
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "Guardando...";
 
-      if (!/^\d{7,8}$/.test(dni)) {
-        alert("⚠️ Ingresá un número de DNI válido (entre 7 y 8 dígitos numéricos, sin puntos ni letras).");
-        return;
-      }
+      try {
+        const nombre = document
+          .getElementById("perfil-nombre")
+          .value.trim()
+          .toUpperCase();
 
-      const fechaNacimiento = document.getElementById("perfil-fnac").value;
-      const genero = document.getElementById("perfil-genero").value;
+        const dniCrudo = document.getElementById("perfil-dni").value.trim();
+        const dni = dniCrudo.replace(/\D/g, "");
 
-      let telefono = null;
-      let notaCategoria = null;
-
-      if (esJugadorNuevoPuro) {
-        const telCrudo = document.getElementById("perfil-telefono").value.trim();
-        telefono = telCrudo.replace(/\D/g, "");
-
-        if (telefono.length < 10) {
-          alert("⚠️ Ingresá un número de teléfono válido con al menos 10 dígitos (incluyendo el código de área, ej: 3415123456).");
+        if (!/^\d{7,8}$/.test(dni)) {
+          alert(
+            "⚠️ Ingresá un número de DNI válido (entre 7 y 8 dígitos numéricos, sin puntos ni letras).",
+          );
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = "Guardar";
           return;
         }
 
-        notaCategoria = document.getElementById("perfil-nota-categoria").value.trim();
-      }
+        const fechaNacimiento = document.getElementById("perfil-fnac").value;
+        const genero = document.getElementById("perfil-genero").value;
 
-      const email = esJugadorNuevoPuro
-        ? document.getElementById("perfil-email").value.trim()
-        : null;
+        const telCrudo = document
+          .getElementById("perfil-telefono")
+          .value.trim();
+        const telefono = telCrudo.replace(/\D/g, "");
 
-      const categoriasSeleccionadas = esJugadorNuevoPuro
-        ? []
-        : Array.from(document.querySelectorAll(".cat-prov-cb:checked")).map(
-            (cb) => cb.value,
+        if (telefono.length < 10) {
+          alert(
+            "⚠️ Ingresá un número de teléfono válido con al menos 10 dígitos (incluyendo código de área, ej: 3415123456).",
           );
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = "Guardar";
+          return;
+        }
 
-      let equipoIdFinal = selectClub.value;
-      let nombreClubFinal = "";
+        const email = document.getElementById("perfil-email").value.trim();
+        if (!email || !email.includes("@")) {
+          alert("⚠️ Ingresá un correo electrónico válido.");
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = "Guardar";
+          return;
+        }
 
-      if (!esJugadorNuevoPuro && categoriasSeleccionadas.length === 0) {
-        alert("⚠️ Debes seleccionar al menos una categoría.");
-        return;
-      }
+        const notaCategoria = esJugadorNuevoPuro
+          ? document.getElementById("perfil-nota-categoria").value.trim()
+          : null;
 
-      try {
+        const categoriasSeleccionadas = esJugadorNuevoPuro
+          ? []
+          : Array.from(document.querySelectorAll(".cat-prov-cb:checked")).map(
+              (cb) => cb.value,
+            );
+
+        let equipoIdFinal = selectClub.value;
+        let nombreClubFinal = "";
+
+        if (!esJugadorNuevoPuro && categoriasSeleccionadas.length === 0) {
+          alert("⚠️ Debes seleccionar al menos una categoría.");
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = "Guardar";
+          return;
+        }
+
         let { data: jugadorPorDni } = await window.supabase
           .from("jugadores")
           .select("id")
@@ -348,7 +371,11 @@ export class JugadorModal {
 
         if (jugadorPorDni) {
           if (jugadorIdFinal && jugadorPorDni.id !== jugadorIdFinal) {
-            alert("⚠️ El DNI ingresado ya pertenece a otro jugador en el padrón.");
+            alert(
+              "⚠️ El DNI ingresado ya pertenece a otro jugador en el padrón.",
+            );
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = "Guardar";
             return;
           }
           jugadorIdFinal = jugadorPorDni.id;
@@ -358,6 +385,8 @@ export class JugadorModal {
           const nombreNuevoClub = inputClubNuevo.value.trim().toUpperCase();
           if (!nombreNuevoClub) {
             alert("⚠️ Ingresá el nombre del nuevo club.");
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = "Guardar";
             return;
           }
 
@@ -416,6 +445,8 @@ export class JugadorModal {
               fecha_nacimiento: fechaNacimiento,
               genero,
               equipo_id: equipoIdFinal,
+              telefono,
+              email,
             })
             .eq("id", jugadorIdFinal);
 
@@ -430,7 +461,7 @@ export class JugadorModal {
               genero,
               equipo_id: equipoIdFinal,
               telefono,
-              email
+              email,
             })
             .select("id")
             .single();
@@ -454,7 +485,7 @@ export class JugadorModal {
               telefono: telefono,
               email: email,
               nombreClub: nombreClubFinal,
-              notaCategoria: notaCategoria, // <-- Enviamos la nota de categoría al gestor superior
+              notaCategoria: notaCategoria,
               esNuevoPuro: true,
             });
           }
@@ -471,6 +502,11 @@ export class JugadorModal {
       } catch (err) {
         console.error("Error guardando perfil:", err);
         alert("⚠️ Ocurrió un error al guardar los datos del jugador.");
+        const btnSubmit = document.getElementById("btn-submit-perfil");
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = "Guardar";
+        }
       }
     };
   }

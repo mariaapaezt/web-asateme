@@ -327,31 +327,20 @@ export class ProvincialVista {
     }
 
     try {
-      const { data: inscripcionExistente } = await clienteSupabase
-        .from("inscripciones")
-        .select("id")
-        .eq("torneo_id", this.torneoIdActivo)
-        .eq("jugador_id", nuevoInscripto.jugadorId)
-        .maybeSingle();
-
-      let errorSupabase = null;
-
-      if (inscripcionExistente) {
-        const { error } = await clienteSupabase
-          .from("inscripciones")
-          .update({ categorias: nuevoInscripto.categoriasSeleccionadas })
-          .eq("id", inscripcionExistente.id);
-        errorSupabase = error;
-      } else {
-        const { error } = await clienteSupabase.from("inscripciones").insert({
+      // Usamos UPSERT aprovechando la restricción UNIQUE(torneo_id, jugador_id)
+      // Esto actualiza las categorías si ya existía la fila, o la crea si es nueva, evitando duplicados.
+      const { error } = await clienteSupabase.from("inscripciones").upsert(
+        {
           torneo_id: this.torneoIdActivo,
           jugador_id: nuevoInscripto.jugadorId,
           categorias: nuevoInscripto.categoriasSeleccionadas,
-        });
-        errorSupabase = error;
-      }
+        },
+        {
+          onConflict: "torneo_id,jugador_id",
+        },
+      );
 
-      if (errorSupabase) throw errorSupabase;
+      if (error) throw error;
       return true;
     } catch (err) {
       console.error("Error guardando inscripción provincial:", err);
@@ -359,7 +348,7 @@ export class ProvincialVista {
       return false;
     }
   }
-
+  
   abrirModalExito(inscripto) {
     const clubLimpio =
       this.limpiarNombreClub(inscripto.nombreClub) || "Sin Club";
