@@ -399,6 +399,10 @@ export class ProvincialForm {
 
         const rankingVisible = rankingCoincidencias.slice(0, 10);
 
+        const abrirModalNuevoJugador = () => {
+          this.jugadorModal.abrir(null, null, this.clubesRegistrados);
+        };
+
         if (jugadoresSoloEnPadron.length === 0 && rankingVisible.length === 0) {
           contenedorSugerencias.innerHTML = `
             <div class="p-6 bg-amber-50 border border-amber-200 rounded-2xl text-center space-y-3">
@@ -407,9 +411,8 @@ export class ProvincialForm {
                     <i class="fas fa-user-plus mr-1"></i> Registrar Jugador Nuevo
                 </button>
             </div>`;
-          document.getElementById("btn-registrar-desde-cero").onclick = () => {
-            this.jugadorModal.abrir(null, null, this.clubesRegistrados);
-          };
+          document.getElementById("btn-registrar-desde-cero").onclick =
+            abrirModalNuevoJugador;
           return;
         }
 
@@ -452,8 +455,17 @@ export class ProvincialForm {
           });
         }
 
-        htmlResultados += `</div>`;
+        htmlResultados += `
+            <div class="pt-3 text-center border-t border-gray-100">
+                <button type="button" id="btn-registrar-desde-cero-alt" class="text-xs text-asatemeRed font-bold hover:underline cursor-pointer">
+                    ¿No figurás en la lista? Registrate como jugador nuevo
+                </button>
+            </div>
+          </div>`;
         contenedorSugerencias.innerHTML = htmlResultados;
+
+        document.getElementById("btn-registrar-desde-cero-alt").onclick =
+          abrirModalNuevoJugador;
 
         document.querySelectorAll(".seleccionar-padron-btn").forEach((btn) => {
           btn.onclick = async () => {

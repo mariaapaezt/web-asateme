@@ -113,7 +113,7 @@ export class ProvincialVista {
                               <i class="fas fa-calendar-alt text-amber-400"></i>
                               <div>
                                   <span class="block text-[10px] uppercase font-bold text-blue-200">FECHA</span>
-                                  <span class="text-xs font-bold">28 de Noviembre</span>
+                                  <span class="text-xs font-bold">28 de Noviembre  2026</span>
                               </div>
                           </div>
                           <div class="bg-white/10 backdrop-blur-xs border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3">
@@ -161,7 +161,7 @@ export class ProvincialVista {
 
                       <div class="text-[10px] text-blue-100 space-y-1 pt-1 border-t border-white/10">
                           <p>🕧 <i>Según inscriptos, el horario puede variar +/- 30 minutos.</i></p>
-                          <p class="text-amber-300 font-bold">⌛ Cierre de inscripciones: Viernes 30 hasta las 14 hs.</p>
+                          <p class="text-amber-300 font-bold">⌛ Cierre de inscripciones: Viernes 27 hasta las 14 hs.</p>
                       </div>
                   </div>
               </div>
