@@ -5,10 +5,10 @@ import { InscriptosProvModal } from "../componentes/inscripciones/InscriptosProv
 export class ProvincialVista {
   constructor() {
     this.inscriptos = [];
-    this.torneoIdActivo = 2; // ID del torneo provincial en la tabla torneos
+    this.torneoIdActivo = 3; // ID del torneo provincial en la tabla torneos
 
     // Control de estado de inscripciones para el torneo activo
-    this.inscripcionesAbiertas = false; // Cambiar a true si deseas abrirlas nuevamente
+    this.inscripcionesAbiertas = true; // Cambiar a true si deseas abrirlas nuevamente
 
     this.categoriasProvinciales = [
       "Primera",
@@ -113,14 +113,14 @@ export class ProvincialVista {
                               <i class="fas fa-calendar-alt text-amber-400"></i>
                               <div>
                                   <span class="block text-[10px] uppercase font-bold text-blue-200">FECHA</span>
-                                  <span class="text-xs font-bold">31 de Octubre</span>
+                                  <span class="text-xs font-bold">28 de Noviembre</span>
                               </div>
                           </div>
                           <div class="bg-white/10 backdrop-blur-xs border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3">
                               <i class="fas fa-map-marker-alt text-amber-400"></i>
                               <div>
                                   <span class="block text-[10px] uppercase font-bold text-blue-200">SEDE</span>
-                                  <span class="text-xs font-bold">Club Atletico Provincial, Rosario</span>
+                                  <span class="text-xs font-bold">Complejo Deportivo Municipal Emilio A. Lotuf (ex Belgrano Centro), Rosario</span>
                               </div>
                           </div>
                       </div>
@@ -197,40 +197,51 @@ export class ProvincialVista {
       const clienteSupabase = await this.obtenerClienteSupabase();
       if (!clienteSupabase) return;
 
-      // 1. Traemos TODOS los jugadores del padrón general junto con sus equipos (clubes)
+      // 1. Traemos clubes para asegurar el mapeo por club_id aunque el join embebido venga vacío
+      const { data: clubesData, error: errClubes } = await clienteSupabase
+        .from("clubes")
+        .select("id, nombre");
+      if (errClubes) throw errClubes;
+
+      const mapaClubes = new Map();
+      (clubesData || []).forEach((c) => {
+        mapaClubes.set(String(c.id), c.nombre);
+      });
+
+      // 2. Traemos jugadores del padrón con DNI
       const { data: jugadoresData, error: errJug } = await clienteSupabase
         .from("jugadores")
         .select(
           `
             id,
-            nombre, 
-            dni, 
-            genero, 
+            nombre,
+            dni,
+            genero,
             fecha_nacimiento,
             telefono,
             email,
-            equipos (nombre)
-        `,
+            club_id,
+            clubes (nombre)
+          `,
         )
         .not("dni", "is", null)
         .neq("dni", "");
-
       if (errJug) throw errJug;
 
-      // 2. Traemos las inscripciones exclusivas de este torneo activo
+      // 3. Traemos las inscripciones exclusivas de este torneo activo
       const { data: inscripcionesData, error: errIns } = await clienteSupabase
         .from("inscripciones")
         .select(
           `
             jugador_id,
             categorias
-        `,
+          `,
         )
         .eq("torneo_id", this.torneoIdActivo);
 
       if (errIns) throw errIns;
 
-      // 3. Creamos un mapa rápido de inscripciones por jugador_id
+      // 4. Mapa de inscripciones por jugador_id
       const mapaInscripciones = new Map();
       if (inscripcionesData) {
         inscripcionesData.forEach((ins) => {
@@ -238,16 +249,21 @@ export class ProvincialVista {
         });
       }
 
-      // 4. Fusionamos el padrón con sus respectivas categorías del torneo
+      // 5. Fusionamos el padrón con sus categorías y club
       this.inscriptos = [];
       if (jugadoresData) {
         jugadoresData.forEach((j) => {
           const categoriasDelJugador = mapaInscripciones.get(j.id) || [];
-          const nombreClubCrudo = j.equipos ? j.equipos.nombre : "";
+          const nombreClubRelacion = Array.isArray(j.clubes)
+            ? j.clubes[0]?.nombre
+            : j.clubes?.nombre;
+          const nombreClubPorId =
+            j.club_id != null ? mapaClubes.get(String(j.club_id)) : "";
+          const nombreClubCrudo = nombreClubRelacion || nombreClubPorId || "";
 
           this.inscriptos.push({
             id: j.id,
-            nombre: j.nombre,
+            nombre: String(j.nombre || "").toUpperCase(),
             dni: j.dni,
             genero: j.genero,
             fechaNacimiento: j.fecha_nacimiento,
@@ -495,5 +511,44 @@ export class ProvincialVista {
     setTimeout(() => {
       ventanaPrint.print();
     }, 500);
+  }
+
+  async obtenerClienteSupabase() {
+    if (window.supabase) return window.supabase;
+    for (let i = 0; i < 20; i++) {
+      await new Promise((res) => setTimeout(res, 100));
+      if (window.supabase) return window.supabase;
+    }
+    return null;
+  }
+
+  async cargarClubesDeSupabase() {
+    try {
+      const clienteSupabase = await this.obtenerClienteSupabase();
+      if (!clienteSupabase) {
+        console.warn("Supabase no se inicializó a tiempo para cargar clubes.");
+        return;
+      }
+
+      const { data, error } = await clienteSupabase
+        .from("clubes")
+        .select("id, nombre");
+
+      if (error) {
+        console.error("Error consultando tabla clubes:", error);
+        return;
+      }
+
+      if (data) {
+        this.clubesRegistrados = data
+          .map((c) => ({
+            id: c.id,
+            nombreLimpio: this.limpiarNombreClub(c.nombre),
+          }))
+          .sort((a, b) => a.nombreLimpio.localeCompare(b.nombreLimpio));
+      }
+    } catch (e) {
+      console.warn("No se pudieron cargar los clubes:", e);
+    }
   }
 }

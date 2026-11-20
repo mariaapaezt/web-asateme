@@ -18,8 +18,8 @@ export class JugadorModal {
     const esEdicion = !!jugadorData;
     const esJugadorNuevoPuro = !jugadorData && !rankingData;
 
-    const nombreFinal = (
-      jugadorData ? jugadorData.nombre : rankingData ? rankingData.nombre : ""
+    const nombreFinal = String(
+      rankingData?.nombre || (jugadorData ? jugadorData.nombre : ""),
     ).toUpperCase();
 
     const dniFinal = jugadorData ? jugadorData.dni || "" : "";
@@ -28,7 +28,6 @@ export class JugadorModal {
       ? jugadorData.genero || "Masculino"
       : "Masculino";
 
-    // Extraemos el teléfono y email si ya están guardados en jugadorData
     const telefonoFinal = jugadorData ? jugadorData.telefono || "" : "";
     const emailFinal = jugadorData ? jugadorData.email || "" : "";
 
@@ -37,14 +36,14 @@ export class JugadorModal {
       : jugadorData
         ? jugadorData.puntos_ranking || 0
         : 0;
-    const clubSugerido = rankingData ? rankingData.club : "";
+
+    const clubIdPreferido =
+      rankingData?.clubId ?? (jugadorData ? jugadorData.club_id : null);
 
     const opcionesClubes = clubesRegistrados
       .map((c) => {
         const seleccionado =
-          (jugadorData && String(jugadorData.equipo_id) === String(c.id)) ||
-          (!jugadorData &&
-            c.nombreLimpio.toLowerCase() === clubSugerido.toLowerCase())
+          clubIdPreferido != null && String(clubIdPreferido) === String(c.id)
             ? "selected"
             : "";
         return `<option value="${c.id}" ${seleccionado}>${c.nombreLimpio}</option>`;
@@ -133,7 +132,6 @@ export class JugadorModal {
                                  class="hidden mt-2 w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-asatemeBlue uppercase">
                       </div>
 
-                      <!-- Teléfono y Email precargados y obligatorios para todos los casos -->
                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-gray-100">
                           <div>
                               <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Teléfono de Contacto *</label>
@@ -147,7 +145,6 @@ export class JugadorModal {
                           </div>
                       </div>
 
-                      <!-- Nota de categoría exclusiva para jugador nuevo puro -->
                       ${
                         esJugadorNuevoPuro
                           ? `
@@ -167,12 +164,9 @@ export class JugadorModal {
                           : ""
                       }
 
-                      <!-- Bloque de Categorías (Oculto completamente si es jugador nuevo puro) -->
                       <div class="pt-2 border-t border-gray-100 space-y-2 ${esJugadorNuevoPuro ? "hidden" : ""}">
                           <label class="block text-[11px] font-bold text-gray-700 uppercase">Categorías habilitadas (Máx. 2):</label>
-                          <div id="contenedor-checkboxes-categorias" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              <!-- Renderizado dinámico -->
-                          </div>
+                          <div id="contenedor-checkboxes-categorias" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
                       </div>
 
                       <div class="flex gap-3 pt-2">
@@ -326,7 +320,7 @@ export class JugadorModal {
 
         if (telefono.length < 10) {
           alert(
-            "⚠️ Ingresá un número de teléfono válido con al menos 10 dígitos (incluyendo código de área, ej: 3415123456).",
+            "⚠️ Ingresá un número de teléfono válido con al menos 10 dígitos.",
           );
           btnSubmit.disabled = false;
           btnSubmit.textContent = "Guardar";
@@ -351,7 +345,7 @@ export class JugadorModal {
               (cb) => cb.value,
             );
 
-        let equipoIdFinal = selectClub.value;
+        let clubIdFinal = selectClub.value;
         let nombreClubFinal = "";
 
         if (!esJugadorNuevoPuro && categoriasSeleccionadas.length === 0) {
@@ -381,7 +375,7 @@ export class JugadorModal {
           jugadorIdFinal = jugadorPorDni.id;
         }
 
-        if (equipoIdFinal === "OTRO") {
+        if (clubIdFinal === "OTRO") {
           const nombreNuevoClub = inputClubNuevo.value.trim().toUpperCase();
           if (!nombreNuevoClub) {
             alert("⚠️ Ingresá el nombre del nuevo club.");
@@ -391,50 +385,38 @@ export class JugadorModal {
           }
 
           const { data: clubExistente } = await window.supabase
-            .from("equipos")
+            .from("clubes")
             .select("id, nombre")
             .ilike("nombre", nombreNuevoClub)
             .maybeSingle();
 
           if (clubExistente) {
-            equipoIdFinal = clubExistente.id;
+            clubIdFinal = clubExistente.id;
             nombreClubFinal = clubExistente.nombre;
           } else {
-            const nuevoId = crypto.randomUUID
-              ? crypto.randomUUID()
-              : "eq_" + Date.now();
-            const tokenGenerado = crypto.randomUUID
-              ? crypto.randomUUID()
-              : "tok_" + Date.now();
-
-            const datosNuevoClub = {
-              id: nuevoId,
-              nombre: nombreNuevoClub,
-              delegado: "A determinar",
-              liga: "ASATEME",
-              token: tokenGenerado,
-            };
-
-            const { data: nuevoEquipo, error: errEq } = await window.supabase
-              .from("equipos")
-              .insert(datosNuevoClub)
+            const { data: nuevoClub, error: errClub } = await window.supabase
+              .from("clubes")
+              .insert({ nombre: nombreNuevoClub })
               .select("id, nombre")
               .single();
 
-            if (errEq) throw errEq;
-            equipoIdFinal = nuevoEquipo.id;
-            nombreClubFinal = nuevoEquipo.nombre;
+            if (errClub) throw errClub;
+            clubIdFinal = nuevoClub.id;
+            nombreClubFinal = nuevoClub.nombre;
           }
-        } else if (equipoIdFinal) {
+        } else if (clubIdFinal) {
           const clubSeleccionadoObj = clubesRegistrados.find(
-            (c) => String(c.id) === String(equipoIdFinal),
+            (c) => String(c.id) === String(clubIdFinal),
           );
           nombreClubFinal = clubSeleccionadoObj
             ? clubSeleccionadoObj.nombreLimpio
             : "";
         } else {
-          equipoIdFinal = null;
+          clubIdFinal = jugadorData?.club_id ?? null;
         }
+
+        const puntosRankingGuardar =
+          rankingData?.puntos ?? jugadorData?.puntos_ranking ?? 0;
 
         if (jugadorIdFinal) {
           const { error: errUpd } = await window.supabase
@@ -444,9 +426,10 @@ export class JugadorModal {
               dni,
               fecha_nacimiento: fechaNacimiento,
               genero,
-              equipo_id: equipoIdFinal,
+              club_id: clubIdFinal,
               telefono,
               email,
+              puntos_ranking: puntosRankingGuardar,
             })
             .eq("id", jugadorIdFinal);
 
@@ -459,9 +442,11 @@ export class JugadorModal {
               dni,
               fecha_nacimiento: fechaNacimiento,
               genero,
-              equipo_id: equipoIdFinal,
+              club_id: clubIdFinal,
+              equipo_id: null,
               telefono,
               email,
+              puntos_ranking: puntosRankingGuardar,
             })
             .select("id")
             .single();
@@ -493,7 +478,7 @@ export class JugadorModal {
           await this.onGuardarExitoso({
             jugadorId: jugadorIdFinal,
             nombre: nombre,
-            equipoId: equipoIdFinal,
+            clubId: clubIdFinal,
             nombreClub: nombreClubFinal,
             categoriasSeleccionadas: categoriasSeleccionadas,
             esNuevoPuro: false,
