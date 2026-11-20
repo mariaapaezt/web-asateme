@@ -5,7 +5,11 @@ import { InscriptosProvModal } from "../componentes/inscripciones/InscriptosProv
 export class ProvincialVista {
   constructor() {
     this.inscriptos = [];
-    this.torneoIdActivo = 2; // ID del torneo provincial en la tabla torneos
+    this.torneoIdActivo = 3; // ID del torneo provincial en la tabla torneos
+
+    // Control de estado de inscripciones para el torneo activo
+    this.inscripcionesAbiertas = true; // Cambiar a true si deseas abrirlas nuevamente
+
     this.categoriasProvinciales = [
       "Primera",
       "Segunda",
@@ -18,9 +22,16 @@ export class ProvincialVista {
     this.modalComponent = new InscriptosProvModal();
 
     this.formComponent = new ProvincialForm({
+      inscripcionesAbiertas: this.inscripcionesAbiertas,
       onInscripcionExitosa: async (nuevoInscripto) => {
+        if (!this.inscripcionesAbiertas) {
+          alert(
+            "⚠️ Las inscripciones para este torneo se encuentran cerradas.",
+          );
+          return false;
+        }
+
         // 1. Si es un jugador nuevo puro, NO mostramos modal de inscripción exitosa
-        // (solo fue registrado en el padrón y ya fue notificado por WhatsApp)
         if (nuevoInscripto.esNuevoPuro) {
           window.scrollTo({ top: 0, behavior: "smooth" });
           return true;
@@ -88,7 +99,7 @@ export class ProvincialVista {
       <div class="min-h-screen bg-[#F8F9FA] pb-20">
           <!-- Banner Superior Provincial -->
           <div class="bg-asatemeBlue text-white py-10 px-6 md:px-16 relative overflow-hidden shadow-md">
-              <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
+              <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 relative z-10">
                   <div class="space-y-4 max-w-2xl">
                       <span class="inline-block px-3 py-1 rounded-full bg-blue-600 text-white font-extrabold text-[10px] tracking-wider uppercase">
                           • Torneo Provincial ASATEME
@@ -97,35 +108,74 @@ export class ProvincialVista {
                       <p class="text-blue-100 text-xs md:text-sm">Competencia oficial regulada por la Asociación Santafesina de Tenis de Mesa. Inscripciones validadas por padrón y ranking oficial.</p>
                       
                       <!-- Bloques de Fecha y Sede -->
-                      <div class="flex flex-wrap gap-4 pt-2">
+                      <div class="flex flex-wrap gap-4 pt-1">
                           <div class="bg-white/10 backdrop-blur-xs border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3">
                               <i class="fas fa-calendar-alt text-amber-400"></i>
                               <div>
                                   <span class="block text-[10px] uppercase font-bold text-blue-200">FECHA</span>
-                                  <span class="text-xs font-bold">31 de Octubre</span>
+                                  <span class="text-xs font-bold">28 de Noviembre</span>
                               </div>
                           </div>
                           <div class="bg-white/10 backdrop-blur-xs border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3">
                               <i class="fas fa-map-marker-alt text-amber-400"></i>
                               <div>
                                   <span class="block text-[10px] uppercase font-bold text-blue-200">SEDE</span>
-                                  <span class="text-xs font-bold">Club Atletico Provincial, Rosario</span>
+                                  <span class="text-xs font-bold">Complejo Deportivo Municipal Emilio A. Lotuf (ex Belgrano Centro), Rosario</span>
                               </div>
                           </div>
                       </div>
-
-                      <div class="pt-2">
-                          <a href="#seccion-formulario-prov" class="inline-flex items-center gap-2 bg-asatemeRed hover:bg-red-700 text-white font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg cursor-pointer">
-                              <i class="fas fa-pen-to-square"></i> INSCRIBIRME AHORA
-                          </a>
-                      </div>
                   </div>
 
-                  <div class="shrink-0">
-                      <div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white/20 flex items-center justify-center p-3 overflow-hidden bg-white/5">
-                          <img src="assets/images/logo-asateme.png" alt="Logo ASATEME" class="w-full h-full object-contain">
+                  <!-- Horarios Integrados en el Banner -->
+                  <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 w-full lg:w-auto lg:min-w-[420px] space-y-3.5 shadow-xl">
+                      <div class="flex items-center gap-2 text-amber-300 font-extrabold text-xs uppercase tracking-wider">
+                          <i class="fas fa-clock"></i> Horarios por Categoría
+                      </div>
+                      
+                      <div class="grid grid-cols-3 gap-2 text-center">
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Quinta</span>
+                              <span class="text-xs font-black">09:30 hs</span>
+                          </div>
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Tercera</span>
+                              <span class="text-xs font-black">10:30 hs</span>
+                          </div>
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Sub-13</span>
+                              <span class="text-xs font-black">12:30 hs</span>
+                          </div>
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Primera</span>
+                              <span class="text-xs font-black">13:45 hs</span>
+                          </div>
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Cuarta</span>
+                              <span class="text-xs font-black">14:00 hs</span>
+                          </div>
+                          <div class="bg-black/20 rounded-xl p-2.5">
+                              <span class="block text-[9px] text-blue-200 font-bold uppercase">Segunda</span>
+                              <span class="text-xs font-black">16:30 hs</span>
+                          </div>
+                      </div>
+
+                      <div class="text-[10px] text-blue-100 space-y-1 pt-1 border-t border-white/10">
+                          <p>🕧 <i>Según inscriptos, el horario puede variar +/- 30 minutos.</i></p>
+                          <p class="text-amber-300 font-bold">⌛ Cierre de inscripciones: Viernes 30 hasta las 14 hs.</p>
                       </div>
                   </div>
+              </div>
+
+              <div class="mt-6">
+                  ${
+                    this.inscripcionesAbiertas
+                      ? `<a href="#seccion-formulario-prov" class="inline-flex items-center gap-2 bg-asatemeRed hover:bg-red-700 text-white font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg cursor-pointer">
+                             <i class="fas fa-pen-to-square"></i> INSCRIBIRME AHORA
+                         </a>`
+                      : `<div class="inline-flex items-center gap-2 bg-gray-800/90 text-amber-300 border border-amber-300/30 font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-md">
+                             <i class="fas fa-lock"></i> INSCRIPCIONES FINALIZADAS
+                         </div>`
+                  }
               </div>
           </div>
 
@@ -147,45 +197,87 @@ export class ProvincialVista {
       const clienteSupabase = await this.obtenerClienteSupabase();
       if (!clienteSupabase) return;
 
-      const { data, error } = await clienteSupabase
+      // 1. Traemos clubes para asegurar el mapeo por club_id aunque el join embebido venga vacío
+      const { data: clubesData, error: errClubes } = await clienteSupabase
+        .from("clubes")
+        .select("id, nombre");
+      if (errClubes) throw errClubes;
+
+      const mapaClubes = new Map();
+      (clubesData || []).forEach((c) => {
+        mapaClubes.set(String(c.id), c.nombre);
+      });
+
+      // 2. Traemos jugadores del padrón con DNI
+      const { data: jugadoresData, error: errJug } = await clienteSupabase
+        .from("jugadores")
+        .select(
+          `
+            id,
+            nombre,
+            dni,
+            genero,
+            fecha_nacimiento,
+            telefono,
+            email,
+            club_id,
+            clubes (nombre)
+          `,
+        )
+        .not("dni", "is", null)
+        .neq("dni", "");
+      if (errJug) throw errJug;
+
+      // 3. Traemos las inscripciones exclusivas de este torneo activo
+      const { data: inscripcionesData, error: errIns } = await clienteSupabase
         .from("inscripciones")
         .select(
           `
-            categorias,
-            jugadores (
-              nombre, 
-              dni, 
-              genero, 
-              fecha_nacimiento,
-              equipos (nombre)
-            )
-        `,
+            jugador_id,
+            categorias
+          `,
         )
         .eq("torneo_id", this.torneoIdActivo);
 
-      if (error) throw error;
+      if (errIns) throw errIns;
 
-      if (data) {
-        this.inscriptos = data
-          .filter((item) => item.jugadores !== null)
-          .map((item) => {
-            const nombreClubCrudo = item.jugadores.equipos
-              ? item.jugadores.equipos.nombre
-              : "";
-            return {
-              nombre: item.jugadores.nombre,
-              dni: item.jugadores.dni,
-              genero: item.jugadores.genero,
-              fechaNacimiento: item.jugadores.fecha_nacimiento,
-              club: this.limpiarNombreClub(nombreClubCrudo) || "Sin Club",
-              categoriasSeleccionadas: item.categorias,
-            };
-          });
-
-        this.renderizarResumenYTarjetas();
+      // 4. Mapa de inscripciones por jugador_id
+      const mapaInscripciones = new Map();
+      if (inscripcionesData) {
+        inscripcionesData.forEach((ins) => {
+          mapaInscripciones.set(ins.jugador_id, ins.categorias || []);
+        });
       }
+
+      // 5. Fusionamos el padrón con sus categorías y club
+      this.inscriptos = [];
+      if (jugadoresData) {
+        jugadoresData.forEach((j) => {
+          const categoriasDelJugador = mapaInscripciones.get(j.id) || [];
+          const nombreClubRelacion = Array.isArray(j.clubes)
+            ? j.clubes[0]?.nombre
+            : j.clubes?.nombre;
+          const nombreClubPorId =
+            j.club_id != null ? mapaClubes.get(String(j.club_id)) : "";
+          const nombreClubCrudo = nombreClubRelacion || nombreClubPorId || "";
+
+          this.inscriptos.push({
+            id: j.id,
+            nombre: String(j.nombre || "").toUpperCase(),
+            dni: j.dni,
+            genero: j.genero,
+            fechaNacimiento: j.fecha_nacimiento,
+            telefono: j.telefono,
+            email: j.email,
+            club: this.limpiarNombreClub(nombreClubCrudo) || "Sin Club",
+            categoriasSeleccionadas: categoriasDelJugador,
+          });
+        });
+      }
+
+      this.renderizarResumenYTarjetas();
     } catch (error) {
-      console.error("Error al cargar inscriptos provinciales:", error);
+      console.error("Error al cargar inscriptos y padrón provincial:", error);
     }
   }
 
@@ -193,10 +285,18 @@ export class ProvincialVista {
     const contenedor = document.getElementById("seccion-resumen-provincial");
     if (!contenedor) return;
 
-    const totalJugadoresUnicos = new Set(this.inscriptos.map((i) => i.dni))
-      .size;
-    let totalInscripcionesCategorias = 0;
+    // 1. Filtramos solo los jugadores que tienen al menos 1 categoría inscripta en este torneo
+    const jugadoresConInscripcion = this.inscriptos.filter(
+      (i) => i.categoriasSeleccionadas && i.categoriasSeleccionadas.length > 0,
+    );
 
+    // 2. Contamos la cantidad de DNI/Jugadores únicos realmente inscriptos
+    const totalJugadoresUnicos = new Set(
+      jugadoresConInscripcion.map((i) => i.dni),
+    ).size;
+
+    // 3. Calculamos la suma total de inscripciones por categoría
+    let totalInscripcionesCategorias = 0;
     const estadisticasCategorias = this.categoriasProvinciales.map((cat) => {
       const inscriptosEnCat = this.inscriptos.filter((i) =>
         i.categoriasSeleccionadas?.includes(cat),
@@ -231,16 +331,22 @@ export class ProvincialVista {
               </div>
           </div>
 
-          <!-- Cuadrícula en Rectángulos Compactos (3 columnas en pantallas grandes) -->
+          <!-- Cuadrícula de Categorías -->
           <div class="lg:col-span-3 space-y-3">
               <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 px-5 flex justify-between items-center">
                   <div>
                       <h3 class="text-xs font-bold text-gray-800">Categorías del Torneo Provincial</h3>
                       <p class="text-[10px] text-gray-400">Desglose de inscriptos según ranking y categorías oficiales.</p>
                   </div>
-                  <span class="px-2 py-0.5 bg-blue-50 text-asatemeBlue font-bold rounded-md text-[10px]">
-                      Abierto
-                  </span>
+                  ${
+                    this.inscripcionesAbiertas
+                      ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-black rounded-md text-[10px] uppercase border border-emerald-100">
+                             • Abierto
+                         </span>`
+                      : `<span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-black rounded-md text-[10px] uppercase border border-amber-100 flex items-center gap-1">
+                             <i class="fas fa-lock text-[9px]"></i> Cerrado
+                         </span>`
+                  }
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -294,19 +400,18 @@ export class ProvincialVista {
     }
 
     try {
-      const { error } = await clienteSupabase.from("inscripciones").insert({
-        torneo_id: this.torneoIdActivo,
-        jugador_id: nuevoInscripto.jugadorId,
-        categorias: nuevoInscripto.categoriasSeleccionadas,
-      });
+      const { error } = await clienteSupabase.from("inscripciones").upsert(
+        {
+          torneo_id: this.torneoIdActivo,
+          jugador_id: nuevoInscripto.jugadorId,
+          categorias: nuevoInscripto.categoriasSeleccionadas,
+        },
+        {
+          onConflict: "torneo_id,jugador_id",
+        },
+      );
 
-      if (error) {
-        if (error.code === "23505") {
-          alert("⚠️ Este jugador ya se encuentra inscripto en este torneo.");
-          return false;
-        }
-        throw error;
-      }
+      if (error) throw error;
       return true;
     } catch (err) {
       console.error("Error guardando inscripción provincial:", err);
@@ -316,11 +421,9 @@ export class ProvincialVista {
   }
 
   abrirModalExito(inscripto) {
-    // Obtenemos el nombre limpio del club
     const clubLimpio =
       this.limpiarNombreClub(inscripto.nombreClub) || "Sin Club";
 
-    // Pasamos el objeto limpio a InscriptosProvModal sin concatenar textos largos en el campo nombre
     this.modalComponent.mostrar("¡Inscripción Exitosa!", [
       {
         nombre: `${inscripto.nombre} ha quedado inscripto correctamente.`,
@@ -408,5 +511,44 @@ export class ProvincialVista {
     setTimeout(() => {
       ventanaPrint.print();
     }, 500);
+  }
+
+  async obtenerClienteSupabase() {
+    if (window.supabase) return window.supabase;
+    for (let i = 0; i < 20; i++) {
+      await new Promise((res) => setTimeout(res, 100));
+      if (window.supabase) return window.supabase;
+    }
+    return null;
+  }
+
+  async cargarClubesDeSupabase() {
+    try {
+      const clienteSupabase = await this.obtenerClienteSupabase();
+      if (!clienteSupabase) {
+        console.warn("Supabase no se inicializó a tiempo para cargar clubes.");
+        return;
+      }
+
+      const { data, error } = await clienteSupabase
+        .from("clubes")
+        .select("id, nombre");
+
+      if (error) {
+        console.error("Error consultando tabla clubes:", error);
+        return;
+      }
+
+      if (data) {
+        this.clubesRegistrados = data
+          .map((c) => ({
+            id: c.id,
+            nombreLimpio: this.limpiarNombreClub(c.nombre),
+          }))
+          .sort((a, b) => a.nombreLimpio.localeCompare(b.nombreLimpio));
+      }
+    } catch (e) {
+      console.warn("No se pudieron cargar los clubes:", e);
+    }
   }
 }
