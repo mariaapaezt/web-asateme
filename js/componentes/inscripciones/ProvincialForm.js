@@ -130,7 +130,6 @@ export class ProvincialForm {
       provincial: "Provincial",
       sionista: "Sionista",
       estudantil: "Estudantil",
-      estudiantil: "Estudantil",
       casba: "CASBA",
     };
     const lower = limpio.toLowerCase();
@@ -295,25 +294,6 @@ export class ProvincialForm {
     this.conectarEventosBusqueda();
   }
 
-  async cargarClubesDeSupabase() {
-    try {
-      if (!window.supabase) return;
-      const { data, error } = await window.supabase
-        .from("clubes")
-        .select("id, nombre");
-      if (!error && data) {
-        this.clubesRegistrados = data
-          .map((c) => ({
-            id: c.id,
-            nombreLimpio: this.limpiarNombreClub(c.nombre),
-          }))
-          .sort((a, b) => a.nombreLimpio.localeCompare(b.nombreLimpio));
-      }
-    } catch (e) {
-      console.warn("No se pudieron cargar los clubes:", e);
-    }
-  }
-
   conectarEventosBusqueda() {
     if (!this.inscripcionesAbiertas) return;
 
@@ -393,11 +373,25 @@ export class ProvincialForm {
           }
         });
 
+        const rankingVisible = rankingCoincidencias.slice(0, 10);
+
+        const nombresEnRankingVisible = new Set(
+          rankingVisible
+            .map((item) => this.normalizarNombre(item.jugador))
+            .filter(Boolean),
+        );
+
         const jugadoresSoloEnPadron = jugadoresCoincidencias
-          .filter((j) => !idsPadronVinculados.has(String(j.id)))
+          .filter(
+            (j) =>
+              !idsPadronVinculados.has(String(j.id)) &&
+              !nombresEnRankingVisible.has(this.normalizarNombre(j.nombre)),
+          )
           .slice(0, 10);
 
-        const rankingVisible = rankingCoincidencias.slice(0, 10);
+        const abrirModalNuevoJugador = () => {
+          this.jugadorModal.abrir(null, null, this.clubesRegistrados);
+        };
 
         if (jugadoresSoloEnPadron.length === 0 && rankingVisible.length === 0) {
           contenedorSugerencias.innerHTML = `
@@ -407,9 +401,8 @@ export class ProvincialForm {
                     <i class="fas fa-user-plus mr-1"></i> Registrar Jugador Nuevo
                 </button>
             </div>`;
-          document.getElementById("btn-registrar-desde-cero").onclick = () => {
-            this.jugadorModal.abrir(null, null, this.clubesRegistrados);
-          };
+          document.getElementById("btn-registrar-desde-cero").onclick =
+            abrirModalNuevoJugador;
           return;
         }
 
@@ -452,8 +445,17 @@ export class ProvincialForm {
           });
         }
 
-        htmlResultados += `</div>`;
+        htmlResultados += `
+            <div class="pt-3 text-center border-t border-gray-100">
+                <button type="button" id="btn-registrar-desde-cero-alt" class="text-xs text-asatemeRed font-bold hover:underline cursor-pointer">
+                    ¿No figurás en la lista? Registrate como jugador nuevo
+                </button>
+            </div>
+          </div>`;
         contenedorSugerencias.innerHTML = htmlResultados;
+
+        document.getElementById("btn-registrar-desde-cero-alt").onclick =
+          abrirModalNuevoJugador;
 
         document.querySelectorAll(".seleccionar-padron-btn").forEach((btn) => {
           btn.onclick = async () => {
@@ -606,4 +608,3 @@ export class ProvincialForm {
     }
   }
 }
-
