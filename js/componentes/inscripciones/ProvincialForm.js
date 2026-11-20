@@ -130,7 +130,6 @@ export class ProvincialForm {
       provincial: "Provincial",
       sionista: "Sionista",
       estudantil: "Estudantil",
-      estudiantil: "Estudantil",
       casba: "CASBA",
     };
     const lower = limpio.toLowerCase();
@@ -295,25 +294,6 @@ export class ProvincialForm {
     this.conectarEventosBusqueda();
   }
 
-  async cargarClubesDeSupabase() {
-    try {
-      if (!window.supabase) return;
-      const { data, error } = await window.supabase
-        .from("clubes")
-        .select("id, nombre");
-      if (!error && data) {
-        this.clubesRegistrados = data
-          .map((c) => ({
-            id: c.id,
-            nombreLimpio: this.limpiarNombreClub(c.nombre),
-          }))
-          .sort((a, b) => a.nombreLimpio.localeCompare(b.nombreLimpio));
-      }
-    } catch (e) {
-      console.warn("No se pudieron cargar los clubes:", e);
-    }
-  }
-
   conectarEventosBusqueda() {
     if (!this.inscripcionesAbiertas) return;
 
@@ -393,11 +373,21 @@ export class ProvincialForm {
           }
         });
 
-        const jugadoresSoloEnPadron = jugadoresCoincidencias
-          .filter((j) => !idsPadronVinculados.has(String(j.id)))
-          .slice(0, 10);
-
         const rankingVisible = rankingCoincidencias.slice(0, 10);
+
+        const nombresEnRankingVisible = new Set(
+          rankingVisible
+            .map((item) => this.normalizarNombre(item.jugador))
+            .filter(Boolean),
+        );
+
+        const jugadoresSoloEnPadron = jugadoresCoincidencias
+          .filter(
+            (j) =>
+              !idsPadronVinculados.has(String(j.id)) &&
+              !nombresEnRankingVisible.has(this.normalizarNombre(j.nombre)),
+          )
+          .slice(0, 10);
 
         const abrirModalNuevoJugador = () => {
           this.jugadorModal.abrir(null, null, this.clubesRegistrados);
@@ -618,4 +608,3 @@ export class ProvincialForm {
     }
   }
 }
-
