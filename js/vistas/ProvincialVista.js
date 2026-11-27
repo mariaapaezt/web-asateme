@@ -1,14 +1,15 @@
 // js/vistas/ProvincialVista.js
 import { ProvincialForm } from "../componentes/inscripciones/ProvincialForm.js";
-import { InscriptosProvModal } from "../componentes/inscripciones/InscriptosProvModal.js";
+import { InsitcriptosProvModal } from "../componentes/inscripciones/InscriptosProvModal.js";
+import { SembradoTorneoView } from "./SembradoTorneoView.js";
 
 export class ProvincialVista {
   constructor() {
     this.inscriptos = [];
-    this.torneoIdActivo = 3; // ID del torneo provincial en la tabla torneos
+    this.torneoIdActivo = 2; // ID del torneo provincial en la tabla torneos
 
     // Control de estado de inscripciones para el torneo activo
-    this.inscripcionesAbiertas = true; // Cambiar a true si deseas abrirlas nuevamente
+    this.inscripcionesAbiertas = false; // Cambiar a false al cerrar inscripciones
 
     this.categoriasProvinciales = [
       "Primera",
@@ -19,6 +20,8 @@ export class ProvincialVista {
       "Sub-13",
     ];
 
+    this.pestanaActiva = "inscripcion"; // 'inscripcion' | 'sembrado'
+    this.sembradoRenderizado = false;
     this.modalComponent = new InscriptosProvModal();
 
     this.formComponent = new ProvincialForm({
@@ -49,6 +52,17 @@ export class ProvincialVista {
       },
     });
 
+    this.sembradoView = new SembradoTorneoView({
+      torneoId: this.torneoIdActivo,
+      torneoNombre: "Torneo Provincial ASATEME",
+      categorias: this.categoriasProvinciales,
+      categoriaInicial: this.categoriasProvinciales[0],
+      inscripcionCerrada: !this.inscripcionesAbiertas,
+      onEstadoCambiado: async () => {
+        await this.cargarInscriptosDeSupabase();
+      },
+    });
+
     window.verListadoCategoriaProvincial = (cat) =>
       this.abrirModalCategoria(cat);
     window.descargarListadoPDFGeneral = () => this.generarPDFGeneral();
@@ -67,7 +81,6 @@ export class ProvincialVista {
       provincial: "Provincial",
       sionista: "Sionista",
       estudantil: "Estudantil",
-      estudiantil: "Estudantil",
       casba: "CASBA",
     };
 
@@ -79,7 +92,7 @@ export class ProvincialVista {
 
   async obtenerClienteSupabase() {
     if (window.supabase) return window.supabase;
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 20; i++) {
       await new Promise((res) => setTimeout(res, 100));
       if (window.supabase) return window.supabase;
     }
@@ -88,32 +101,31 @@ export class ProvincialVista {
 
   async render(container) {
     this.container = container;
-    this.renderizarEstructuraBase();
+    this.sembradoRenderizado = false;
+    await this.renderizarEstructuraBase();
     await this.cargarInscriptosDeSupabase();
   }
 
-  renderizarEstructuraBase() {
+  async renderizarEstructuraBase() {
     if (!this.container) return;
 
     this.container.innerHTML = `
       <div class="min-h-screen bg-[#F8F9FA] pb-20">
-          <!-- Banner Superior Provincial -->
           <div class="bg-asatemeBlue text-white py-10 px-6 md:px-16 relative overflow-hidden shadow-md">
               <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 relative z-10">
                   <div class="space-y-4 max-w-2xl">
                       <span class="inline-block px-3 py-1 rounded-full bg-blue-600 text-white font-extrabold text-[10px] tracking-wider uppercase">
-                          • Torneo Provincial ASATEME
+                          Torneo Provincial ASATEME
                       </span>
                       <h1 class="text-3xl md:text-5xl font-black tracking-tight">Torneo Provincial<br>ASATEME</h1>
                       <p class="text-blue-100 text-xs md:text-sm">Competencia oficial regulada por la Asociación Santafesina de Tenis de Mesa. Inscripciones validadas por padrón y ranking oficial.</p>
-                      
-                      <!-- Bloques de Fecha y Sede -->
+
                       <div class="flex flex-wrap gap-4 pt-1">
                           <div class="bg-white/10 backdrop-blur-xs border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3">
                               <i class="fas fa-calendar-alt text-amber-400"></i>
                               <div>
                                   <span class="block text-[10px] uppercase font-bold text-blue-200">FECHA</span>
-                                  <span class="text-xs font-bold">28 de Noviembre  2026</span>
+                                  <span class="text-xs font-bold">28 de Noviembre 2026</span>
                               </div>
                           </div>
                           <div class="bg-white/10 backdrop-blur-xs border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3">
@@ -126,12 +138,11 @@ export class ProvincialVista {
                       </div>
                   </div>
 
-                  <!-- Horarios Integrados en el Banner -->
                   <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 w-full lg:w-auto lg:min-w-[420px] space-y-3.5 shadow-xl">
                       <div class="flex items-center gap-2 text-amber-300 font-extrabold text-xs uppercase tracking-wider">
                           <i class="fas fa-clock"></i> Horarios por Categoría
                       </div>
-                      
+
                       <div class="grid grid-cols-3 gap-2 text-center">
                           <div class="bg-black/20 rounded-xl p-2.5">
                               <span class="block text-[9px] text-blue-200 font-bold uppercase">Quinta</span>
@@ -179,17 +190,116 @@ export class ProvincialVista {
               </div>
           </div>
 
-          <!-- Contenido Principal: Resumen y Formulario -->
-          <div class="max-w-7xl mx-auto px-4 md:px-6 pt-8 space-y-10">
+          <div class="max-w-7xl mx-auto px-4 md:px-6 pt-6">
+              <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-2 inline-flex gap-2" role="tablist">
+                  <button
+                    type="button"
+                    id="tab-btn-inscripcion"
+                    data-tab-prov="inscripcion"
+                    class="px-4 py-2 rounded-xl text-xs font-extrabold transition cursor-pointer ${
+                      this.pestanaActiva === "inscripcion"
+                        ? "bg-asatemeBlue text-white shadow-sm"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }"
+                  >
+                      <i class="fas fa-users mr-1.5"></i> Inscripción y Listados
+                  </button>
+                  <button
+                    type="button"
+                    id="tab-btn-sembrado"
+                    data-tab-prov="sembrado"
+                    class="px-4 py-2 rounded-xl text-xs font-extrabold transition cursor-pointer ${
+                      this.pestanaActiva === "sembrado"
+                        ? "bg-asatemeBlue text-white shadow-sm"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }"
+                  >
+                      <i class="fas fa-sitemap mr-1.5"></i> Sembrado de Zonas
+                  </button>
+              </div>
+          </div>
+
+          <div id="panel-prov-inscripcion" class="max-w-7xl mx-auto px-4 md:px-6 pt-6 space-y-10 ${
+            this.pestanaActiva === "inscripcion" ? "" : "hidden"
+          }">
               <div id="seccion-resumen-provincial"></div>
               <div class="max-w-3xl mx-auto" id="seccion-formulario-prov"></div>
+          </div>
+
+          <div id="panel-prov-sembrado" class="max-w-7xl mx-auto px-4 md:px-6 pt-6 ${
+            this.pestanaActiva === "sembrado" ? "" : "hidden"
+          }">
+              <div id="seccion-sembrado-provincial"></div>
           </div>
 
           <div id="modal-provincial-container"></div>
       </div>
     `;
 
+    this.conectarPestanas();
     this.formComponent.render("seccion-formulario-prov");
+
+    if (this.pestanaActiva === "sembrado") {
+      await this.activarPestanaSembrado();
+    }
+  }
+
+
+  conectarPestanas() {
+    const botones = this.container?.querySelectorAll("[data-tab-prov]") || [];
+    botones.forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const destino = btn.getAttribute("data-tab-prov");
+        await this.cambiarPestana(destino);
+      });
+    });
+  }
+
+  async cambiarPestana(pestana) {
+    if (!this.container || !pestana) return;
+    this.pestanaActiva = pestana;
+
+    const btnInsc = this.container.querySelector("#tab-btn-inscripcion");
+    const btnSemb = this.container.querySelector("#tab-btn-sembrado");
+    const panelInsc = this.container.querySelector("#panel-prov-inscripcion");
+    const panelSemb = this.container.querySelector("#panel-prov-sembrado");
+
+    const claseActiva = ["bg-asatemeBlue", "text-white", "shadow-sm"];
+    const claseInactiva = ["text-gray-600", "hover:bg-gray-100"];
+
+    if (pestana === "sembrado") {
+      btnSemb?.classList.add(...claseActiva);
+      btnSemb?.classList.remove(...claseInactiva);
+      btnInsc?.classList.remove(...claseActiva);
+      btnInsc?.classList.add(...claseInactiva);
+
+      panelInsc?.classList.add("hidden");
+      panelSemb?.classList.remove("hidden");
+
+      await this.activarPestanaSembrado();
+    } else {
+      btnInsc?.classList.add(...claseActiva);
+      btnInsc?.classList.remove(...claseInactiva);
+      btnSemb?.classList.remove(...claseActiva);
+      btnSemb?.classList.add(...claseInactiva);
+
+      panelSemb?.classList.add("hidden");
+      panelInsc?.classList.remove("hidden");
+    }
+  }
+
+  async activarPestanaSembrado() {
+    this.sembradoView.torneoId = this.torneoIdActivo;
+    this.sembradoView.torneoNombre = `Torneo #${this.torneoIdActivo} ASATEME`;
+    this.sembradoView.categorias = this.categoriasProvinciales;
+    this.sembradoView.inscripcionCerrada = !this.inscripcionesAbiertas;
+
+    if (!this.sembradoRenderizado) {
+      await this.sembradoView.render("seccion-sembrado-provincial");
+      this.sembradoRenderizado = true;
+    } else {
+      await this.sembradoView.cargarSembrado({ forzarRegenerar: false });
+    }
   }
 
   async cargarInscriptosDeSupabase() {
@@ -341,7 +451,7 @@ export class ProvincialVista {
                   ${
                     this.inscripcionesAbiertas
                       ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-black rounded-md text-[10px] uppercase border border-emerald-100">
-                             • Abierto
+                              Abierto
                          </span>`
                       : `<span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-black rounded-md text-[10px] uppercase border border-amber-100 flex items-center gap-1">
                              <i class="fas fa-lock text-[9px]"></i> Cerrado
@@ -511,44 +621,5 @@ export class ProvincialVista {
     setTimeout(() => {
       ventanaPrint.print();
     }, 500);
-  }
-
-  async obtenerClienteSupabase() {
-    if (window.supabase) return window.supabase;
-    for (let i = 0; i < 20; i++) {
-      await new Promise((res) => setTimeout(res, 100));
-      if (window.supabase) return window.supabase;
-    }
-    return null;
-  }
-
-  async cargarClubesDeSupabase() {
-    try {
-      const clienteSupabase = await this.obtenerClienteSupabase();
-      if (!clienteSupabase) {
-        console.warn("Supabase no se inicializó a tiempo para cargar clubes.");
-        return;
-      }
-
-      const { data, error } = await clienteSupabase
-        .from("clubes")
-        .select("id, nombre");
-
-      if (error) {
-        console.error("Error consultando tabla clubes:", error);
-        return;
-      }
-
-      if (data) {
-        this.clubesRegistrados = data
-          .map((c) => ({
-            id: c.id,
-            nombreLimpio: this.limpiarNombreClub(c.nombre),
-          }))
-          .sort((a, b) => a.nombreLimpio.localeCompare(b.nombreLimpio));
-      }
-    } catch (e) {
-      console.warn("No se pudieron cargar los clubes:", e);
-    }
   }
 }
