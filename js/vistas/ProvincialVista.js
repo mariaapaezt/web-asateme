@@ -6,7 +6,7 @@ import { SembradoTorneoView } from "./SembradoTorneoView.js";
 export class ProvincialVista {
   constructor() {
     this.inscriptos = [];
-    this.torneoIdActivo = ; // ID del torneo provincial en la tabla torneos
+    this.torneoIdActivo = 3; // ID del torneo provincial en la tabla torneos
 
     // Control de estado de inscripciones para el torneo activo
     this.inscripcionesAbiertas = false; // Cambiar a false al cerrar inscripciones
