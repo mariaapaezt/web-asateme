@@ -1,12 +1,12 @@
 // js/vistas/ProvincialVista.js
 import { ProvincialForm } from "../componentes/inscripciones/ProvincialForm.js";
-import { InsitcriptosProvModal } from "../componentes/inscripciones/InscriptosProvModal.js";
+import { InscriptosProvModal } from "../componentes/inscripciones/InscriptosProvModal.js";
 import { SembradoTorneoView } from "./SembradoTorneoView.js";
 
 export class ProvincialVista {
   constructor() {
     this.inscriptos = [];
-    this.torneoIdActivo = 2; // ID del torneo provincial en la tabla torneos
+    this.torneoIdActivo = 3; // ID del torneo provincial en la tabla torneos
 
     // Control de estado de inscripciones para el torneo activo
     this.inscripcionesAbiertas = false; // Cambiar a false al cerrar inscripciones
